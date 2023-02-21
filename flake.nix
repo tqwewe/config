@@ -18,9 +18,14 @@
 
     # Lunatic
     lunatic.url = "github:tqwewe/lunatic-flake";
+
+    nvchad = {
+      url = "github:cfcosta/nvchad";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { nixpkgs, home-manager, hardware, ... }@inputs: {
+  outputs = { nixpkgs, home-manager, hardware, nvchad, ... }@inputs: {
     nixosConfigurations = {
       ari = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; };

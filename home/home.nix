@@ -7,12 +7,15 @@
     # If you want to use home-manager modules from other flakes (such as nix-colors):
     # inputs.nix-colors.homeManagerModule
     # plasma-manager.homeManagerModules.plasma-manager
+    inputs.nvchad.hmModule
 
     # You can also split up your configuration and import pieces of it here:
     ./fish.nix
     ./gh.nix
     ./git.nix
+    ./helix.nix
     ./librewolf.nix
+    # ./neovim.nix
   ];
 
   nixpkgs = {
@@ -36,6 +39,10 @@
     };
   };
 
+  programs.devos.neovim = {
+    enable = true;
+  };
+
   home = {
     username = "ari";
     homeDirectory = "/home/ari";
@@ -54,7 +61,10 @@
     inputs.lunatic.packages.x86_64-linux.unstable
 
     discord
+    gcc
     materia-kde-theme
+    nodejs
+    ripgrep
     rust-bin.stable."1.66.1".default
     spotify
     vlc
