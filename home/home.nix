@@ -17,9 +17,8 @@
 
   nixpkgs = {
     # You can add overlays here
-    overlays = [
-      # If you want to use overlays exported from other flakes:
-      # neovim-nightly-overlay.overlays.default
+    overlays = with inputs; [
+      rust-overlay.overlays.default
 
       # Or define it inline, for example:
       # (final: prev: {
@@ -54,6 +53,7 @@
   home.packages = with pkgs; [
     discord
     materia-kde-theme
+    rust-bin.stable."1.66.1".default
     spotify
     vlc
 

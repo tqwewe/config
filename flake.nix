@@ -13,8 +13,8 @@
     # Hardware quirks
     hardware.url = "github:nixos/nixos-hardware";
 
-    # KDE Plasma manager
-    plasma-manager.url = "github:pjones/plasma-manager";
+    # Rust oxalica overlay
+    rust-overlay.url = "github:oxalica/rust-overlay";
   };
 
   outputs = { nixpkgs, home-manager, hardware, ... }@inputs: {
