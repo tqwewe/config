@@ -51,6 +51,8 @@
   programs.zoxide.enable = true;
 
   home.packages = with pkgs; [
+    inputs.lunatic.packages.x86_64-linux.unstable
+
     discord
     materia-kde-theme
     rust-bin.stable."1.66.1".default

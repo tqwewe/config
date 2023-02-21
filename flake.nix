@@ -15,6 +15,9 @@
 
     # Rust oxalica overlay
     rust-overlay.url = "github:oxalica/rust-overlay";
+
+    # Lunatic
+    lunatic.url = "github:tqwewe/lunatic-flake";
   };
 
   outputs = { nixpkgs, home-manager, hardware, ... }@inputs: {
