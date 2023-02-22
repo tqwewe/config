@@ -1,7 +1,16 @@
 # This is your home-manager configuration file
 # Use this to configure your home environment (it replaces ~/.config/nixpkgs/home.nix)
 
-{ inputs, lib, config, pkgs, ... }: {
+{ inputs, lib, config, pkgs, ... }:
+
+let
+  lunatic-unstable = inputs.lunatic.packages.x86_64-linux.unstable;
+
+  rust-overlay-wasi = pkgs.rust-bin.stable."1.66.1".default.override {
+    targets = [ "wasm32-wasi" ];
+  };
+in
+{
   # You can import other home-manager modules here
   imports = with inputs; [
     # If you want to use home-manager modules from other flakes (such as nix-colors):
@@ -58,14 +67,13 @@
   programs.zoxide.enable = true;
 
   home.packages = with pkgs; [
-    inputs.lunatic.packages.x86_64-linux.unstable
-
     discord
     gcc
+    lunatic-unstable
     materia-kde-theme
     nodejs
     ripgrep
-    rust-bin.stable."1.66.1".default
+    rust-overlay-wasi
     spotify
     vlc
 
