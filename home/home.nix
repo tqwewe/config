@@ -74,6 +74,7 @@ in
     materia-kde-theme
     nodejs
     ripgrep
+    rnote
     rust-overlay-wasi
     spotify
     tdesktop
