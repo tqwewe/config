@@ -76,6 +76,7 @@ in
     ripgrep
     rust-overlay-wasi
     spotify
+    tdesktop
     vlc
 
     # Fonts
