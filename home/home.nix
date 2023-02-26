@@ -7,6 +7,7 @@ let
   lunatic-unstable = inputs.lunatic.packages.x86_64-linux.unstable;
 
   rust-overlay-wasi = pkgs.rust-bin.stable."1.66.1".default.override {
+    extensions = [ "rust-src" "rustfmt" "rust-analyzer" ];
     targets = [ "wasm32-wasi" ];
   };
 in
