@@ -28,7 +28,7 @@
     mailserver.url = "gitlab:simple-nixos-mailserver/nixos-mailserver/nixos-22.11";
   };
 
-  outputs = { nixpkgs, home-manager, hardware, nvchad, mailserver, ... }@inputs: {
+  outputs = { nixpkgs, home-manager, ... }@inputs: {
     nixosConfigurations = {
       ari = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; };

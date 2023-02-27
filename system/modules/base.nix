@@ -1,8 +1,6 @@
-{ inputs, lib, config, pkgs, ... }: {
+{ inputs, lib, config, ... }: {
   nixpkgs = {
-    # Configure your nixpkgs instance
     config = {
-      # Disable if you don't want unfree packages
       allowUnfree = true;
     };
   };
@@ -21,12 +19,6 @@
       experimental-features = "nix-command flakes";
       # Deduplicate and optimize nix store
       auto-optimise-store = true;
-    };
-
-    gc = {
-      automatic = true;
-      dates = "weekly";
-      options = "--delete-older-than 30d";
     };
   };
 
