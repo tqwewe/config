@@ -33,14 +33,14 @@
       ari = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; };
         modules = [
-          ./nixos/desktop/configuration.nix
+          ./system/desktop/configuration.nix
         ];
       };
 
       server = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; };
         modules = [
-          ./nixos/server/configuration.nix
+          ./system/server/configuration.nix
           ./modules/mailserver.nix
         ];
       };
