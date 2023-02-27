@@ -34,8 +34,13 @@
       isNormalUser = true;
       extraGroups = [ "networkmanager" "wheel" ];
       openssh.authorizedKeys.keys = [
-        (builtins.readFile ./key.pub)
+        (builtins.readFile ../../key.pub)
       ];
     };
   };
+
+  # System packages
+  environment.systemPackages = with pkgs; [
+    git
+  ];
 }
