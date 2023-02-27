@@ -23,9 +23,11 @@
       url = "github:cfcosta/nvchad";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    mailserver.url = "gitlab:simple-nixos-mailserver/nixos-mailserver/nixos-22.11";
   };
 
-  outputs = { nixpkgs, home-manager, hardware, nvchad, ... }@inputs: {
+  outputs = { nixpkgs, home-manager, hardware, nvchad, mailserver, ... }@inputs: {
     nixosConfigurations = {
       ari = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; };
@@ -38,6 +40,7 @@
         specialArgs = { inherit inputs; };
         modules = [
           ./nixos/server/configuration.nix
+          ./modules/mailserver.nix
         ];
       };
     };
