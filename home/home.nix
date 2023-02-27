@@ -17,14 +17,14 @@ in
     inputs.nvchad.hmModule
 
     # You can also split up your configuration and import pieces of it here:
-    ./fish.nix
-    ./gh.nix
-    ./git.nix
-    ./helix.nix
-    ./librewolf.nix
-    # ./neovim.nix
-    ./ssh.nix
-    ./thunderbird.nix
+    ./modules/fish.nix
+    ./modules/gh.nix
+    ./modules/git.nix
+    ./modules/helix.nix
+    ./modules/librewolf.nix
+    # ./modules/neovim.nix
+    ./modules/ssh.nix
+    ./modules/thunderbird.nix
   ];
 
   nixpkgs = {

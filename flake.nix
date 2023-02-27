@@ -41,13 +41,10 @@
         specialArgs = { inherit inputs; };
         modules = [
           ./system/server/configuration.nix
-          ./modules/mailserver.nix
         ];
       };
     };
 
-    # Standalone home-manager configuration entrypoint
-    # Available through 'home-manager --flake .#your-username@your-hostname'
     homeConfigurations = {
       "ari@ari" = home-manager.lib.homeManagerConfiguration {
         pkgs = nixpkgs.legacyPackages.x86_64-linux;

@@ -5,11 +5,11 @@
   imports = [
     ./hardware-configuration.nix
 
-    ../shared/base.nix
-    ../shared/fish.nix
-    ../shared/garbage.nix
-    ../shared/locale.nix
-    ../shared/pipewire.nix
+    ../modules/base.nix
+    ../modules/fish.nix
+    ../modules/garbage.nix
+    ../modules/locale.nix
+    ../modules/pipewire.nix
   ];
 
   # Hostname

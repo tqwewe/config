@@ -6,10 +6,10 @@
 {
   # You can import other home-manager modules here
   imports = [
-    ./fish.nix
-    ./gh.nix
-    ./git.nix
-    ./helix.nix
+    ./modules/fish.nix
+    ./modules/gh.nix
+    ./modules/git.nix
+    ./modules/helix.nix
   ];
 
   nixpkgs = {
