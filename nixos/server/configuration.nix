@@ -14,7 +14,6 @@
 
   # Hostname
   networking.hostName = "server";
-  networking.networkmanager.enable = true;
 
   # Bootloader
   boot.loader.grub.enable = true;
