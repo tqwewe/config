@@ -1,6 +1,7 @@
-{
+{ inputs, ... }: {
   programs.helix = {
     enable = true;
+    package = inputs.unstable.legacyPackages.x86_64-linux.helix;
 
     settings = {
       theme = "onedark";
