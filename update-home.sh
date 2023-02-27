@@ -1,3 +1,3 @@
 #!/bin/sh
 
-home-manager --flake .#ari@ari switch
+home-manager --flake ".#$(whoami)@$(hostname)" switch
