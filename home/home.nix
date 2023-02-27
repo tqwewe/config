@@ -23,6 +23,7 @@ in
     ./helix.nix
     ./librewolf.nix
     # ./neovim.nix
+    ./thunderbird.nix
   ];
 
   nixpkgs = {
