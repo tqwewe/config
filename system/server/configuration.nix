@@ -1,7 +1,7 @@
 # This is your system's configuration file.
 # Use this to configure your system environment (it replaces /etc/nixos/configuration.nix)
 
-{ pkgs, ... }: {
+{ config, pkgs, lib, ... }: {
   # You can import other NixOS modules here
   imports = [
     ./hardware-configuration.nix
@@ -25,6 +25,42 @@
   services.openssh.enable = true;
   services.openssh.permitRootLogin = "no";
   services.openssh.passwordAuthentication = false;
+
+  # Roundcube
+  services.roundcube = {
+     enable = true;
+     # this is the url of the vhost, not necessarily the same as the fqdn of
+     # the mailserver
+     hostName = "webmail.theari.dev";
+     extraConfig = ''
+       # starttls needed for authentication, so the fqdn required to match
+       # the certificate
+       $config['smtp_server'] = "tls://${config.mailserver.fqdn}";
+       $config['smtp_user'] = "%u";
+       $config['smtp_pass'] = "%p";
+     '';
+  };
+
+  services.nginx.enable = true;
+
+  networking.firewall.enable = true;
+  networking.firewall.allowedTCPPorts = [ 80 443 465 587 25 993 143 8096 ];
+
+  nixpkgs.config.packageOverrides = pkgs: {
+    vaapiIntel = pkgs.vaapiIntel.override { enableHybridCodec = true; };
+  };
+  hardware.opengl = {
+    enable = true;
+    extraPackages = with pkgs; [
+      intel-media-driver
+      vaapiIntel
+      vaapiVdpau
+      libvdpau-va-gl
+      intel-compute-runtime # OpenCL filter support (hardware tonemapping and subtitle burn-in)
+    ];
+  };
+  services.jellyfin.enable = true;
+  services.jellyfin.openFirewall = true;
 
   # Users
   users.mutableUsers = false;
