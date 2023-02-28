@@ -45,6 +45,7 @@ in
   programs.bat.enable = true;
   programs.exa.enable = true;
   programs.obs-studio.enable = true;
+  programs.rtorrent.enable = true;
   programs.starship.enable = true;
   programs.vscode.enable = true;
   programs.zoxide.enable = true;
@@ -55,6 +56,7 @@ in
     lunatic-unstable
     materia-kde-theme
     nodejs
+    qbittorrent
     ripgrep
     rnote
     rust-overlay-wasi
