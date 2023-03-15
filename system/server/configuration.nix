@@ -9,6 +9,7 @@
     ../modules/base.nix
     ../modules/fish.nix
     ../modules/garbage.nix
+    ../modules/jellyfin.nix
     ../modules/locale.nix
     ../modules/mailserver.nix
   ];
@@ -45,22 +46,6 @@
 
   networking.firewall.enable = true;
   networking.firewall.allowedTCPPorts = [ 80 443 465 587 25 993 143 8096 ];
-
-  nixpkgs.config.packageOverrides = pkgs: {
-    vaapiIntel = pkgs.vaapiIntel.override { enableHybridCodec = true; };
-  };
-  hardware.opengl = {
-    enable = true;
-    extraPackages = with pkgs; [
-      intel-media-driver
-      vaapiIntel
-      vaapiVdpau
-      libvdpau-va-gl
-      intel-compute-runtime # OpenCL filter support (hardware tonemapping and subtitle burn-in)
-    ];
-  };
-  services.jellyfin.enable = true;
-  services.jellyfin.openFirewall = true;
 
   # Users
   users.mutableUsers = false;
