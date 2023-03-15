@@ -44,6 +44,7 @@ in
   # User programs & packages
   programs.alacritty.enable = true;
   programs.bat.enable = true;
+  programs.bottom.enable = true;
   programs.exa.enable = true;
   programs.obs-studio.enable = true;
   programs.rtorrent.enable = true;
