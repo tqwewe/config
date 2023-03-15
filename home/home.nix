@@ -1,6 +1,7 @@
 { inputs, pkgs, ... }@foo:
 
 let
+  cocogitto = inputs.cocogitto.packages.x86_64-linux.default;
   lunatic-unstable = inputs.lunatic.packages.x86_64-linux.unstable;
 
   rust-overlay-wasi = pkgs.rust-bin.stable."1.66.1".default.override {
@@ -51,6 +52,7 @@ in
   programs.zoxide.enable = true;
 
   home.packages = with pkgs; [
+    cocogitto
     discord
     gcc
     lunatic-unstable

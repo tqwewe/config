@@ -20,6 +20,9 @@
     # Lunatic
     lunatic.url = "github:tqwewe/lunatic-flake";
 
+    # Cocogitto
+    cocogitto.url = "github:tqwewe/cocogitto-nix";
+
     nvchad = {
       url = "github:cfcosta/nvchad";
       inputs.nixpkgs.follows = "nixpkgs";
