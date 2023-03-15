@@ -61,5 +61,14 @@
         modules = [ ./home/server.nix ];
       };
     };
+
+    devShells.x86_64-linux.default =
+      let
+        pkgs = nixpkgs.legacyPackages.x86_64-linux;
+      in pkgs.mkShell {
+        packages = builtins.attrValues {
+          inherit (pkgs) pkg-config openssl;
+        };
+      };
   };
 }
