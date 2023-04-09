@@ -45,7 +45,7 @@
   services.nginx.enable = true;
 
   networking.firewall.enable = true;
-  networking.firewall.allowedTCPPorts = [ 80 443 465 587 25 993 143 8096 ];
+  networking.firewall.allowedTCPPorts = [ 80 443 465 587 25 993 143 8096, 3000 ];
 
   # Users
   users.mutableUsers = false;

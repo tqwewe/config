@@ -1,10 +1,11 @@
 # This is your system's configuration file.
 # Use this to configure your system environment (it replaces /etc/nixos/configuration.nix)
 
-{
+{ inputs, ... }: {
   imports = [
     ./hardware-configuration.nix
 
+    inputs.nix-ld.nixosModules.nix-ld
     ../modules/base.nix
     ../modules/docker.nix
     ../modules/fish.nix
@@ -41,13 +42,20 @@
   hardware.bluetooth.enable = true;
   services.blueman.enable = true;
 
+  # SSH
+  services.openssh = {
+    enable = true;
+    permitRootLogin = "no";
+    passwordAuthentication = true;
+  };
+
   # Users
   users.users = {
     ari = {
       initialPassword = "";
       isNormalUser = true;
       openssh.authorizedKeys.keys = [];
-      extraGroups = [ "networkmanager" "wheel" ];
+      extraGroups = [ "networkmanager" "wheel" "docker" ];
     };
   };
 

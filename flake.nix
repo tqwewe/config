@@ -23,20 +23,27 @@
     # Cocogitto
     cocogitto.url = "github:tqwewe/cocogitto-nix";
 
-    nvchad = {
-      url = "github:cfcosta/nvchad";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    # Bacon
+    bacon.url = "github:tqwewe/bacon-flake";
 
     mailserver.url = "gitlab:simple-nixos-mailserver/nixos-mailserver/nixos-22.11";
+
+    vscode-server.url = "github:msteen/nixos-vscode-server";
+
+    nix-ld.url = "github:Mic92/nix-ld";
+    nix-ld.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { nixpkgs, home-manager, ... }@inputs: {
+  outputs = { nixpkgs, home-manager, vscode-server, ... }@inputs: {
     nixosConfigurations = {
       ari = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; };
         modules = [
           ./system/desktop/configuration.nix
+          vscode-server.nixosModule
+          ({ config, pkgs, ... }: {
+            services.vscode-server.enable = true;
+          })
         ];
       };
 
