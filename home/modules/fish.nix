@@ -6,6 +6,13 @@
       set -gx GPG_TTY $(tty)
       zoxide init fish | source
       starship init fish | source
+
+      if status is-login
+        if not set -q TMUX
+          set -x TMUX tmux
+          exec $TMUX
+        end
+      end
     '';
 
     shellAliases = {

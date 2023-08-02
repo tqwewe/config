@@ -1,14 +1,13 @@
-
 {
   description = "Ari's NixOS config";
 
   inputs = {
     # Nixpkgs
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-22.11";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-23.05";
     unstable.url = "github:nixos/nixpkgs/nixos-unstable";
 
     # Home manager
-    home-manager.url = "github:nix-community/home-manager";
+    home-manager.url = "github:nix-community/home-manager/release-23.05";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
     # Hardware quirks
@@ -16,6 +15,11 @@
 
     # Rust oxalica overlay
     rust-overlay.url = "github:oxalica/rust-overlay";
+
+    # Helix
+    # helix.url = "github:helix-editor/helix";
+    helix.url = "github:tqwewe/helix-tree-explorer/tree_explore";
+    helix.inputs.nixpkgs.follows = "nixpkgs";
 
     # Lunatic
     lunatic.url = "github:tqwewe/lunatic-flake";
@@ -26,9 +30,9 @@
     # Bacon
     bacon.url = "github:tqwewe/bacon-flake";
 
-    mailserver.url = "gitlab:simple-nixos-mailserver/nixos-mailserver/nixos-22.11";
+    # mailserver.url = "gitlab:simple-nixos-mailserver/nixos-mailserver/nixos-22.11";
 
-    vscode-server.url = "github:msteen/nixos-vscode-server";
+    # vscode-server.url = "github:msteen/nixos-vscode-server";
 
     nix-ld.url = "github:Mic92/nix-ld";
     nix-ld.inputs.nixpkgs.follows = "nixpkgs";
@@ -40,10 +44,10 @@
         specialArgs = { inherit inputs; };
         modules = [
           ./system/desktop/configuration.nix
-          vscode-server.nixosModule
-          ({ config, pkgs, ... }: {
-            services.vscode-server.enable = true;
-          })
+          # vscode-server.nixosModule
+          # ({ config, pkgs, ... }: {
+          #   services.vscode-server.enable = true;
+          # })
         ];
       };
 
@@ -74,7 +78,7 @@
         pkgs = nixpkgs.legacyPackages.x86_64-linux;
       in pkgs.mkShell {
         packages = builtins.attrValues {
-          inherit (pkgs) pkg-config openssl;
+          inherit (pkgs) pkg-config openssl cmake fontconfig;
         };
       };
   };

@@ -1,4 +1,4 @@
-{ config, inputs, lib, modulesPath, ... }:
+{ pkgs, config, inputs, lib, modulesPath, ... }:
 
 {
   imports = [
@@ -8,9 +8,9 @@
   ];
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usbhid" "usb_storage" "sd_mod" ];
-  boot.initrd.kernelModules = [ ];
+  boot.initrd.kernelModules = [ "v4l2loopback" ];
   boot.kernelModules = [ "kvm-intel" ];
-  boot.extraModulePackages = [ ];
+  boot.extraModulePackages = [ pkgs.linuxPackages.v4l2loopback ];
 
   fileSystems."/" =
     { device = "/dev/disk/by-uuid/7f119145-51e8-4cc1-9be9-df75591a6fba";

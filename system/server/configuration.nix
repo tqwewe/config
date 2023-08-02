@@ -23,9 +23,13 @@
   boot.loader.grub.device = "/dev/vda";
 
   # SSH
-  services.openssh.enable = true;
-  services.openssh.permitRootLogin = "no";
-  services.openssh.passwordAuthentication = false;
+  services.openssh = {
+    enable = true;
+    settings = {
+      PermitRootLogin = "no";
+      PasswordAuthentication = false;
+    };
+  };
 
   # Roundcube
   services.roundcube = {
@@ -63,5 +67,6 @@
   # System packages
   environment.systemPackages = with pkgs; [
     git
+    kmod
   ];
 }
