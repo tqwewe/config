@@ -4,13 +4,17 @@
 
     shellInit = ''
       set -gx GPG_TTY $(tty)
+      set -gx EDITOR "hx"
       zoxide init fish | source
-      starship init fish | source
 
       if status is-login
-        if not set -q TMUX
-          set -x TMUX tmux
-          exec $TMUX
+        #if not set -q TMUX
+        #  set -x TMUX tmux
+        #  exec $TMUX
+        #end
+        if set -q ZELLIJ
+        else
+          zellij
         end
       end
     '';
@@ -23,8 +27,8 @@
 
     functions = {
       fish_greeting = ''
-        echo Hello Ari!
-        echo The time is (set_color yellow; date +%T; set_color normal)
+        # echo Hello Ari!
+        # echo The time is (set_color yellow; date +%T; set_color normal)
       '';
 
       fish_user_key_bindings = ''

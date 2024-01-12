@@ -37,9 +37,9 @@ with lib.hm.gvariant;
     "org/gnome/desktop/background" = {
       color-shading-type = "solid";
       picture-options = "zoom";
-      picture-uri = "file:///run/current-system/sw/share/backgrounds/gnome/keys-l.webp";
-      picture-uri-dark = "file:///run/current-system/sw/share/backgrounds/gnome/keys-d.webp";
-      primary-color = "#aaaaaa";
+      picture-uri = "file:///run/current-system/sw/share/backgrounds/gnome/adwaita-l.webp";
+      picture-uri-dark = "file:///run/current-system/sw/share/backgrounds/gnome/adwaita-d.webp";
+      primary-color = "#3071AE";
       secondary-color = "#000000";
     };
 
@@ -50,14 +50,17 @@ with lib.hm.gvariant;
 
     "org/gnome/desktop/interface" = {
       clock-format = "12h";
+      clock-show-weekday = true;
+      clock-show-date = true;
+      clock-show-seconds = false;
       color-scheme = "prefer-dark";
       cursor-size = 24;
-      cursor-theme = "KDE_Classic";
+      cursor-theme = "Adwaita";
       enable-animations = true;
       font-antialiasing = "grayscale";
       font-hinting = "slight";
       font-name = "Noto Sans,  10";
-      icon-theme = "Papirus-Dark";
+      icon-theme = "Adwaita";
       text-scaling-factor = 1.0;
       toolbar-style = "text";
       toolkit-accessibility = false;
@@ -177,7 +180,7 @@ with lib.hm.gvariant;
       disable-user-extensions = false;
       disabled-extensions = [ "workspace-indicator@gnome-shell-extensions.gcampax.github.com" "windowsNavigator@gnome-shell-extensions.gcampax.github.com" "window-list@gnome-shell-extensions.gcampax.github.com" "dash-to-dock@micxgx.gmail.com" "apps-menu@gnome-shell-extensions.gcampax.github.com" "native-window-placement@gnome-shell-extensions.gcampax.github.com" "gTile@vibou" "tiling-assistant@leleat-on-github" ];
       enabled-extensions = [ "user-theme@gnome-shell-extensions.gcampax.github.com" "blur-my-shell@aunetx" "arcmenu@arcmenu.com" "dash-to-panel@jderose9.github.com" "appindicatorsupport@rgcjonas.gmail.com" "Vitals@CoreCoding.com" "openweather-extension@jenslody.de" "ding@rastersoft.com" ];
-      favorite-apps = [ "librewolf.desktop" "org.gnome.Nautilus.desktop" "org.wezfurlong.wezterm.desktop" "discord.desktop" ];
+      favorite-apps = [ "firefox.desktop" "org.gnome.Nautilus.desktop" "org.wezfurlong.wezterm.desktop" "discord.desktop" "spotify.desktop" ];
       last-selected-power-profile = "performance";
       welcome-dialog-last-shown-version = "44.2";
     };

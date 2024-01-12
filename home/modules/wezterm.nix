@@ -15,6 +15,7 @@
         brightness = 0.1
       }
       -- config.window_background_opacity = 0.92
+      config.enable_tab_bar = false
 
       local act = wezterm.action
 

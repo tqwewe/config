@@ -10,6 +10,9 @@
     home-manager.url = "github:nix-community/home-manager/release-23.05";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
+    # NUR
+    nur.url = "github:nix-community/NUR";
+
     # Hardware quirks
     hardware.url = "github:nixos/nixos-hardware";
 
@@ -18,7 +21,8 @@
 
     # Helix
     # helix.url = "github:helix-editor/helix";
-    helix.url = "github:tqwewe/helix-tree-explorer/tree_explore";
+    helix.url = "github:pascalkuthe/helix/inline-diagnostics";
+    # helix.url = "github:tqwewe/helix-tree-explorer/tree_explore";
     helix.inputs.nixpkgs.follows = "nixpkgs";
 
     # Lunatic
@@ -30,24 +34,31 @@
     # Bacon
     bacon.url = "github:tqwewe/bacon-flake";
 
+    # # Atuin
+    # atuin.url = "github:atuinsh/atuin";
+
+    # Cargo Leptos
+    # cargo-leptos.url = "github:leptos-rs/cargo-leptos";
+
+    # Virtual Webcam
+    webcam.url = "github:tqwewe/usb-webcam-v4l2-ffmpeg-nix";
+
     # mailserver.url = "gitlab:simple-nixos-mailserver/nixos-mailserver/nixos-22.11";
 
     # vscode-server.url = "github:msteen/nixos-vscode-server";
+    zjstatus.url = "github:dj95/zjstatus";
 
     nix-ld.url = "github:Mic92/nix-ld";
     nix-ld.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { nixpkgs, home-manager, vscode-server, ... }@inputs: {
+  outputs = { nixpkgs, home-manager, nur, vscode-server, ... }@inputs: {
     nixosConfigurations = {
       ari = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; };
         modules = [
+          nur.nixosModules.nur
           ./system/desktop/configuration.nix
-          # vscode-server.nixosModule
-          # ({ config, pkgs, ... }: {
-          #   services.vscode-server.enable = true;
-          # })
         ];
       };
 
@@ -63,7 +74,7 @@
       "ari@ari" = home-manager.lib.homeManagerConfiguration {
         pkgs = nixpkgs.legacyPackages.x86_64-linux;
         extraSpecialArgs = { inherit inputs; };
-        modules = [ ./home/home.nix ];
+        modules = [ nur.nixosModules.nur ./home/home.nix ];
       };
 
       "ari@server" = home-manager.lib.homeManagerConfiguration {

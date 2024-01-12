@@ -1,7 +1,7 @@
 # This is your system's configuration file.
 # Use this to configure your system environment (it replaces /etc/nixos/configuration.nix)
 
-{ inputs, config, ... }: {
+{ inputs, config, pkgs, ... }: {
   imports = [
     ./hardware-configuration.nix
 
@@ -14,6 +14,8 @@
     ../modules/locale.nix
     ../modules/pipewire.nix
   ];
+  
+  networking.firewall.enable = false;
 
   # Hostname
   networking.hostName = "ari";
@@ -30,6 +32,13 @@
   # Kernel Packages
   boot.extraModulePackages = with config.boot.kernelPackages; [ perf ];
 
+  # NUR
+  nixpkgs.config.packageOverrides = {
+    nur = import (builtins.fetchTarball "https://github.com/nix-community/NUR/archive/master.tar.gz") {
+      inherit pkgs;
+    };
+  };
+
   # Enable Gnome
   services.xserver.enable = true;
   services.xserver.displayManager.gdm.enable = true;
@@ -38,7 +47,20 @@
   systemd.services."getty@tty1".enable = false;
   systemd.services."autovt@tty1".enable = false;
 
-
+  # Webcam
+  # boot.extraModprobeConfig = ''
+  #   v4l2loopback devices=2 video_nr=4,5 card_label="OBS,GoPro"
+  # '';
+  systemd.services.webcam = {
+    path = with pkgs; [v4l-utils ffmpeg_5-full kmod];
+    wantedBy = ["multi-user.target"];
+    script = ''
+      modprobe -r v4l2loopback
+      modprobe v4l2loopback devices=2 video_nr=4,5 card_label="OBS,GoPro"
+      ffmpeg -f v4l2 -input_format mjpeg -r 30 -i /dev/video1 -vcodec rawvideo -pix_fmt rgb24 -r 30 -f v4l2 /dev/video5
+    '';
+  };
+  
   # Enable Plasma KDE
   # services.xserver.enable = true;
   # services.xserver.displayManager.sddm.enable = true;
@@ -78,6 +100,11 @@
   services.xserver.displayManager.autoLogin.user = "ari";
 
   programs.dconf.enable = true;
+  programs.steam = {
+    enable = true;
+    remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
+    dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
+  };
 
   environment.sessionVariables = rec {
     CARGO_BIN = "$HOME/.cargo/bin";

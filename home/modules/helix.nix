@@ -2,6 +2,8 @@
   programs.helix = {
     enable = true;
     package = inputs.helix.packages.x86_64-linux.default;
+    # package = inputs.unstable.legacyPackages.x86_64-linux.helix;
+    # defaultEditor = true;
 
     settings = {
       theme = "nightfox";
@@ -21,8 +23,8 @@
         };
         line-number = "relative";
         lsp = {
-          display-messages = true;
-          auto-signature-help = false;
+          # display-messages = true;
+          # auto-signature-help = false;
         };
         rulers = [120];
         statusline = {
@@ -53,5 +55,28 @@
         "A-x" = "extend_to_line_bounds";
       };
     };
+
+    languages = {
+      # language = [{
+      #   name = "rust";
+      #   formatter = { command = "leptosfmt"; args = ["--stdin" "--rustfmt"]; };
+      # }];
+      language-server.rust-analyzer.config = {
+        cargo = {
+          buildScripts.enable = true;
+        };
+        procMacro = {
+          ignored = {
+            leptos_macro = ["component" "server" "island"];
+          };
+        };
+      };
+      # language-server.rust-analyzer.config = {
+      #   "rust-analyzer.rustfmt.overrideCommand" = ["sh" "-c" "rustfmt | leptosfmt --stdin"];
+      # };
+    };
+  };
+  home.sessionVariables = {
+    EDITOR = "hx";
   };
 }
