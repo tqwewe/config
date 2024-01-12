@@ -4,7 +4,7 @@
 
     matchBlocks = {
       server = {
-        hostname = "139.180.178.235";
+        hostname = "170.64.147.60";
         user = "ari";
         extraOptions = {
           serverAliveInterval = "20";

@@ -7,20 +7,19 @@
     ./hardware-configuration.nix
     
     ../modules/base.nix
+    ../modules/docker.nix
     ../modules/fish.nix
     ../modules/garbage.nix
-    ../modules/jellyfin.nix
     ../modules/locale.nix
-    ../modules/mailserver.nix
+    ../modules/networking.nix
   ];
 
   # Hostname
   networking.hostName = "server";
 
   # Bootloader
-  boot.loader.grub.enable = true;
-  boot.loader.grub.version = 2;
-  boot.loader.grub.device = "/dev/vda";
+  boot.cleanTmpDir = true;
+  zramSwap.enable = true;
 
   # SSH
   services.openssh = {
@@ -31,42 +30,32 @@
     };
   };
 
-  # Roundcube
-  services.roundcube = {
-     enable = true;
-     # this is the url of the vhost, not necessarily the same as the fqdn of
-     # the mailserver
-     hostName = "webmail.theari.dev";
-     extraConfig = ''
-       # starttls needed for authentication, so the fqdn required to match
-       # the certificate
-       $config['smtp_server'] = "tls://${config.mailserver.fqdn}";
-       $config['smtp_user'] = "%u";
-       $config['smtp_pass'] = "%p";
-     '';
-  };
-
-  services.nginx.enable = true;
-
-  networking.firewall.enable = true;
-  networking.firewall.allowedTCPPorts = [ 80 443 465 587 25 993 143 8096, 3000 ];
+  networking.firewall.enable = false;
+  networking.hostName = "cloud-dev";
+  networking.domain = "";
+  # networking.firewall.allowedTCPPorts = [ 80 443 465 587 25 993 143 8096, 3000 ];
+  services.openssh.enable = true;
+  users.users.root.openssh.authorizedKeys.keys = [''ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINpecxt7TBNV6HlkVhdUNw3ntFpe6RA1f378XPHCOMeb ariseyhun@live.com.au'' ];
 
   # Users
-  users.mutableUsers = false;
   users.users = {
     ari = {
       initialPassword = "";
       isNormalUser = true;
-      extraGroups = [ "networkmanager" "wheel" ];
-      openssh.authorizedKeys.keys = [
-        (builtins.readFile ../../key.pub)
-      ];
+      extraGroups = [ "networkmanager" "wheel" "docker" ];
     };
   };
 
   # System packages
   environment.systemPackages = with pkgs; [
-    git
-    kmod
+    # git
   ];
+
+  environment.sessionVariables = rec {
+    CARGO_BIN = "$HOME/.cargo/bin";
+    
+    PATH = [ 
+      "${CARGO_BIN}"
+    ];
+  };
 }

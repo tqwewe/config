@@ -14,8 +14,6 @@
     ../modules/locale.nix
     ../modules/pipewire.nix
   ];
-  
-  networking.firewall.enable = false;
 
   # Hostname
   networking.hostName = "ari";
