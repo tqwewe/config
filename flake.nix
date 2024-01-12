@@ -62,7 +62,7 @@
         ];
       };
 
-      server = nixpkgs.lib.nixosSystem {
+      cloud-dev = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; };
         modules = [
           ./system/server/configuration.nix
@@ -77,7 +77,7 @@
         modules = [ nur.nixosModules.nur ./home/home.nix ];
       };
 
-      "ari@server" = home-manager.lib.homeManagerConfiguration {
+      "ari@cloud-dev" = home-manager.lib.homeManagerConfiguration {
         pkgs = nixpkgs.legacyPackages.x86_64-linux;
         extraSpecialArgs = { inherit inputs; };
         modules = [ ./home/server.nix ];

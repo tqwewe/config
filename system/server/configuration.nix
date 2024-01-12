@@ -15,23 +15,14 @@
   ];
 
   # Hostname
-  networking.hostName = "server";
+  networking.hostName = "cloud-dev";
 
   # Bootloader
-  boot.cleanTmpDir = true;
+  boot.tmp.cleanOnBoot = true;
   zramSwap.enable = true;
 
   # SSH
-  services.openssh = {
-    enable = true;
-    settings = {
-      PermitRootLogin = "no";
-      PasswordAuthentication = false;
-    };
-  };
-
   networking.firewall.enable = false;
-  networking.hostName = "cloud-dev";
   networking.domain = "";
   # networking.firewall.allowedTCPPorts = [ 80 443 465 587 25 993 143 8096, 3000 ];
   services.openssh.enable = true;
