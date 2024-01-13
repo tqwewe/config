@@ -26,7 +26,10 @@
   networking.domain = "";
   # networking.firewall.allowedTCPPorts = [ 80 443 465 587 25 993 143 8096, 3000 ];
   services.openssh.enable = true;
-  users.users.root.openssh.authorizedKeys.keys = [''ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINpecxt7TBNV6HlkVhdUNw3ntFpe6RA1f378XPHCOMeb ariseyhun@live.com.au'' ];
+  users.users.root.openssh.authorizedKeys.keys = [
+    ''ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINpecxt7TBNV6HlkVhdUNw3ntFpe6RA1f378XPHCOMeb ariseyhun@live.com.au''
+    ''ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPsnUFtG1IYtexjTjCbvCknN/lr3OuittQzsWxAlajYP ariseyhun@live.com.au''
+  ];
 
   # Users
   users.users = {

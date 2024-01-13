@@ -20,8 +20,8 @@
     rust-overlay.url = "github:oxalica/rust-overlay";
 
     # Helix
-    # helix.url = "github:helix-editor/helix";
-    helix.url = "github:pascalkuthe/helix/inline-diagnostics";
+    helix.url = "github:helix-editor/helix";
+    # helix.url = "github:pascalkuthe/helix/inline-diagnostics";
     # helix.url = "github:tqwewe/helix-tree-explorer/tree_explore";
     helix.inputs.nixpkgs.follows = "nixpkgs";
 
@@ -32,7 +32,7 @@
     cocogitto.url = "github:tqwewe/cocogitto-nix";
 
     # Bacon
-    bacon.url = "github:tqwewe/bacon-flake";
+    #bacon.url = "github:tqwewe/bacon-flake";
 
     # # Atuin
     # atuin.url = "github:atuinsh/atuin";
@@ -52,7 +52,7 @@
     nix-ld.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { nixpkgs, home-manager, nur, vscode-server, ... }@inputs: {
+  outputs = { nixpkgs, home-manager, nur, ... }@inputs: {
     nixosConfigurations = {
       ari = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; };

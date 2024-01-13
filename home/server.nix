@@ -2,7 +2,7 @@
 
 let
   cocogitto = inputs.cocogitto.packages.x86_64-linux.default;
-  bacon = inputs.bacon.packages.x86_64-linux.default;
+  #bacon = inputs.bacon.packages.x86_64-linux.default;
   helix = inputs.helix.packages.x86_64-linux.default;
   lunatic-unstable = inputs.lunatic.packages.x86_64-linux.unstable;
   unstable = inputs.unstable.legacyPackages.x86_64-linux;
@@ -19,7 +19,7 @@ in
     ./modules/fish.nix
     ./modules/gh.nix
     ./modules/git.nix
-    ./modules/helix.nix
+    #./modules/helix.nix
     ./modules/lazygit.nix
     ./modules/ssh.nix
     ./modules/starship.nix

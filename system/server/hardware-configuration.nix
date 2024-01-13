@@ -9,13 +9,18 @@
     ];
 
   boot.loader.grub.device = "/dev/vda";
-  boot.initrd.availableKernelModules = [ "ata_piix" "uhci_hcd" "virtio_pci" "virtio_scsi" "virtio_blk" ];
+  boot.initrd.availableKernelModules = [ "ata_piix" "uhci_hcd" "virtio_pci" "virtio_scsi" "sd_mod" "virtio_blk" ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
     { device = "/dev/disk/by-uuid/8a7f8857-a087-42cf-a594-f2aa58a70119";
+      fsType = "ext4";
+    };
+
+  fileSystems."/mnt/volume_syd1" =
+    { device = "/dev/disk/by-uuid/650b4710-8d13-4ae0-a397-f9d6b299a8b6";
       fsType = "ext4";
     };
 
@@ -26,9 +31,9 @@
   # still possible to use this option, but it's recommended to use it in conjunction
   # with explicit per-interface declarations with `networking.interfaces.<interface>.useDHCP`.
   networking.useDHCP = lib.mkDefault true;
+  # networking.interfaces.docker0.useDHCP = lib.mkDefault true;
   # networking.interfaces.eth0.useDHCP = lib.mkDefault true;
   # networking.interfaces.eth1.useDHCP = lib.mkDefault true;
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
-  hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 }

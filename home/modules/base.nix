@@ -25,4 +25,10 @@
 
   # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
   home.stateVersion = "23.05";
+
+  manual = {
+    html.enable = false;
+    json.enable = false;
+    manpages.enable = false;
+  };
 }
