@@ -1,7 +1,7 @@
-{ inputs, ... }: {
+{ inputs, pkgs, ... }: {
   programs.helix = {
     enable = true;
-    package = inputs.helix.packages.x86_64-linux.default;
+    package = inputs.helix.packages.${pkgs.system}.default;
     # package = inputs.unstable.legacyPackages.x86_64-linux.helix;
     # defaultEditor = true;
 
@@ -48,6 +48,8 @@
 
         "X" = ["extend_line_up" "extend_to_line_bounds"];
         "A-x" = "extend_to_line_bounds";
+
+        "C-y" = ":sh zellij run -f -x 10% -y 10% --width 80% --height 80% -- bash ~/.config/helix/yazi-picker.sh";
       };
 
       keys.select = {
@@ -79,4 +81,19 @@
   home.sessionVariables = {
     EDITOR = "hx";
   };
+  xdg.configFile."helix/yazi-picker.sh".text = ''
+    #!/usr/bin/env bash
+
+    paths=$(yazi --chooser-file=/dev/stdout | while read -r; do printf "%q " "$REPLY"; done)
+
+    if [[ -n "$paths" ]]; then
+    	zellij action toggle-floating-panes
+    	zellij action write 27 # send <Escape> key
+    	zellij action write-chars ":open $paths"
+    	zellij action write 13 # send <Enter> key
+    	zellij action toggle-floating-panes
+    fi
+
+    zellij action close-pane
+  '';
 }

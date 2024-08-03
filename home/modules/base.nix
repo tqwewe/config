@@ -1,4 +1,5 @@
-{ inputs, pkgs, ... }: {
+{ inputs, pkgs, ... }:
+{
   nixpkgs = {
     overlays = with inputs; [
       rust-overlay.overlays.default

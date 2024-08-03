@@ -3,13 +3,13 @@
 in {
   programs.zellij = {
     enable = true;
-    package = inputs.unstable.legacyPackages.x86_64-linux.zellij;
+    package = inputs.unstable.legacyPackages.${pkgs.system}.zellij;
 
-    enableFishIntegration = true;
+    enableFishIntegration = false;
   };
   xdg.configFile."zellij/config.kdl".text = ''
     keybinds {
-      unbind "Ctrl h" "Ctrl o"
+      unbind "Ctrl h" "Ctrl o" "Alt Left" "Alt Right" "Alt i" "Alt o"
       shared_except "move" "locked" {
         bind "Ctrl k" { SwitchToMode "Move"; }
       }
@@ -71,7 +71,7 @@ in {
             format_right "#[fg=#181825,bg=#b1bbfa]{datetime}#[fg=#6C7086,bg=#b1bbfa,bold]{swap_layout} "
             format_space "#[bg=#181825]"
 
-            hide_frame_for_single_pane "true"
+            hide_frame_for_single_pane "false"
 
             mode_normal  "#[bg=blue] "
 

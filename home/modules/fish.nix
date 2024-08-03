@@ -5,6 +5,8 @@
     shellInit = ''
       set -gx GPG_TTY $(tty)
       set -gx EDITOR "hx"
+      set -gx PATH $PATH ~/.cargo/bin
+      set -gx ZELLIJ_AUTO_ATTACH true
       zoxide init fish | source
 
       if status is-login
@@ -12,9 +14,8 @@
         #  set -x TMUX tmux
         #  exec $TMUX
         #end
-        if set -q ZELLIJ
-        else
-          zellij
+        if not test "$TERM_PROGRAM" = "vscode"
+          eval (zellij setup --generate-auto-start fish | string collect)
         end
       end
     '';

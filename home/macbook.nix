@@ -1,12 +1,16 @@
-{ inputs, pkgs, ... }@foo:
+{ inputs, pkgs, ... }:
 
 let
-  cocogitto = inputs.cocogitto.packages.x86_64-linux.default;
-  #bacon = inputs.bacon.packages.x86_64-linux.default;
-  helix = inputs.helix.packages.x86_64-linux.default;
-  lunatic-unstable = inputs.lunatic.packages.x86_64-linux.unstable;
-  unstable = inputs.unstable.legacyPackages.x86_64-linux;
+  #cocogitto = inputs.cocogitto.packages.x86_64-darwin.default;
+  # bacon = inputs.bacon.packages.x86_64-darwin.default;
+  helix = inputs.helix.packages.x86_64-darwin.default;
+  #lunatic-unstable = inputs.lunatic.packages.x86_64-darwin.unstable;
+  unstable = inputs.unstable.legacyPackages.x86_64-darwin;
 
+  # rust-overlay-wasi = (pkgs.rust-bin.selectLatestNightlyWith (toolchain: toolchain.default)).override {
+  #   extensions = [ "rust-src" "rustfmt" "rust-analyzer" ];
+  #   targets = [ "wasm32-wasi" "wasm32-unknown-unknown" ];
+  # };
   rust-overlay-wasi = pkgs.rust-bin.stable.latest.default.override {
     extensions = [ "rust-src" "rustfmt" "rust-analyzer" ];
     targets = [ "wasm32-wasi" "wasm32-unknown-unknown" ];
@@ -14,15 +18,17 @@ let
 in
 {
   imports = with inputs; [
+    ./modules/alacritty.nix
     ./modules/base.nix
     ./modules/direnv.nix
     ./modules/fish.nix
     ./modules/gh.nix
     ./modules/git.nix
-    #./modules/helix.nix
+    ./modules/helix.nix
     ./modules/lazygit.nix
-    ./modules/ssh.nix
+    ./modules/neovim.nix
     ./modules/starship.nix
+    # ./modules/vscode.nix
     ./modules/zellij.nix
   ];
 
@@ -36,7 +42,7 @@ in
 
   home = {
     username = "ari";
-    homeDirectory = "/home/ari";
+    homeDirectory = "/Users/ari";
     sessionVariables = {
       EDITOR = "hx";
     };
@@ -53,10 +59,10 @@ in
     unstable.cargo-expand
     unstable.cargo-generate
     unstable.cargo-outdated
-    cocogitto
-    docker-compose
+    #cocogitto
+    #docker-compose
     gcc
-    killall
+    # unstable.lapce
     nodejs
     nodePackages.vscode-langservers-extracted
     nodePackages.typescript-language-server

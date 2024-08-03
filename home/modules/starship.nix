@@ -20,6 +20,8 @@
     [ ](fg:#212736)\
     \n$character"""
 
+    command_timeout = 2000
+
     [directory]
     style = "fg:#e3e5e5 bg:#769ff0"
     format = "[ $path ]($style)"

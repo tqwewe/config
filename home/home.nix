@@ -17,6 +17,7 @@ let
 in
 {
   imports = with inputs; [
+    ./modules/alacritty.nix
     ./modules/base.nix
     ./modules/dconf.nix
     ./modules/direnv.nix
@@ -56,7 +57,7 @@ in
   programs.bat.enable = true;
   programs.bottom.enable = true;
   programs.chromium.enable = true;
-  programs.exa.enable = true;
+  programs.eza.enable = true;
   programs.obs-studio.enable = true;
   programs.obs-studio.plugins = [ pkgs.obs-studio-plugins.obs-backgroundremoval ];
   programs.rtorrent.enable = true;
