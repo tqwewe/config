@@ -23,7 +23,7 @@
     rust-overlay.url = "github:oxalica/rust-overlay";
 
     # Helix
-    helix.url = "github:helix-editor/helix/2cadec0b1182332338a5a1cc3062776f834d8835";
+    helix.url = "github:helix-editor/helix/25.01";
     # helix.url = "github:pascalkuthe/helix/inline-diagnostics";
     # helix.url = "github:tqwewe/helix-tree-explorer/tree_explore";
     helix.inputs.nixpkgs.follows = "nixpkgs";
@@ -53,9 +53,15 @@
 
     nix-ld.url = "github:Mic92/nix-ld";
     nix-ld.inputs.nixpkgs.follows = "nixpkgs";
+
+    agenix.url = "github:ryantm/agenix";
+    agenix.inputs.nixpkgs.follows = "nixpkgs";
+    agenix.inputs.home-manager.follows = "home-manager";
+
+    # jj.url = "github:jj-vcs/jj";
   };
 
-  outputs = { nixpkgs, unstable, nixpkgs-darwin, nix-darwin, home-manager, nur, ... }@inputs: {
+  outputs = { nixpkgs, unstable, nixpkgs-darwin, nix-darwin, home-manager, nur, agenix, ... }@inputs: {
     nixosConfigurations = {
       ari = nixpkgs.lib.nixosSystem {
         specialArgs = { inherit inputs; };
@@ -76,8 +82,10 @@
     darwinConfigurations."Aris-MacBook-Pro" = nix-darwin.lib.darwinSystem {
       specialArgs = { inherit inputs; };
       modules = [
+        agenix.darwinModules.default
         home-manager.darwinModules.home-manager
         ./system/macbook/configuration.nix
+        # ./secrets/secrets.nix
       ];
     };
 

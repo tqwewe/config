@@ -13,11 +13,14 @@ let
   # };
   rust-overlay-wasi = pkgs.rust-bin.stable.latest.default.override {
     extensions = [ "rust-src" "rustfmt" "rust-analyzer" ];
-    targets = [ "wasm32-wasi" "wasm32-unknown-unknown" ];
+    targets = [ "wasm32-unknown-unknown" ];
   };
 in
 {
   imports = with inputs; [
+    agenix.homeManagerModules.default
+    ../system/modules/secrets.nix
+
     ./modules/alacritty.nix
     ./modules/base.nix
     ./modules/direnv.nix
@@ -59,6 +62,8 @@ in
     unstable.cargo-expand
     unstable.cargo-generate
     unstable.cargo-outdated
+    unstable.cargo-temp
+    helix-gpt
     #cocogitto
     #docker-compose
     gcc
@@ -68,6 +73,9 @@ in
     nodePackages.typescript-language-server
     ripgrep
     rust-overlay-wasi
+    unstable.nodePackages.svelte-language-server
+    tailwindcss-language-server
+    vscode-langservers-extracted
     unstable.yazi
 
     # Fonts

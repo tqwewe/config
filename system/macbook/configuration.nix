@@ -3,6 +3,8 @@
 
 { inputs, config, pkgs, ... }: {
   imports = [
+    ../modules/ollama.nix
+    ../modules/secrets.nix
     #inputs.nix-ld.nixosModules.nix-ld
     # ../modules/base.nix
     # ../modules/docker.nix
@@ -16,6 +18,12 @@
   users.users.ari.shell = pkgs.fish;
 
   services.nix-daemon.enable = true;
+  services.ollama = {
+    enable = true;
+    environmentVariables = {
+      OLLAMA_INTEL_GPU = "true";
+    };
+  };
   # Installs a version of nix, that dosen't need "experimental-features = nix-command flakes" in /etc/nix/nix.conf
   #services.nix-daemon.package = pkgs.nixFlakes;
 

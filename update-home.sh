@@ -1,3 +1,3 @@
 #!/bin/sh
 
-home-manager --flake ".#$(whoami)@$(hostname)" switch
+home-manager --flake ".#$(whoami)@$(hostname -s)" switch

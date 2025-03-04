@@ -72,6 +72,7 @@ in
     unstable.cargo-generate
     # cargo-leptos
     unstable.cargo-outdated
+    unstable.cargo-temp
     cocogitto
     discord
     docker-compose
@@ -83,9 +84,9 @@ in
     unstable.kooha
     # unstable.ollama
     libreoffice
-    lunatic-unstable
+    # lunatic-unstable
     materia-kde-theme
-    unstable.neovim
+    # unstable.neovim
     netflix
     nodejs
     nodePackages.vscode-langservers-extracted
