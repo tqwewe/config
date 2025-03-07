@@ -2,7 +2,7 @@
   programs.git = {
     enable = true;
 
-    userEmail = "ariseyhun@live.com.au";
+    userEmail = "dev@tqwewe.com";
     userName = "Ari Seyhun";
 
     lfs.enable = true;
