@@ -6,6 +6,9 @@ in {
     package = inputs.unstable.legacyPackages.${pkgs.system}.zellij;
 
     enableFishIntegration = false;
+    settings = {
+      theme = "kanagawa";
+    }; 
   };
   xdg.configFile."zellij/config.kdl".text = ''
     keybinds {
