@@ -3,14 +3,14 @@
 
   inputs = {
     # Nixpkgs
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-24.05";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-24.11";
     unstable.url = "github:nixos/nixpkgs/nixos-unstable";
-    nixpkgs-darwin.url = "github:NixOS/nixpkgs/nixpkgs-24.05-darwin";
-    nix-darwin.url = "github:LnL7/nix-darwin";
+    nixpkgs-darwin.url = "github:NixOS/nixpkgs/nixpkgs-24.11-darwin";
+    nix-darwin.url = "github:LnL7/nix-darwin/nix-darwin-24.11";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
 
     # Home manager
-    home-manager.url = "github:nix-community/home-manager/release-24.05";
+    home-manager.url = "github:nix-community/home-manager/release-24.11";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
     # NUR
@@ -128,14 +128,25 @@
           inherit (pkgs) pkg-config openssl cmake fontconfig;
         };
       };
-    # devShells.x86_64-darwin.default =
-    #   let
-    #     pkgs = nixpkgs.legacyPackages.x86_64-darwin;
-    #   in pkgs.mkShell {
-    #     packages = builtins.attrValues {
-    #       inherit (pkgs) pkg-config openssl cmake fontconfig;
-    #       buildInputs = [ pkgs.darwin.apple_sdk.frameworks.SystemConfiguration ];
-    #     };
-    #   };
+    devShells.x86_64-darwin.default =
+      let
+        pkgs = nixpkgs.legacyPackages.x86_64-darwin;
+      in pkgs.mkShell {
+        packages = builtins.attrValues {
+          inherit (pkgs) pkg-config openssl cmake fontconfig;
+        };
+        shellHook = ''
+          echo "Development shell started successfully!"
+          echo "Project: My awesome project"
+          echo "Environment: $(uname -a)"
+          # You can add more commands here
+        '';
+        buildInputs = with pkgs; [
+          darwin.apple_sdk.frameworks.CoreServices
+          darwin.apple_sdk.frameworks.CoreFoundation
+          darwin.apple_sdk.frameworks.Security
+          darwin.apple_sdk.frameworks.SystemConfiguration
+        ];
+      };
   };
 }

@@ -54,7 +54,11 @@
         "X" = "select_line_above";
         "A-x" = "extend_to_line_bounds";
 
-        "C-y" = ":sh zellij run -f -x 10% -y 10% --width 80% --height 80% -- bash ~/.config/helix/yazi-picker.sh";
+        "C-y" = {
+          "y" = ":sh zellij run -c -f -x 10% -y 10% --width 80% --height 80% -- bash ~/.config/helix/yazi-picker.sh";
+          "v" = ":sh zellij run -c -f -x 10% -y 10% --width 80% --height 80% -- bash ~/.config/helix/yazi-picker.sh vsplit";
+          "h" = ":sh zellij run -c -f -x 10% -y 10% --width 80% --height 80% -- bash ~/.config/helix/yazi-picker.sh hsplit";
+        };
       };
 
       keys.select = {
@@ -175,11 +179,10 @@
     if [[ -n "$paths" ]]; then
     	zellij action toggle-floating-panes
     	zellij action write 27 # send <Escape> key
-    	zellij action write-chars ":open $paths"
+    	zellij action write-chars ":$1 $paths"
     	zellij action write 13 # send <Enter> key
+    else
     	zellij action toggle-floating-panes
     fi
-
-    zellij action close-pane
   '';
 }

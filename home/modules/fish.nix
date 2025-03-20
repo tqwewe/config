@@ -7,6 +7,10 @@
       set -gx EDITOR "hx"
       set -gx PATH $PATH ~/.cargo/bin
       set -gx ZELLIJ_AUTO_ATTACH true
+      set -gx BARTIB_FILE ~/.bartib/activities.bartib
+      # set -gx DYLD_FALLBACK_LIBRARY_PATH /usr/lib $DYLD_FALLBACK_LIBRARY_PATH
+      # set -gx LIBRARY_PATH /usr/lib $LIBRARY_PATH
+      # set -gx RUSTFLAGS "-L/usr/lib $RUSTFLAGS"
       zoxide init fish | source
 
       if status is-login
@@ -39,23 +43,44 @@
       '';
 
       cr = ''
-        if string match -q -e  -- "github.com" $argv[1]
-          set -f owner (echo $argv | sed -e 's/.*github.com\/\([^\/]*\)\/.*/\1/g')
-          set -f repo (echo $argv | sed -e 's/.*github.com\/[^\/]*\/\(.*\)\(\.git\)\?/\1/g')
+        # Function to clone GitHub repositories into ~/dev/{owner}/{repo} directory.
+        # Usage: cr owner/repo
+        # Also handles: cr https://github.com/owner/repo.git
+        #               cr git@github.com:owner/repo.git
+        #               cr repo # uses currently logged in users repo
+        set -l repo_arg $argv[1]
+
+        # Handle GitHub URLs (both HTTPS and SSH)
+        if string match -q -r -- "(https://github.com/|git@github.com:)" $repo_arg
+          # Extract owner/repo from HTTPS URL: https://github.com/owner/repo.git
+          # or from SSH URL: git@github.com:owner/repo.git
+          set -l repo_path (echo $repo_arg | sed -E 's/^(https:\/\/github\.com\/|git@github\.com:)([^\/]+)\/([^\/]+)(\.git)?$/\2\/\3/g')
+  
+          # Extract owner and repo from the path
+          set -l owner (echo $repo_path | cut -d '/' -f 1)
+          set -l repo (echo $repo_path | cut -d '/' -f 2 | sed 's/\.git$//')
+  
+          # Create directory if it doesn't exist
           mkdir -p ~/dev/$owner > /dev/null
-          git clone -- $argv[1] ~/dev/$owner/$repo
+  
+          # Clone repository
+          git clone -- $repo_arg ~/dev/$owner/$repo
           cd ~/dev/$owner/$repo
         else
-          if string match -q -e -- "/" $argv[1]
-            set -f owner (echo $argv | sed -e 's/\([^\/]*\)\/.*/\1/g')
-            set -f repo (echo $argv | sed -e 's/[^\/]*\/\(.*\)/\1/g')
+          # Handle simple "owner/repo" format
+          if string match -q -r -- "/" $repo_arg
+            set -l owner (echo $repo_arg | cut -d '/' -f 1)
+            set -l repo (echo $repo_arg | cut -d '/' -f 2)
+    
             mkdir -p ~/dev/$owner > /dev/null
-            gh repo clone $argv ~/dev/$owner/$repo
+            gh repo clone $repo_arg ~/dev/$owner/$repo
             cd ~/dev/$owner/$repo
           else
-            set -f username (gh auth status 2>&1 | sed -n '2s/.*as \([^ ]*\).*/\1/p')
-            set -f repo $argv[1]
-            gh repo clone $argv ~/dev/$username/$repo
+            # Handle just "repo" format (uses current GitHub username)
+            set -l username (gh auth status 2>&1 | sed -n '2s/.*as \([^ ]*\).*/\1/p')
+            set -l repo $repo_arg
+    
+            gh repo clone $repo_arg ~/dev/$username/$repo
             cd ~/dev/$username/$repo
           end
         end

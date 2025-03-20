@@ -48,8 +48,24 @@ in
     homeDirectory = "/Users/ari";
     sessionVariables = {
       EDITOR = "hx";
+      # More direct approach to influence the linker
+      DYLD_FALLBACK_LIBRARY_PATH = "/usr/lib:${pkgs.libiconv}/lib";
+      LIBRARY_PATH = "/usr/lib:${pkgs.libiconv}/lib:$LIBRARY_PATH";
+      LDFLAGS = "-L/usr/lib -L${pkgs.libiconv}/lib";
+      CPPFLAGS = "-I/usr/include -I${pkgs.libiconv}/include";
+      # Point Rust directly to the system libraries
+      RUSTFLAGS = "-L/usr/lib";
+      BARTIB_FILE="/Users/ari/activities.bartib";
     };
   };
+
+  # xdg.configFile."cargo/config.toml".text = ''
+  #   [target.x86_64-apple-darwin]
+  #   rustflags = ["-L", "/usr/lib", "-C", "link-args=-Wl,-search_paths_first"]
+
+  #   [build]
+  #   rustflags = ["-L", "/usr/lib"]
+  # '';
 
   # User programs & packages
   programs.bat.enable = true;
@@ -59,6 +75,7 @@ in
 
   home.packages = with pkgs; [
     bacon
+    bartib
     unstable.cargo-expand
     unstable.cargo-generate
     unstable.cargo-outdated
@@ -68,15 +85,24 @@ in
     #docker-compose
     gcc
     # unstable.lapce
+    libiconv
     nodejs
     nodePackages.vscode-langservers-extracted
     nodePackages.typescript-language-server
+    pkg-config
     ripgrep
     rust-overlay-wasi
     unstable.nodePackages.svelte-language-server
     tailwindcss-language-server
     vscode-langservers-extracted
     unstable.yazi
+
+    darwin.apple_sdk.frameworks.CoreServices
+    darwin.apple_sdk.frameworks.CoreFoundation
+    darwin.apple_sdk.frameworks.Security
+    darwin.apple_sdk.frameworks.System
+    darwin.apple_sdk.frameworks.SystemConfiguration
+    darwin.cctools
 
     # Fonts
     (pkgs.nerdfonts.override { fonts = [ "FiraCode" "DroidSansMono" ]; })
