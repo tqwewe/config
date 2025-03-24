@@ -2,7 +2,7 @@
 {
   nixpkgs = {
     overlays = with inputs; [
-      rust-overlay.overlays.default
+      # (import inputs.rust-overlay)
     ];
     config = {
       allowUnfree = true;

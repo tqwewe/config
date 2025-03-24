@@ -28,6 +28,7 @@
       cat = "bat";
       cd = "z";
       ls = "exa --long --group-directories-first --no-permissions --no-user";
+      rustdev = "nix develop /Users/ari/dev/tqwewe/config#rust -c fish";
     };
 
     functions = {
@@ -84,6 +85,40 @@
             cd ~/dev/$username/$repo
           end
         end
+      '';
+
+      setup-rust-env = ''
+        # Create the .envrc file
+        echo 'use flake /Users/ari/dev/tqwewe/config#rust' > ./.envrc
+        echo "Created .envrc file"
+    
+        # Allow the .envrc file with direnv
+        direnv allow
+    
+        # Check if .gitignore exists
+        if test -f .gitignore
+          # Check if .direnv is already in .gitignore
+          if not grep -q '\.direnv' .gitignore
+            # Add .direnv to .gitignore
+            echo ".direnv" >> .gitignore
+            echo "Added .direnv to .gitignore"
+          else
+            echo ".direnv already in .gitignore"
+          end
+
+          # Check if .envrc is already in .gitignore
+          if not grep -q '\.envrc' .gitignore
+            # Add .envrc to .gitignore
+            echo ".envrc" >> .gitignore
+            echo "Added .envrc to .gitignore"
+          else
+            echo ".envrc already in .gitignore"
+          end
+        else
+          echo "No .gitignore found, skipping .gitignore update"
+        end
+    
+        echo "Rust environment setup complete!"
       '';
     };
   };

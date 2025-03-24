@@ -5,15 +5,10 @@
   imports = [
     ../modules/ollama.nix
     ../modules/secrets.nix
-    #inputs.nix-ld.nixosModules.nix-ld
-    # ../modules/base.nix
-    # ../modules/docker.nix
-    # ../modules/fish.nix
-    # ../modules/garbage.nix
-    # ../modules/locale.nix
   ];
 
   environment.shells = with pkgs; [ fish ];
+  environment.variables = {};
   programs.fish.enable = true;
   users.users.ari.shell = pkgs.fish;
 
@@ -29,9 +24,9 @@
 
   nixpkgs = {
     hostPlatform = "x86_64-darwin";
-    overlays = with inputs; [
-      rust-overlay.overlays.default
-    ];
+    # overlays = with inputs; [
+    #   rust-overlay.overlays.default
+    # ];
     config = {
       allowUnfree = true;
       # Workaround for https://github.com/nix-community/home-manager/issues/2942
@@ -47,6 +42,11 @@
   nix.extraOptions = ''
     extra-experimental-features = nix-command flakes
   '';
+
+  # environment.systemPackages = with pkgs; [
+  #   rust-bin.stable.latest.default
+  # ];
+
 
   # Enable home-manager
   # programs.home-manager.enable = true;

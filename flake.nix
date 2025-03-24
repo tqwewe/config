@@ -20,7 +20,10 @@
     hardware.url = "github:nixos/nixos-hardware";
 
     # Rust oxalica overlay
-    rust-overlay.url = "github:oxalica/rust-overlay";
+    rust-overlay = {
+      url = "github:oxalica/rust-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # Helix
     helix.url = "github:helix-editor/helix/25.01";
@@ -37,11 +40,9 @@
     # Bacon
     bacon.url = "github:tqwewe/bacon-flake";
 
-    # # Atuin
-    # atuin.url = "github:atuinsh/atuin";
-
-    # Cargo Leptos
-    # cargo-leptos.url = "github:leptos-rs/cargo-leptos";
+    # Rust devshell
+    rust-devshell.url = "path:./devshells/rust";
+    rust-devshell.inputs.nixpkgs.follows = "nixpkgs";
 
     # Virtual Webcam
     webcam.url = "github:tqwewe/usb-webcam-v4l2-ffmpeg-nix";
@@ -61,56 +62,68 @@
     # jj.url = "github:jj-vcs/jj";
   };
 
-  outputs = { nixpkgs, unstable, nixpkgs-darwin, nix-darwin, home-manager, nur, agenix, ... }@inputs: {
-    nixosConfigurations = {
-      ari = nixpkgs.lib.nixosSystem {
+  outputs = { nixpkgs, unstable, nixpkgs-darwin, nix-darwin, home-manager, nur, agenix, rust-devshell, ... }@inputs:
+    let
+      # Define these helper functions in your main flake
+      supportedSystems = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
+      forAllSystems = function: nixpkgs.lib.genAttrs supportedSystems function;
+      
+      # Define pkgsFor function if you're going to use it
+      pkgsFor = system: import nixpkgs {
+        inherit system;
+        # Add any overlays you need here
+      };
+    in
+    {
+      nixosConfigurations = {
+        ari = nixpkgs.lib.nixosSystem {
+          specialArgs = { inherit inputs; };
+          modules = [
+            nur.nixosModules.nur
+            ./system/desktop/configuration.nix
+          ];
+        };
+
+        cloud-dev = nixpkgs.lib.nixosSystem {
+          specialArgs = { inherit inputs; };
+          modules = [
+            ./system/server/configuration.nix
+          ];
+        };
+      };
+
+      darwinConfigurations."Aris-MacBook-Pro" = nix-darwin.lib.darwinSystem {
         specialArgs = { inherit inputs; };
         modules = [
-          nur.nixosModules.nur
-          ./system/desktop/configuration.nix
+          agenix.darwinModules.default
+          home-manager.darwinModules.home-manager
+          ./system/macbook/configuration.nix
+          # ./secrets/secrets.nix
         ];
       };
 
-      cloud-dev = nixpkgs.lib.nixosSystem {
-        specialArgs = { inherit inputs; };
-        modules = [
-          ./system/server/configuration.nix
-        ];
-      };
-    };
+      homeConfigurations = {
+        "ari@ari" = home-manager.lib.homeManagerConfiguration {
+          pkgs = nixpkgs.legacyPackages.x86_64-linux;
+          extraSpecialArgs = { inherit inputs; };
+          modules = [ nur.nixosModules.nur ./home/home.nix ];
+        };
 
-    darwinConfigurations."Aris-MacBook-Pro" = nix-darwin.lib.darwinSystem {
-      specialArgs = { inherit inputs; };
-      modules = [
-        agenix.darwinModules.default
-        home-manager.darwinModules.home-manager
-        ./system/macbook/configuration.nix
-        # ./secrets/secrets.nix
-      ];
-    };
+        "ari@cloud-dev" = home-manager.lib.homeManagerConfiguration {
+          pkgs = nixpkgs.legacyPackages.x86_64-linux;
+          extraSpecialArgs = { inherit inputs; };
+          modules = [ ./home/server.nix ];
+        };
 
-    homeConfigurations = {
-      "ari@ari" = home-manager.lib.homeManagerConfiguration {
-        pkgs = nixpkgs.legacyPackages.x86_64-linux;
-        extraSpecialArgs = { inherit inputs; };
-        modules = [ nur.nixosModules.nur ./home/home.nix ];
+        "ari@Aris-MacBook-Pro" = home-manager.lib.homeManagerConfiguration {
+          pkgs = nixpkgs-darwin.legacyPackages.x86_64-darwin;
+          extraSpecialArgs = { inherit inputs; };
+          modules = [ ./home/macbook.nix ];
+        };
       };
 
-      "ari@cloud-dev" = home-manager.lib.homeManagerConfiguration {
-        pkgs = nixpkgs.legacyPackages.x86_64-linux;
-        extraSpecialArgs = { inherit inputs; };
-        modules = [ ./home/server.nix ];
-      };
-
-      "ari@Aris-MacBook-Pro" = home-manager.lib.homeManagerConfiguration {
-        pkgs = nixpkgs-darwin.legacyPackages.x86_64-darwin;
-        extraSpecialArgs = { inherit inputs; };
-        modules = [ ./home/macbook.nix ];
-      };
-    };
-
-    overlays = {
-      # Overlay useful on Macs with Apple Silicon
+      overlays = {
+        # Overlay useful on Macs with Apple Silicon
         apple-silicon = final: prev: unstable.lib.optionalAttrs (prev.stdenv.system == "aarch64-darwin") {
           # Add access to x86 packages system is running Apple Silicon
           pkgs-x86 = import inputs.nixpkgs-unstable {
@@ -120,33 +133,11 @@
         }; 
       };
 
-    devShells.x86_64-linux.default =
-      let
-        pkgs = nixpkgs.legacyPackages.x86_64-linux;
-      in pkgs.mkShell {
-        packages = builtins.attrValues {
-          inherit (pkgs) pkg-config openssl cmake fontconfig;
-        };
-      };
-    devShells.x86_64-darwin.default =
-      let
-        pkgs = nixpkgs.legacyPackages.x86_64-darwin;
-      in pkgs.mkShell {
-        packages = builtins.attrValues {
-          inherit (pkgs) pkg-config openssl cmake fontconfig;
-        };
-        shellHook = ''
-          echo "Development shell started successfully!"
-          echo "Project: My awesome project"
-          echo "Environment: $(uname -a)"
-          # You can add more commands here
-        '';
-        buildInputs = with pkgs; [
-          darwin.apple_sdk.frameworks.CoreServices
-          darwin.apple_sdk.frameworks.CoreFoundation
-          darwin.apple_sdk.frameworks.Security
-          darwin.apple_sdk.frameworks.SystemConfiguration
-        ];
-      };
-  };
+      devShells = forAllSystems (system:
+        let pkgs = pkgsFor system;
+        in {
+          rust = rust-devshell.devShells.${system}.default;
+        }
+      );
+    };
 }
