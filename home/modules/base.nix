@@ -1,20 +1,5 @@
-{ inputs, pkgs, ... }:
 {
-  nixpkgs = {
-    overlays = with inputs; [
-      # (import inputs.rust-overlay)
-    ];
-    config = {
-      allowUnfree = true;
-      # Workaround for https://github.com/nix-community/home-manager/issues/2942
-      allowUnfreePredicate = (_: true);
-      permittedInsecurePackages = [
-        "openssl-1.1.1v"
-        "openssl-1.1.1w"
-        "electron-24.8.6"
-      ];
-    };
-  };
+  nixpkgs.config.allowUnfree = true;
 
   fonts.fontconfig.enable = true;
 

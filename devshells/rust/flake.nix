@@ -33,9 +33,7 @@
               cargo-generate
               cargo-outdated
               cargo-temp
-              clippy
               rustToolchain
-              rust-analyzer
               pkg-config
               openssl.dev
             ] ++ pkgs.lib.optionals pkgs.stdenv.isDarwin (with pkgs.darwin.apple_sdk.frameworks; [

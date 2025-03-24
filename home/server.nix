@@ -21,7 +21,6 @@ in
     ./modules/git.nix
     #./modules/helix.nix
     ./modules/lazygit.nix
-    ./modules/ssh.nix
     ./modules/starship.nix
     ./modules/zellij.nix
   ];

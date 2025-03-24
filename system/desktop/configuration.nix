@@ -5,7 +5,6 @@
   imports = [
     ./hardware-configuration.nix
 
-    inputs.nix-ld.nixosModules.nix-ld
     # ../modules/arion.nix
     ../modules/base.nix
     ../modules/docker.nix

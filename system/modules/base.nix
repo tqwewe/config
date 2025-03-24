@@ -1,9 +1,5 @@
 { inputs, lib, config, ... }: {
-  nixpkgs = {
-    config = {
-      allowUnfree = true;
-    };
-  };
+  nixpkgs.config.allowUnfree = true;
 
   nix = {
     # This will add each flake input as a registry

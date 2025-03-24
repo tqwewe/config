@@ -29,7 +29,6 @@ in
     ./modules/lazygit.nix
     ./modules/librewolf.nix
     ./modules/nur.nix
-    ./modules/ssh.nix
     ./modules/starship.nix
     ./modules/thunderbird.nix
     ./modules/wezterm.nix
