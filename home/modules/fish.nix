@@ -13,14 +13,8 @@
       # set -gx RUSTFLAGS "-L/usr/lib $RUSTFLAGS"
       zoxide init fish | source
 
-      if status is-login
-        #if not set -q TMUX
-        #  set -x TMUX tmux
-        #  exec $TMUX
-        #end
-        if not test "$TERM_PROGRAM" = "vscode"
-          eval (zellij setup --generate-auto-start fish | string collect)
-        end
+      if status is-interactive
+        eval (zellij setup --generate-auto-start fish | string collect)
       end
     '';
 
@@ -28,7 +22,7 @@
       cat = "bat";
       cd = "z";
       ls = "exa --long --group-directories-first --no-permissions --no-user";
-      rustdev = "nix develop /Users/ari/dev/tqwewe/config#rust -c fish";
+      rustdev = "nix develop ~/dev/tqwewe/config#rust -c fish";
     };
 
     functions = {
@@ -89,7 +83,7 @@
 
       setup-rust-env = ''
         # Create the .envrc file
-        echo 'use flake /Users/ari/dev/tqwewe/config#rust' > ./.envrc
+        echo 'use flake ~/dev/tqwewe/config#rust' > ./.envrc
         echo "Created .envrc file"
     
         # Allow the .envrc file with direnv

@@ -1,6 +1,6 @@
 {
   # Set time zone
-  time.timeZone = "Australia/Adelaide";
+  time.timeZone = "Australia/Melbourne";
 
   # Select internationalisation properties
   i18n.defaultLocale = "en_AU.UTF-8";

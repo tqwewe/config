@@ -87,7 +87,7 @@ in {
 
             datetime          "#[fg=#6C7086,bg=#b1bbfa,bold] {format} "
             datetime_format   "%A, %d %b %Y %I:%M %P"
-            datetime_timezone "Australia/Adelaide"
+            datetime_timezone "Australia/Melbourne"
           }
         }
       }

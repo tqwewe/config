@@ -1,0 +1,22 @@
+#!/usr/bin/sh
+
+vol="$(amixer | awk -F" " '/Left: Playback/ {print substr($5, 2, length($5)-3)}')"
+
+icons() {
+if (( 10#$vol == 100 )); then
+	echo "img/speaker-high.svg"
+elif (( 10#$vol > 50 )) || (( 10#$vol == 50 )); then
+	echo "img/speaker-high.svg"
+elif (( 10#$vol < 50 )) && (( 10#$vol > 0 )); then
+	echo "img/speaker-low.svg"
+elif (( 10#$vol == 0 )); then
+	echo "img/speaker-simple-x.svg"
+fi
+}
+
+vols() {
+	echo "$vol"
+}
+
+[ "$1" == "vol" ] && icons && exit
+[ "$1" == "vols" ] && vols && exit

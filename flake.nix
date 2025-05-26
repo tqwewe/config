@@ -19,6 +19,24 @@
     # Hardware quirks
     hardware.url = "github:nixos/nixos-hardware";
 
+    niri.url = "github:YaLTeR/niri";
+
+    hyprland.url = "github:hyprwm/Hyprland";
+    hyprpanel = {
+      url = "github:Jas-SinghFSU/HyprPanel";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    hyprland-plugins = {
+      url = "github:hyprwm/hyprland-plugins";
+      inputs.hyprland.follows = "hyprland";
+    };
+    hyprlock.url = "github:hyprwm/hyprlock";
+    ashell.url = "github:MalpenZibo/ashell";
+    # hypr-dynamic-cursors = {
+    #     url = "github:VirtCode/hypr-dynamic-cursors";
+    #     inputs.hyprland.follows = "hyprland";
+    # };
+
     # Helix
     helix = {
       url = "github:helix-editor/helix/25.01";
@@ -42,7 +60,7 @@
     let
       homeConfig = { module, system ? "x86_64-linux" }: home-manager.lib.homeManagerConfiguration {
         pkgs = nixpkgs.legacyPackages.${system};
-        extraSpecialArgs = { inherit inputs; };
+        extraSpecialArgs = { inherit inputs; inherit system; };
         modules = [ module ];
       };
       supportedSystems = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
@@ -53,7 +71,7 @@
     in
     {
       nixosConfigurations = {
-        ari = nixpkgs.lib.nixosSystem {
+        pc = nixpkgs.lib.nixosSystem {
           specialArgs = { inherit inputs; };
           modules = [
             ./system/desktop/configuration.nix
@@ -78,7 +96,7 @@
       };
 
       homeConfigurations = {
-        "ari@ari" = homeConfig { module = ./home/pc.nix; };
+        "ari@pc" = homeConfig { module = ./home/pc.nix; };
         "ari@Aris-MacBook-Pro" = homeConfig { module = ./home/macbook.nix; system = "x86_64-darwin"; };
       };
 

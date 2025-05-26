@@ -1,4 +1,4 @@
-{ config, inputs, ... }: {
+{ pkgs, inputs, ... }: {
   programs.firefox = {
     enable = true;
     package = inputs.unstable.legacyPackages.x86_64-linux.firefox;
@@ -67,7 +67,7 @@
           }
         ];
 
-        extensions = with config.nur.repos.rycee.firefox-addons; [
+        extensions = with pkgs.nur.repos.rycee.firefox-addons; [
           # https://nur.nix-community.org/repos/rycee/
           lastpass-password-manager
           return-youtube-dislikes

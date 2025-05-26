@@ -1,19 +1,9 @@
 { inputs, pkgs, ... }@foo:
 
 let
-  # atuin = inputs.atuin.packages.x86_64-linux.default;
-  cocogitto = inputs.cocogitto.packages.x86_64-linux.default;
-  bacon = inputs.bacon.packages.x86_64-linux.default;
-  # cargo-leptos = inputs.cargo-leptos.packages.x86_64-linux.default;
   helix = inputs.helix.packages.x86_64-linux.default;
-  lunatic-unstable = inputs.lunatic.packages.x86_64-linux.unstable;
-  webcam = inputs.webcam.packages.x86_64-linux.default;
+  # webcam = inputs.webcam.packages.x86_64-linux.default;
   unstable = inputs.unstable.legacyPackages.x86_64-linux;
-
-  rust-overlay-wasi = pkgs.rust-bin.stable.latest.default.override {
-    extensions = [ "rust-src" "rustfmt" "rust-analyzer" ];
-    targets = [ "wasm32-wasi" "wasm32-unknown-unknown" ];
-  };
 in
 {
   imports = with inputs; [
@@ -21,18 +11,26 @@ in
     ./modules/base.nix
     ./modules/dconf.nix
     ./modules/direnv.nix
-    ./modules/firefox.nix
+    # ./modules/firefox.nix
     ./modules/fish.nix
     ./modules/gh.nix
     ./modules/git.nix
     ./modules/helix.nix
+    ./modules/hyprland.nix
+    ./modules/kitty.nix
     ./modules/lazygit.nix
     ./modules/librewolf.nix
+    ./modules/mangohud.nix
     ./modules/nur.nix
     ./modules/starship.nix
     ./modules/thunderbird.nix
     ./modules/wezterm.nix
     ./modules/zellij.nix
+    hyprpanel.homeManagerModules.hyprpanel
+
+    # Secrets
+    agenix.homeManagerModules.default
+    ../system/modules/secrets.nix
   ];
 
   nixpkgs = {
@@ -40,6 +38,7 @@ in
       (final: prev: {
         zjstatus = zjstatus.packages.${prev.system}.default;
       })
+      hyprpanel.overlay
     ];
   };
 
@@ -55,7 +54,6 @@ in
   programs.alacritty.enable = true;
   programs.bat.enable = true;
   programs.bottom.enable = true;
-  programs.chromium.enable = true;
   programs.eza.enable = true;
   programs.obs-studio.enable = true;
   programs.obs-studio.plugins = [ pkgs.obs-studio-plugins.obs-backgroundremoval ];
@@ -64,21 +62,25 @@ in
   programs.wezterm.enable = true;
   programs.zoxide.enable = true;
 
+  xdg = {
+    enable = true;
+    mimeApps = {
+      enable = true;
+      defaultApplications = {
+        "inode/directory" = "nautilus";
+      };
+    };
+  };
+
   home.packages = with pkgs; [
     # atuin
-    bacon
-    unstable.cargo-expand
-    unstable.cargo-generate
-    # cargo-leptos
-    unstable.cargo-outdated
-    unstable.cargo-temp
-    cocogitto
+    inputs.ashell.defaultPackage.${pkgs.system}
     discord
     docker-compose
     gcc
     # unstable.git-cliff
     # helix
-    insomnia
+    # insomnia
     killall
     unstable.kooha
     # unstable.ollama
@@ -86,40 +88,44 @@ in
     # lunatic-unstable
     materia-kde-theme
     # unstable.neovim
+    nautilus
     netflix
+    networkmanagerapplet
     nodejs
     nodePackages.vscode-langservers-extracted
     nodePackages.typescript-language-server
     obsidian
     peek
+    protonvpn-gui
+    protonvpn-cli
+    proton-pass
     qbittorrent
     ripgrep
     rnote
-    rust-overlay-wasi
     spotify
     sumneko-lua-language-server
     tdesktop
     viber
     vlc
-    xclip
-    webcam
+    # xclip
+    # webcam
     whatsapp-for-linux
     unstable.yazi
     zoom-us
 
     # Fonts
-    (pkgs.nerdfonts.override { fonts = [ "FiraCode" "DroidSansMono" ]; })
+    (pkgs.nerdfonts.override { fonts = [ "FiraCode" "DroidSansMono" "Terminus" "Noto" ]; })
 
     # Gnome Extensions
-    gnome-extension-manager
-    gnome.gnome-tweaks
-    gnomeExtensions.appindicator
-    gnomeExtensions.arcmenu
-    gnomeExtensions.blur-my-shell
-    gnomeExtensions.dash-to-panel
-    gnomeExtensions.desktop-icons-ng-ding
-    gnomeExtensions.openweather
-    gnomeExtensions.tiling-assistant
-    gnomeExtensions.vitals
+    # gnome-extension-manager
+    # gnome-tweaks
+    # gnomeExtensions.appindicator
+    # gnomeExtensions.arcmenu
+    # gnomeExtensions.blur-my-shell
+    # gnomeExtensions.dash-to-panel
+    # gnomeExtensions.desktop-icons-ng-ding
+    # # gnomeExtensions.openweather
+    # gnomeExtensions.tiling-assistant
+    # gnomeExtensions.vitals
   ];
 }

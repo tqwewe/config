@@ -75,28 +75,28 @@
           formatter.command = "prettier";
           formatter.args = ["--stdin-filepath" "main.js"];
           auto-format = true;
-          language-servers = ["typescript-language-server" "gpt"];
+          language-servers = ["typescript-language-server"];
         }
         {
           name = "jsx";
           formatter.command = "prettier";
           formatter.args = ["--stdin-filepath" "main.jsx"];
           auto-format = true;
-          language-servers = ["typescript-language-server" "gpt"];
+          language-servers = ["typescript-language-server"];
         }
         {
           name = "typescript";
           formatter.command = "prettier";
           formatter.args = ["--parser" "typescript" "--stdin-filepath" "main.ts"];
           auto-format = true;
-          language-servers = ["typescript-language-server" "gpt"];
+          language-servers = ["typescript-language-server"];
         }
         {
           name = "tsx";
           formatter.command = "prettier";
           formatter.args = ["--parser" "typescript" "--stdin-filepath" "main.tsx"];
           auto-format = true;
-          language-servers = ["typescript-language-server" "gpt"];
+          language-servers = ["typescript-language-server"];
         }
         {
           name = "svelte";
@@ -108,7 +108,6 @@
             "svelteserver"
             { name = "tailwindcss-ls"; except-features = ["hover"]; }
             "vscode-eslint-language-server"
-            "gpt"
           ];
           comment-token = "//";
           block-comment-tokens = { start = "/*"; end = "*/"; };
@@ -119,31 +118,31 @@
         }
       ];
 
-      language-server.gpt = {
-        command = "bash";
-        args = [
-          "-c"
-          ''
-            /Users/ari/.deno/bin/deno run --allow-env --allow-net https://raw.githubusercontent.com/tqwewe/helix-gpt/refs/heads/deno/src/app.ts \
-            --handler copilot \
-            --copilotApiKey "$(cat ${config.age.secrets.copilotApiKey.path})"
-          ''
-        ];
-      };
+      # language-server.gpt = {
+      #   command = "bash";
+      #   args = [
+      #     "-c"
+      #     ''
+      #       /Users/ari/.deno/bin/deno run --allow-env --allow-net https://raw.githubusercontent.com/tqwewe/helix-gpt/refs/heads/deno/src/app.ts \
+      #       --handler copilot \
+      #       --copilotApiKey "$(cat ${config.age.secrets.copilotApiKey.path})"
+      #     ''
+      #   ];
+      # };
 
-      language-server.deepseek = {
-        command = "bash";
-        args = [
-          "-c"
-          ''
-            /Users/ari/.deno/bin/deno run --allow-env --allow-net https://raw.githubusercontent.com/tqwewe/helix-gpt/refs/heads/deno/src/app.ts \
-            --handler openai \
-            --openaiKey "$(cat ${config.age.secrets.deepseekApiKey.path})" \
-            --openaiEndpoint "https://api.deepseek.com/v1/chat/completions" \
-            --openaiModel "deepseek-chat"
-          ''
-        ];
-      };
+      # language-server.deepseek = {
+      #   command = "bash";
+      #   args = [
+      #     "-c"
+      #     ''
+      #       /Users/ari/.deno/bin/deno run --allow-env --allow-net https://raw.githubusercontent.com/tqwewe/helix-gpt/refs/heads/deno/src/app.ts \
+      #       --handler openai \
+      #       --openaiKey "$(cat ${config.age.secrets.deepseekApiKey.path})" \
+      #       --openaiEndpoint "https://api.deepseek.com/v1/chat/completions" \
+      #       --openaiModel "deepseek-chat"
+      #     ''
+      #   ];
+      # };
 
       language-server.rust-analyzer.config = {
         cargo = {
