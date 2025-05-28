@@ -1,9 +1,13 @@
-{ inputs, pkgs, config, ... }: {
+{
+  inputs,
+  pkgs,
+  config,
+  ...
+}:
+{
   programs.helix = {
     enable = true;
     package = inputs.helix.packages.${pkgs.system}.default;
-    # package = inputs.unstable.legacyPackages.x86_64-linux.helix;
-    # defaultEditor = true;
 
     settings = {
       theme = "nightfox";
@@ -30,9 +34,14 @@
           # display-messages = true;
           # auto-signature-help = false;
         };
-        rulers = [120];
+        rulers = [ 120 ];
         statusline = {
-          left = ["mode" "spinner" "version-control" "file-name"];
+          left = [
+            "mode"
+            "spinner"
+            "version-control"
+            "file-name"
+          ];
         };
         true-color = true;
         whitespace = {
@@ -55,9 +64,12 @@
         "A-x" = "extend_to_line_bounds";
 
         "C-y" = {
-          "y" = ":sh zellij run -c -f -x 10% -y 10% --width 80% --height 80% -- bash ~/.config/helix/yazi-picker.sh";
-          "v" = ":sh zellij run -c -f -x 10% -y 10% --width 80% --height 80% -- bash ~/.config/helix/yazi-picker.sh vsplit";
-          "h" = ":sh zellij run -c -f -x 10% -y 10% --width 80% --height 80% -- bash ~/.config/helix/yazi-picker.sh hsplit";
+          "y" =
+            ":sh zellij run -c -f -x 10% -y 10% --width 80% --height 80% -- bash ~/.config/helix/yazi-picker.sh";
+          "v" =
+            ":sh zellij run -c -f -x 10% -y 10% --width 80% --height 80% -- bash ~/.config/helix/yazi-picker.sh vsplit";
+          "h" =
+            ":sh zellij run -c -f -x 10% -y 10% --width 80% --height 80% -- bash ~/.config/helix/yazi-picker.sh hsplit";
         };
       };
 
@@ -73,48 +85,81 @@
         {
           name = "javascript";
           formatter.command = "prettier";
-          formatter.args = ["--stdin-filepath" "main.js"];
+          formatter.args = [
+            "--stdin-filepath"
+            "main.js"
+          ];
           auto-format = true;
-          language-servers = ["typescript-language-server"];
+          language-servers = [ "typescript-language-server" ];
         }
         {
           name = "jsx";
           formatter.command = "prettier";
-          formatter.args = ["--stdin-filepath" "main.jsx"];
+          formatter.args = [
+            "--stdin-filepath"
+            "main.jsx"
+          ];
           auto-format = true;
-          language-servers = ["typescript-language-server"];
+          language-servers = [ "typescript-language-server" ];
         }
         {
           name = "typescript";
           formatter.command = "prettier";
-          formatter.args = ["--parser" "typescript" "--stdin-filepath" "main.ts"];
+          formatter.args = [
+            "--parser"
+            "typescript"
+            "--stdin-filepath"
+            "main.ts"
+          ];
           auto-format = true;
-          language-servers = ["typescript-language-server"];
+          language-servers = [ "typescript-language-server" ];
         }
         {
           name = "tsx";
           formatter.command = "prettier";
-          formatter.args = ["--parser" "typescript" "--stdin-filepath" "main.tsx"];
+          formatter.args = [
+            "--parser"
+            "typescript"
+            "--stdin-filepath"
+            "main.tsx"
+          ];
           auto-format = true;
-          language-servers = ["typescript-language-server"];
+          language-servers = [ "typescript-language-server" ];
         }
         {
           name = "svelte";
           formatter.command = "prettier";
           # formatter.args = ["--parser" "typescript" "--stdin-filepath" "main.svelte"];
-          formatter.args = ["--stdin-filepath" "main.svelte"];
+          formatter.args = [
+            "--stdin-filepath"
+            "main.svelte"
+          ];
           auto-format = true;
           language-servers = [
             "svelteserver"
-            { name = "tailwindcss-ls"; except-features = ["hover"]; }
+            {
+              name = "tailwindcss-ls";
+              except-features = [ "hover" ];
+            }
             "vscode-eslint-language-server"
           ];
           comment-token = "//";
-          block-comment-tokens = { start = "/*"; end = "*/"; };
+          block-comment-tokens = {
+            start = "/*";
+            end = "*/";
+          };
         }
         {
           name = "rust";
-          language-servers = ["rust-analyzer"];
+          language-servers = [ "rust-analyzer" ];
+        }
+        {
+          name = "nix";
+          formatter = {
+            command = "nixfmt";
+            # args = ["<" "input.nix"];
+          };
+          auto-format = true;
         }
       ];
 
@@ -152,10 +197,18 @@
         check.command = "clippy";
         procMacro = {
           ignored = {
-            leptos_macro = ["component" "server" "island"];
+            leptos_macro = [
+              "component"
+              "server"
+              "island"
+            ];
           };
         };
-        "rust-analyzer.rustfmt.overrideCommand" = ["leptosfmt" "--stdin" "--rustfmt"];
+        "rust-analyzer.rustfmt.overrideCommand" = [
+          "leptosfmt"
+          "--stdin"
+          "--rustfmt"
+        ];
       };
 
       language-server.vscode-css-language-server.config = {
@@ -167,9 +220,18 @@
       };
     };
   };
+
+  home.packages = with pkgs; [
+    nil
+    nixfmt-rfc-style
+    nodePackages.vscode-langservers-extracted
+    nodePackages.typescript-language-server
+  ];
+
   home.sessionVariables = {
     EDITOR = "hx";
   };
+
   xdg.configFile."helix/yazi-picker.sh".text = ''
     #!/usr/bin/env bash
 

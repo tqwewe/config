@@ -1,4 +1,10 @@
-{ inputs, lib, config, ... }: {
+{
+  inputs,
+  lib,
+  config,
+  ...
+}:
+{
   nixpkgs.config.allowUnfree = true;
 
   nix = {

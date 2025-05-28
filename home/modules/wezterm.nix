@@ -1,4 +1,5 @@
-{ inputs, ... }: {
+{ inputs, ... }:
+{
   programs.wezterm = {
     enable = true;
     package = inputs.unstable.legacyPackages.x86_64-linux.wezterm;

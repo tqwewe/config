@@ -1,4 +1,5 @@
-{ pkgs, inputs, ... }: {
+{ pkgs, inputs, ... }:
+{
   programs.firefox = {
     enable = true;
     package = inputs.unstable.legacyPackages.x86_64-linux.firefox;
@@ -12,25 +13,25 @@
             bookmarks = [
               {
                 name = "DuckDuckGo";
-                tags = ["search"];
+                tags = [ "search" ];
                 keyword = "search";
                 url = "https://duckduckgo.com/";
               }
               {
                 name = "Youtube";
-                tags = ["youtube"];
+                tags = [ "youtube" ];
                 keyword = "youtube";
                 url = "https://www.youtube.com/";
               }
               {
                 name = "Github";
-                tags = ["github"];
+                tags = [ "github" ];
                 keyword = "github";
                 url = "https://github.com/";
               }
               {
                 name = "Email";
-                tags = ["email"];
+                tags = [ "email" ];
                 keyword = "email";
                 url = "https://outlook.live.com/mail/0/";
               }
@@ -43,7 +44,7 @@
                   }
                   {
                     name = "Home Manager Options";
-                    tags = ["homemanager"];
+                    tags = [ "homemanager" ];
                     url = "https://mipmip.github.io/home-manager-option-search/";
                   }
                   {
@@ -52,14 +53,20 @@
                   }
                   {
                     name = "Wiki";
-                    tags = ["wiki" "nix"];
+                    tags = [
+                      "wiki"
+                      "nix"
+                    ];
                     url = "https://nixos.wiki/";
                   }
                 ];
               }
               {
                 name = "Auctus";
-                tags = ["auctus" "self-employment"];
+                tags = [
+                  "auctus"
+                  "self-employment"
+                ];
                 keyword = "auctus";
                 url = "https://auctuslearning.anewspring.com.au/do?action=viewActivities&courseId=168";
               }
@@ -74,7 +81,7 @@
           sponsorblock
           ublock-origin
         ];
-        
+
         isDefault = true;
 
         search = {

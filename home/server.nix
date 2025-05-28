@@ -8,8 +8,15 @@ let
   unstable = inputs.unstable.legacyPackages.x86_64-linux;
 
   rust-overlay-wasi = pkgs.rust-bin.stable.latest.default.override {
-    extensions = [ "rust-src" "rustfmt" "rust-analyzer" ];
-    targets = [ "wasm32-wasi" "wasm32-unknown-unknown" ];
+    extensions = [
+      "rust-src"
+      "rustfmt"
+      "rust-analyzer"
+    ];
+    targets = [
+      "wasm32-wasi"
+      "wasm32-unknown-unknown"
+    ];
   };
 in
 {
@@ -64,6 +71,11 @@ in
     unstable.yazi
 
     # Fonts
-    (pkgs.nerdfonts.override { fonts = [ "FiraCode" "DroidSansMono" ]; })
+    (pkgs.nerdfonts.override {
+      fonts = [
+        "FiraCode"
+        "DroidSansMono"
+      ];
+    })
   ];
 }

@@ -1,4 +1,9 @@
-{ config, pkgs, inputs, ... }:
+{
+  config,
+  pkgs,
+  inputs,
+  ...
+}:
 {
   wayland.windowManager.hyprland = {
     enable = true;
@@ -19,7 +24,7 @@
         "HYPRCURSOR_THEME,breezex-black"
         "HYPRCURSOR_SIZE,24"
       ];
-      
+
       exec-once = [
         "copyq --start-server"
         "ashell"
@@ -48,64 +53,71 @@
       ecosystem = {
         no_donation_nag = true;
       };
-      
+
       monitor = [
         "DP-1, 2560x1440@144, 0x0, 1"
       ];
-      bind = [
-        # shortcuts
-        "$mod, T, exec, $terminal"
-        "$mod, C, killactive,"
-        "$mod, M, exit,"
-        "$mod, E, exec, $fileManager"
-        "$mod, F, fullscreen,"
-        "$mod, G, togglefloating,"
-        "$mod, R, exec, $menu"
-        "$mod, P, pseudo,"
 
-        # focus
-        "$mod, h, movefocus, l"
-        "$mod, j, movefocus, d"
-        "$mod, k, movefocus, u"
-        "$mod, l, movefocus, r"
+      bind =
+        [
+          # shortcuts
+          "$mod, T, exec, $terminal"
+          "$mod, C, killactive,"
+          "$mod, M, exit,"
+          "$mod, E, exec, $fileManager"
+          "$mod, F, fullscreen,"
+          "$mod, G, togglefloating,"
+          "$mod, R, exec, $menu"
+          "$mod, P, pseudo,"
 
-        # resize
-        "$mod SHIFT, h, resizeactive, -50 0"
-        "$mod SHIFT, j, resizeactive, 0 50"
-        "$mod SHIFT, k, resizeactive, 0 -50"
-        "$mod SHIFT, l, resizeactive, 50 0"
+          # focus
+          "$mod, h, movefocus, l"
+          "$mod, j, movefocus, d"
+          "$mod, k, movefocus, u"
+          "$mod, l, movefocus, r"
 
-        # resize
-        "$mod ALT, h, movewindow, l"
-        "$mod ALT, j, movewindow, d"
-        "$mod ALT, k, movewindow, u"
-        "$mod ALT, l, movewindow, r"
+          # resize
+          "$mod SHIFT, h, resizeactive, -50 0"
+          "$mod SHIFT, j, resizeactive, 0 50"
+          "$mod SHIFT, k, resizeactive, 0 -50"
+          "$mod SHIFT, l, resizeactive, 50 0"
 
-        # scroll workspace
-        "$mod, mouse_down, workspace, e+1"
-        "$mod, mouse_up, workspace, e-1"
+          # resize
+          "$mod ALT, h, movewindow, l"
+          "$mod ALT, j, movewindow, d"
+          "$mod ALT, k, movewindow, u"
+          "$mod ALT, l, movewindow, r"
 
-        # special workspace
-        "$mod, S, togglespecialworkspace, magic"
-        "$mod SHIFT, S, movetoworkspace, special:magic"
+          # scroll workspace
+          "$mod, mouse_down, workspace, e+1"
+          "$mod, mouse_up, workspace, e-1"
 
-        # overview
-        "$mod, grave, hyprexpo:expo, toggle"
-      ] ++ (
-        # workspaces
-        # binds $mod + [shift +] {1..9} to [move to] workspace {1..9}
-        builtins.concatLists (builtins.genList (i:
-            let ws = i + 1;
-            in [
-              "$mod, code:1${toString i}, workspace, ${toString ws}"
-              "$mod SHIFT, code:1${toString i}, movetoworkspace, ${toString ws}"
-            ]
+          # special workspace
+          "$mod, S, togglespecialworkspace, magic"
+          "$mod SHIFT, S, movetoworkspace, special:magic"
+
+          # overview
+          "$mod, grave, hyprexpo:expo, toggle"
+        ]
+        ++ (
+          # workspaces
+          # binds $mod + [shift +] {1..9} to [move to] workspace {1..9}
+          builtins.concatLists (
+            builtins.genList (
+              i:
+              let
+                ws = i + 1;
+              in
+              [
+                "$mod, code:1${toString i}, workspace, ${toString ws}"
+                "$mod SHIFT, code:1${toString i}, movetoworkspace, ${toString ws}"
+              ]
+            ) 9
           )
-          9)
-      );
+        );
 
       # hold binds
-      bindo = [];
+      bindo = [ ];
 
       # mouse binds
       bindm = [
@@ -138,8 +150,8 @@
     enable = true;
     settings = {
       ipc = "on";
-      preload = ["~/dev/tqwewe/config/backgrounds/astro.jpg"];
-      wallpaper = [", ~/dev/tqwewe/config/backgrounds/astro.jpg"];
+      preload = [ "~/dev/tqwewe/config/backgrounds/astro.jpg" ];
+      wallpaper = [ ", ~/dev/tqwewe/config/backgrounds/astro.jpg" ];
     };
   };
 
@@ -291,9 +303,20 @@
       layout = {
         "bar.layouts" = {
           "0" = {
-            left = [ "dashboard" "workspaces" "windowtitle" ];
+            left = [
+              "dashboard"
+              "workspaces"
+              "windowtitle"
+            ];
             middle = [ "media" ];
-            right = [ "volume" "network" "bluetooth" "systray" "clock" "notifications" ];
+            right = [
+              "volume"
+              "network"
+              "bluetooth"
+              "systray"
+              "clock"
+              "notifications"
+            ];
           };
         };
       };
@@ -436,6 +459,6 @@
               ;;
       esac
     '';
-    executable = true;  # This makes the file executable
+    executable = true; # This makes the file executable
   };
 }

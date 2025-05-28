@@ -1,11 +1,17 @@
 # This is your system's configuration file.
 # Use this to configure your system environment (it replaces /etc/nixos/configuration.nix)
 
-{ config, pkgs, lib, ... }: {
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
+{
   # You can import other NixOS modules here
   imports = [
     ./hardware-configuration.nix
-    
+
     ../modules/base.nix
     ../modules/docker.nix
     ../modules/fish.nix
@@ -36,7 +42,11 @@
     ari = {
       initialPassword = "";
       isNormalUser = true;
-      extraGroups = [ "networkmanager" "wheel" "docker" ];
+      extraGroups = [
+        "networkmanager"
+        "wheel"
+        "docker"
+      ];
     };
   };
 
@@ -47,8 +57,8 @@
 
   environment.sessionVariables = rec {
     CARGO_BIN = "$HOME/.cargo/bin";
-    
-    PATH = [ 
+
+    PATH = [
       "${CARGO_BIN}"
     ];
   };

@@ -1,14 +1,15 @@
 # This is your system's configuration file.
 # Use this to configure your system environment (it replaces /etc/nixos/configuration.nix)
 
-{ inputs, ... }: {
+{ inputs, ... }:
+{
   imports = [
     inputs.mailserver.nixosModule
   ];
 
   security.acme.acceptTerms = true;
   security.acme.defaults.email = "ariseyhun@live.com.au";
-  
+
   mailserver = {
     enable = true;
 

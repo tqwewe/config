@@ -1,4 +1,5 @@
-{}: {
+{ }:
+{
   wayland.windowManager.sway = {
     enable = true;
     config = rec {

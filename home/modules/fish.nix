@@ -50,14 +50,14 @@
           # Extract owner/repo from HTTPS URL: https://github.com/owner/repo.git
           # or from SSH URL: git@github.com:owner/repo.git
           set -l repo_path (echo $repo_arg | sed -E 's/^(https:\/\/github\.com\/|git@github\.com:)([^\/]+)\/([^\/]+)(\.git)?$/\2\/\3/g')
-  
+
           # Extract owner and repo from the path
           set -l owner (echo $repo_path | cut -d '/' -f 1)
           set -l repo (echo $repo_path | cut -d '/' -f 2 | sed 's/\.git$//')
-  
+
           # Create directory if it doesn't exist
           mkdir -p ~/dev/$owner > /dev/null
-  
+
           # Clone repository
           git clone -- $repo_arg ~/dev/$owner/$repo
           cd ~/dev/$owner/$repo
@@ -66,7 +66,7 @@
           if string match -q -r -- "/" $repo_arg
             set -l owner (echo $repo_arg | cut -d '/' -f 1)
             set -l repo (echo $repo_arg | cut -d '/' -f 2)
-    
+
             mkdir -p ~/dev/$owner > /dev/null
             gh repo clone $repo_arg ~/dev/$owner/$repo
             cd ~/dev/$owner/$repo
@@ -74,7 +74,7 @@
             # Handle just "repo" format (uses current GitHub username)
             set -l username (gh auth status 2>&1 | sed -n '2s/.*as \([^ ]*\).*/\1/p')
             set -l repo $repo_arg
-    
+
             gh repo clone $repo_arg ~/dev/$username/$repo
             cd ~/dev/$username/$repo
           end
@@ -85,10 +85,10 @@
         # Create the .envrc file
         echo 'use flake ~/dev/tqwewe/config#rust' > ./.envrc
         echo "Created .envrc file"
-    
+
         # Allow the .envrc file with direnv
         direnv allow
-    
+
         # Check if .gitignore exists
         if test -f .gitignore
           # Check if .direnv is already in .gitignore
@@ -111,7 +111,7 @@
         else
           echo "No .gitignore found, skipping .gitignore update"
         end
-    
+
         echo "Rust environment setup complete!"
       '';
     };

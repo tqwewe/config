@@ -1,6 +1,13 @@
-{ inputs, lib, pkgs, ... }: let
+{
+  inputs,
+  lib,
+  pkgs,
+  ...
+}:
+let
   zjstatus_wasm = "file:${pkgs.zjstatus}/bin/zjstatus.wasm";
-in {
+in
+{
   programs.zellij = {
     enable = true;
     package = inputs.unstable.legacyPackages.${pkgs.system}.zellij;
@@ -8,7 +15,7 @@ in {
     enableFishIntegration = false;
     settings = {
       theme = "kanagawa";
-    }; 
+    };
   };
   xdg.configFile."zellij/config.kdl".text = ''
     keybinds {

@@ -92,8 +92,6 @@ in
     netflix
     networkmanagerapplet
     nodejs
-    nodePackages.vscode-langservers-extracted
-    nodePackages.typescript-language-server
     obsidian
     peek
     protonvpn-gui
@@ -114,7 +112,14 @@ in
     zoom-us
 
     # Fonts
-    (pkgs.nerdfonts.override { fonts = [ "FiraCode" "DroidSansMono" "Terminus" "Noto" ]; })
+    (pkgs.nerdfonts.override {
+      fonts = [
+        "FiraCode"
+        "DroidSansMono"
+        "Terminus"
+        "Noto"
+      ];
+    })
 
     # Gnome Extensions
     # gnome-extension-manager

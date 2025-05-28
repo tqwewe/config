@@ -19,7 +19,7 @@
     # Hardware quirks
     hardware.url = "github:nixos/nixos-hardware";
 
-    niri.url = "github:YaLTeR/niri";
+    # niri.url = "github:sodiboo/niri-flake";
 
     hyprland.url = "github:hyprwm/Hyprland";
     hyprpanel = {
@@ -56,18 +56,42 @@
     agenix.inputs.home-manager.follows = "home-manager";
   };
 
-  outputs = { nixpkgs, unstable, nix-darwin, home-manager, agenix, rust-devshell, ... }@inputs:
+  outputs =
+    {
+      nixpkgs,
+      unstable,
+      nix-darwin,
+      home-manager,
+      agenix,
+      rust-devshell,
+      ...
+    }@inputs:
     let
-      homeConfig = { module, system ? "x86_64-linux" }: home-manager.lib.homeManagerConfiguration {
-        pkgs = nixpkgs.legacyPackages.${system};
-        extraSpecialArgs = { inherit inputs; inherit system; };
-        modules = [ module ];
-      };
-      supportedSystems = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
+      homeConfig =
+        {
+          module,
+          system ? "x86_64-linux",
+        }:
+        home-manager.lib.homeManagerConfiguration {
+          pkgs = nixpkgs.legacyPackages.${system};
+          extraSpecialArgs = {
+            inherit inputs;
+            inherit system;
+          };
+          modules = [ module ];
+        };
+      supportedSystems = [
+        "x86_64-linux"
+        "aarch64-linux"
+        "x86_64-darwin"
+        "aarch64-darwin"
+      ];
       forAllSystems = function: nixpkgs.lib.genAttrs supportedSystems function;
-      pkgsFor = system: import nixpkgs {
-        inherit system;
-      };
+      pkgsFor =
+        system:
+        import nixpkgs {
+          inherit system;
+        };
     in
     {
       nixosConfigurations = {
@@ -97,12 +121,18 @@
 
       homeConfigurations = {
         "ari@pc" = homeConfig { module = ./home/pc.nix; };
-        "ari@Aris-MacBook-Pro" = homeConfig { module = ./home/macbook.nix; system = "x86_64-darwin"; };
+        "ari@Aris-MacBook-Pro" = homeConfig {
+          module = ./home/macbook.nix;
+          system = "x86_64-darwin";
+        };
       };
 
-      devShells = forAllSystems (system:
-        let pkgs = pkgsFor system;
-        in {
+      devShells = forAllSystems (
+        system:
+        let
+          pkgs = pkgsFor system;
+        in
+        {
           rust = rust-devshell.devShells.${system}.default;
         }
       );
