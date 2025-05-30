@@ -1,7 +1,6 @@
 {
   inputs,
   pkgs,
-  config,
   ...
 }:
 {
@@ -226,6 +225,7 @@
     nixfmt-rfc-style
     nodePackages.vscode-langservers-extracted
     nodePackages.typescript-language-server
+    sumneko-lua-language-server
   ];
 
   home.sessionVariables = {

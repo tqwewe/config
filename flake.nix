@@ -22,20 +22,18 @@
     # niri.url = "github:sodiboo/niri-flake";
 
     hyprland.url = "github:hyprwm/Hyprland";
-    hyprpanel = {
-      url = "github:Jas-SinghFSU/HyprPanel";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     hyprland-plugins = {
       url = "github:hyprwm/hyprland-plugins";
       inputs.hyprland.follows = "hyprland";
     };
     hyprlock.url = "github:hyprwm/hyprlock";
-    ashell.url = "github:MalpenZibo/ashell";
-    # hypr-dynamic-cursors = {
-    #     url = "github:VirtCode/hypr-dynamic-cursors";
-    #     inputs.hyprland.follows = "hyprland";
-    # };
+    # ashell.url = "github:MalpenZibo/ashell";
+    ashell = {
+      type = "github";
+      owner = "tqwewe";
+      repo = "ashell";
+      ref = "feat/peripherals";
+    };
 
     # Helix
     helix = {
@@ -87,25 +85,13 @@
         "aarch64-darwin"
       ];
       forAllSystems = function: nixpkgs.lib.genAttrs supportedSystems function;
-      pkgsFor =
-        system:
-        import nixpkgs {
-          inherit system;
-        };
     in
     {
       nixosConfigurations = {
-        pc = nixpkgs.lib.nixosSystem {
+        desktop = nixpkgs.lib.nixosSystem {
           specialArgs = { inherit inputs; };
           modules = [
             ./system/desktop/configuration.nix
-          ];
-        };
-
-        cloud-dev = nixpkgs.lib.nixosSystem {
-          specialArgs = { inherit inputs; };
-          modules = [
-            ./system/server/configuration.nix
           ];
         };
       };
@@ -120,21 +106,15 @@
       };
 
       homeConfigurations = {
-        "ari@pc" = homeConfig { module = ./home/pc.nix; };
+        "ari@desktop" = homeConfig { module = ./home/desktop.nix; };
         "ari@Aris-MacBook-Pro" = homeConfig {
           module = ./home/macbook.nix;
           system = "x86_64-darwin";
         };
       };
 
-      devShells = forAllSystems (
-        system:
-        let
-          pkgs = pkgsFor system;
-        in
-        {
-          rust = rust-devshell.devShells.${system}.default;
-        }
-      );
+      devShells = forAllSystems (system: {
+        rust = rust-devshell.devShells.${system}.default;
+      });
     };
 }

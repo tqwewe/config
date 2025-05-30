@@ -1,5 +1,4 @@
 {
-  config,
   pkgs,
   inputs,
   ...
@@ -9,9 +8,10 @@
     enable = true;
     package = inputs.hyprland.packages."${pkgs.system}".hyprland;
     xwayland.enable = true;
-    plugins = with pkgs; [
+    plugins = [
       inputs.hyprland-plugins.packages."${pkgs.system}".hyprbars
       inputs.hyprland-plugins.packages."${pkgs.system}".hyprexpo
+      inputs.hyprland-plugins.packages."${pkgs.system}".csgo-vulkan-fix
     ];
     systemd.enable = true;
     settings = {
@@ -98,6 +98,9 @@
 
           # overview
           "$mod, grave, hyprexpo:expo, toggle"
+
+          # screenshots
+          "$mod, p, exec, hyprshot -m region"
         ]
         ++ (
           # workspaces
@@ -141,6 +144,10 @@
 
   services.copyq.enable = true;
 
+  home.packages = with pkgs; [
+    hyprshot
+  ];
+
   programs.rofi = {
     enable = true;
     theme = "nordic";
@@ -165,7 +172,7 @@
     right = ["SystemInfo", "Tray", ["Clock", "Privacy", "Settings"]]
 
     [system]
-    indicators = ["Cpu", "Memory", "Temperature"]
+    indicators = ["Cpu", "Memory", "Temperature", "Peripherals"]
 
     [clock]
     format = "%a, %d %b %l:%M %P"
@@ -288,53 +295,6 @@
         text-color: @bg1;
     }
   '';
-
-  programs.hyprpanel = {
-    enable = false;
-    systemd.enable = true;
-    hyprland.enable = true;
-    overwrite.enable = true;
-    settings = {
-      bar = {
-        workspaces = {
-          showApplicationIcons = true;
-        };
-      };
-      layout = {
-        "bar.layouts" = {
-          "0" = {
-            left = [
-              "dashboard"
-              "workspaces"
-              "windowtitle"
-            ];
-            middle = [ "media" ];
-            right = [
-              "volume"
-              "network"
-              "bluetooth"
-              "systray"
-              "clock"
-              "notifications"
-            ];
-          };
-        };
-      };
-      menus = {
-        clock = {
-          weather = {
-            key = "7036de49825f480a8f9124511252205";
-            location = "-37.70000000,144.93333000";
-            unit = "metric";
-          };
-        };
-      };
-      theme = {
-        name = "catppuccin_macchiato";
-        bar.location = "bottom";
-      };
-    };
-  };
 
   services.hypridle = {
     enable = true;
