@@ -82,13 +82,10 @@
   # Kernel Packages
   boot.extraModulePackages = with config.boot.kernelPackages; [ perf ];
   # This will enable additional firmware blobs
+  hardware.enableAllFirmware = true;
   hardware.enableRedistributableFirmware = true;
-  # boot.extraModprobeConfig = ''
-  #   options iwlwifi power_save=0 bt_coex_active=0 uapsd_disable=1 amsdu_size=0 fw_restart=0 disable_11ax=1
-  #   options iwlmvm power_scheme=1
-  # '';
   boot.extraModprobeConfig = ''
-    options iwlwifi power_save=0 11n_disable=8 bt_coex_active=0
+    options iwlwifi power_save=0 11n_disable=8 bt_coex_active=0 swcrypto=1
     options iwlmvm power_scheme=1
   '';
 
@@ -107,8 +104,8 @@
   };
 
   # Bluetooth
-  hardware.bluetooth.enable = true;
-  services.blueman.enable = true;
+  hardware.bluetooth.enable = false;
+  services.blueman.enable = false;
 
   # Users
   users.users = {
