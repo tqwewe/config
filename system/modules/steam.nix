@@ -8,6 +8,7 @@
   };
   programs.gamemode.enable = true;
   powerManagement.cpuFreqGovernor = "performance";
+  hardware.xpadneo.enable = true;
 
   environment.systemPackages = with pkgs; [
     protonup

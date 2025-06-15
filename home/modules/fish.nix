@@ -20,7 +20,6 @@
 
     shellAliases = {
       cat = "bat";
-      cd = "z";
       ls = "exa --long --group-directories-first --no-permissions --no-user";
       rustdev = "nix develop ~/dev/tqwewe/config#rust -c fish";
     };
@@ -37,47 +36,79 @@
         bind \b backward-kill-word
       '';
 
+      cd = ''
+        z $argv
+        if test $status -eq 0
+          # Configure the prefix for auto-generated tab names
+          set prefix "*"
+
+          # Get current tab name
+          set current_tab_name (zellij action dump-layout 2>/dev/null | grep "tab name=.*focus=true" | sed 's/.*name="\([^"]*\)".*/\1/')
+
+          # Check if it's a default tab name OR an auto-generated one with our prefix
+          # Use string match with literal matching (not glob patterns)
+          if string match -qr '^Tab #[0-9]+$' "$current_tab_name"; or test (string sub --length (string length "$prefix") "$current_tab_name") = "$prefix"
+            set current_dir (basename $PWD)
+            zellij action rename-tab "$prefix$current_dir" 2>/dev/null
+          end
+        end
+      '';
+
+      # Function to clone GitHub repositories into ~/dev/{owner}/{repo} directory.
+      # Usage: cr owner/repo
+      # Also handles: cr https://github.com/owner/repo.git
+      #               cr git@github.com:owner/repo.git
+      #               cr repo # uses currently logged in users repo
       cr = ''
-        # Function to clone GitHub repositories into ~/dev/{owner}/{repo} directory.
-        # Usage: cr owner/repo
-        # Also handles: cr https://github.com/owner/repo.git
-        #               cr git@github.com:owner/repo.git
-        #               cr repo # uses currently logged in users repo
         set -l repo_arg $argv[1]
 
         # Handle GitHub URLs (both HTTPS and SSH)
         if string match -q -r -- "(https://github.com/|git@github.com:)" $repo_arg
-          # Extract owner/repo from HTTPS URL: https://github.com/owner/repo.git
-          # or from SSH URL: git@github.com:owner/repo.git
-          set -l repo_path (echo $repo_arg | sed -E 's/^(https:\/\/github\.com\/|git@github\.com:)([^\/]+)\/([^\/]+)(\.git)?$/\2\/\3/g')
+            # Extract owner/repo from HTTPS URL: https://github.com/owner/repo.git
+            # or from SSH URL: git@github.com:owner/repo.git
+            set -l repo_path (echo $repo_arg | sed -E 's/^(https:\/\/github\.com\/|git@github\.com:)([^\/]+)\/([^\/]+)(\.git)?$/\2\/\3/g')
 
-          # Extract owner and repo from the path
-          set -l owner (echo $repo_path | cut -d '/' -f 1)
-          set -l repo (echo $repo_path | cut -d '/' -f 2 | sed 's/\.git$//')
+            # Extract owner and repo from the path
+            set -l owner (echo $repo_path | cut -d '/' -f 1)
+            set -l repo (echo $repo_path | cut -d '/' -f 2 | sed 's/\.git$//')
 
-          # Create directory if it doesn't exist
-          mkdir -p ~/dev/$owner > /dev/null
-
-          # Clone repository
-          git clone -- $repo_arg ~/dev/$owner/$repo
-          cd ~/dev/$owner/$repo
-        else
-          # Handle simple "owner/repo" format
-          if string match -q -r -- "/" $repo_arg
-            set -l owner (echo $repo_arg | cut -d '/' -f 1)
-            set -l repo (echo $repo_arg | cut -d '/' -f 2)
-
+            # Create directory if it doesn't exist
             mkdir -p ~/dev/$owner > /dev/null
-            gh repo clone $repo_arg ~/dev/$owner/$repo
-            cd ~/dev/$owner/$repo
-          else
-            # Handle just "repo" format (uses current GitHub username)
-            set -l username (gh auth status 2>&1 | sed -n '2s/.*as \([^ ]*\).*/\1/p')
-            set -l repo $repo_arg
 
-            gh repo clone $repo_arg ~/dev/$username/$repo
-            cd ~/dev/$username/$repo
-          end
+            # Clone repository
+            git clone -- $repo_arg ~/dev/$owner/$repo
+            cd ~/dev/$owner/$repo
+        else
+            # Handle simple "owner/repo" format
+            if string match -q -r -- "/" $repo_arg
+                set -l owner (echo $repo_arg | cut -d '/' -f 1)
+                set -l repo (echo $repo_arg | cut -d '/' -f 2)
+
+                mkdir -p ~/dev/$owner > /dev/null
+                gh repo clone $repo_arg ~/dev/$owner/$repo
+                cd ~/dev/$owner/$repo
+            else
+                # Handle just "repo" format (uses current GitHub username)
+                # More reliable way to get GitHub username
+                set -l username (gh api user --jq '.login' 2>/dev/null)
+
+                # Fallback if API call fails
+                if test -z "$username"
+                    set username (gh auth status --hostname github.com 2>&1 | grep "Logged in" | sed -n 's/.*as \([^ ]*\).*/\1/p')
+                end
+
+                # Final fallback - hardcode your username
+                if test -z "$username"
+                    set username "tqwewe"
+                end
+
+                set -l repo $repo_arg
+
+                mkdir -p ~/dev/$username
+                cd ~/dev/$username
+                gh repo clone $username/$repo
+                cd $repo
+            end
         end
       '';
 

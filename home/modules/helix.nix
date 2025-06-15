@@ -3,6 +3,9 @@
   pkgs,
   ...
 }:
+let
+  crates-lsp = pkgs.callPackage ../../pkgs/crates-lsp.nix { };
+in
 {
   programs.helix = {
     enable = true;
@@ -64,11 +67,11 @@
 
         "C-y" = {
           "y" =
-            ":sh zellij run -c -f -x 10% -y 10% --width 80% --height 80% -- bash ~/.config/helix/yazi-picker.sh";
+            ":sh zellij run -n Yazi -c -f -x 10%% -y 10%% --width 80%% --height 80%% -- bash ~/.config/helix/yazi-picker.sh open %{buffer_name}";
           "v" =
-            ":sh zellij run -c -f -x 10% -y 10% --width 80% --height 80% -- bash ~/.config/helix/yazi-picker.sh vsplit";
+            ":sh zellij run -n Yazi -c -f -x 10%% -y 10%% --width 80%% --height 80%% -- bash ~/.config/helix/yazi-picker.sh vsplit %{buffer_name}";
           "h" =
-            ":sh zellij run -c -f -x 10% -y 10% --width 80% --height 80% -- bash ~/.config/helix/yazi-picker.sh hsplit";
+            ":sh zellij run -n Yazi -c -f -x 10%% -y 10%% --width 80%% --height 80%% -- bash ~/.config/helix/yazi-picker.sh hsplit %{buffer_name}";
         };
       };
 
@@ -153,6 +156,10 @@
           language-servers = [ "rust-analyzer" ];
         }
         {
+          name = "toml";
+          language-servers = [ "crates-lsp" ];
+        }
+        {
           name = "nix";
           formatter = {
             command = "nixfmt";
@@ -161,6 +168,11 @@
           auto-format = true;
         }
       ];
+
+      language-server.crates-lsp = {
+        command = "crates-lsp";
+        except-featues = [ "format" ];
+      };
 
       # language-server.gpt = {
       #   command = "bash";
@@ -221,6 +233,7 @@
   };
 
   home.packages = with pkgs; [
+    crates-lsp
     nil
     nixfmt-rfc-style
     nodePackages.vscode-langservers-extracted
@@ -235,7 +248,7 @@
   xdg.configFile."helix/yazi-picker.sh".text = ''
     #!/usr/bin/env bash
 
-    paths=$(yazi --chooser-file=/dev/stdout | while read -r; do printf "%q " "$REPLY"; done)
+    paths=$(yazi "$2" --chooser-file=/dev/stdout | while read -r; do printf "%q " "$REPLY"; done)
 
     if [[ -n "$paths" ]]; then
     	zellij action toggle-floating-panes

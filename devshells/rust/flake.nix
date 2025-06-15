@@ -35,7 +35,13 @@
           };
 
           # Define the shell directly here, instead of importing
-          rustToolchain = pkgs.rust-bin.stable.latest.default;
+          rustToolchain = pkgs.rust-bin.stable.latest.default.override {
+            extensions = [
+              "rust-src"
+              "rustfmt"
+              "rust-analyzer"
+            ];
+          };
 
           devShell = pkgs.mkShell {
             name = "rust-dev";

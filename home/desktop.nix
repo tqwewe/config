@@ -1,19 +1,24 @@
-{ inputs, pkgs, ... }:
+{
+  inputs,
+  pkgs,
+  ...
+}:
 {
   imports = with inputs; [
-    ./modules/alacritty.nix
     ./modules/base.nix
     ./modules/direnv.nix
+    ./modules/docker.nix
     ./modules/fish.nix
     ./modules/gh.nix
     ./modules/git.nix
+    ./modules/gnome.nix
     ./modules/helix.nix
-    ./modules/hyprland.nix
     ./modules/kitty.nix
     ./modules/lazygit.nix
     ./modules/librewolf.nix
     ./modules/mangohud.nix
     ./modules/nur.nix
+    ./modules/obs.nix
     ./modules/starship.nix
     ./modules/zellij.nix
 
@@ -31,48 +36,36 @@
   programs.bat.enable = true;
   programs.bottom.enable = true;
   programs.eza.enable = true;
-  programs.obs-studio.enable = true;
-  programs.obs-studio.plugins = [ pkgs.obs-studio-plugins.obs-backgroundremoval ];
   programs.zoxide.enable = true;
 
-  xdg = {
-    enable = true;
-    mimeApps = {
-      enable = true;
-      defaultApplications = {
-        "inode/directory" = "nautilus";
-        "application/x-directory" = "nautilus";
-      };
-    };
-  };
-
-  home.packages = with pkgs; [
-    inputs.ashell.defaultPackage.${pkgs.system}
-    discord
-    docker-compose
-    killall
-    libreoffice
-    nautilus
-    networkmanagerapplet
-    nodejs
-    obsidian
-    protonvpn-gui
-    protonvpn-cli
-    proton-pass
-    qbittorrent
-    ripgrep
-    spotify
-    vlc
-    yazi
-
-    # Fonts
-    (pkgs.nerdfonts.override {
-      fonts = [
-        "FiraCode"
-        "DroidSansMono"
-        "Terminus"
-        "Noto"
-      ];
-    })
-  ];
+  home.packages =
+    with pkgs;
+    [
+      discord
+      killall
+      libreoffice
+      nautilus
+      networkmanagerapplet
+      nodejs
+      obsidian
+      proton-pass
+      protonmail-desktop
+      protonvpn-cli
+      protonvpn-gui
+      qbittorrent
+      ripgrep
+      signal-desktop
+      spotify
+      vlc
+      whatsie
+      yazi
+      zoom-us
+    ]
+    ++ (with nerd-fonts; [
+      # Fonts
+      droid-sans-mono
+      fira-code
+      hack
+      noto
+    ]);
 }

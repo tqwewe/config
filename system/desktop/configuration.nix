@@ -10,8 +10,10 @@
     ../modules/base.nix
     ../modules/brightness-control.nix
     ../modules/fish.nix
-    ../modules/greetd.nix
-    ../modules/hyprland.nix
+    ../modules/gnome.nix
+    # ../modules/greetd.nix
+    # ../modules/hyprland.nix
+    # ../modules/kde.nix
     ../modules/locale.nix
     ../modules/nh.nix
     ../modules/nvidia.nix
@@ -28,9 +30,21 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  hardware.pulseaudio.extraConfig = ''
-    resample-method = speex-float-10
-  '';
+  # GSConnect ports
+  networking.firewall = {
+    allowedTCPPortRanges = [
+      {
+        from = 1716;
+        to = 1764;
+      }
+    ];
+    allowedUDPPortRanges = [
+      {
+        from = 1716;
+        to = 1764;
+      }
+    ];
+  };
 
   boot.kernelPackages = pkgs.linuxPackages_6_12;
   boot.resumeDevice = "/dev/disk/by-uuid/6d614528-903b-4eba-8179-927f7d50ec2f";
@@ -80,7 +94,11 @@
   security.polkit.enable = true;
 
   # Kernel Packages
-  boot.extraModulePackages = with config.boot.kernelPackages; [ perf ];
+  boot.kernelModules = [ "v4l2loopback" ];
+  boot.extraModulePackages = with config.boot.kernelPackages; [
+    pkgs.linuxPackages_6_12.v4l2loopback
+    perf
+  ];
   # This will enable additional firmware blobs
   hardware.enableAllFirmware = true;
   hardware.enableRedistributableFirmware = true;
@@ -88,6 +106,10 @@
     options iwlwifi power_save=0 11n_disable=8 bt_coex_active=0 swcrypto=1
     options iwlmvm power_scheme=1
   '';
+  # boot.extraModprobeConfig = ''
+  #   options iwlwifi power_save=0 11n_disable=8 bt_coex_active=0 swcrypto=1
+  #   options iwlmvm power_scheme=1
+  # '';
 
   boot.postBootCommands = ''
     # Pin ALL WiFi interrupts to cores 1,2 only
@@ -104,8 +126,14 @@
   };
 
   # Bluetooth
-  hardware.bluetooth.enable = false;
-  services.blueman.enable = false;
+  hardware.bluetooth.enable = true;
+  services.blueman.enable = true;
+
+  # Docker
+  virtualisation.docker = {
+    enable = true;
+    enableOnBoot = false;
+  };
 
   # Users
   users.users = {
@@ -160,6 +188,10 @@
   # Enable automatic login for the user.
   services.displayManager.autoLogin.enable = true;
   services.displayManager.autoLogin.user = "ari";
+
+  # Fix gnome auto login https://github.com/NixOS/nixpkgs/issues/103746#issuecomment-945091229
+  systemd.services."getty@tty1".enable = false;
+  systemd.services."autovt@tty1".enable = false;
 
   services.upower = {
     enable = true;

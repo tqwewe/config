@@ -5,9 +5,9 @@
     settings = {
       git.paging = {
         colorArg = "always";
-        pager = "delta --dark --paging=never";
+        # pager = "delta --dark --paging=never";
       };
     };
   };
-  programs.git.delta.enable = true;
+  programs.git.delta.enable = false;
 }
