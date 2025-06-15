@@ -13,6 +13,7 @@ in
     ./modules/git.nix
     ./modules/helix.nix
     ./modules/lazygit.nix
+    ./modules/nh.nix
     ./modules/starship.nix
     ./modules/zellij.nix
 
@@ -21,11 +22,16 @@ in
     ../system/modules/secrets.nix
   ];
 
+  _module.args = {
+    inherit unstable;
+  };
+
   nixpkgs = {
     overlays = with inputs; [
       (final: prev: {
         zjstatus = zjstatus.packages.${prev.system}.default;
       })
+      nh.overlays.default
     ];
   };
 
@@ -54,6 +60,7 @@ in
     ripgrep
     unstable.nodePackages.svelte-language-server
     tailwindcss-language-server
+    taplo
     vscode-langservers-extracted
     unstable.yazi
 

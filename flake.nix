@@ -48,11 +48,19 @@
     };
 
     # Rust devshell
-    rust-devshell.url = "path:./devshells/rust";
-    rust-devshell.inputs.nixpkgs.follows = "nixpkgs";
+    rust-devshell = {
+      url = "path:./devshells/rust";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # Zellij statusbar
     zjstatus.url = "github:dj95/zjstatus";
+
+    # Zellij quit prompt
+    zj-quit = {
+      url = "path:./flakes/zj-quit";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # Secrets & encryption
     agenix.url = "github:ryantm/agenix";
