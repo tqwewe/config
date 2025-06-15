@@ -1,5 +1,6 @@
 { inputs, lib, pkgs, ... }: let
   zjstatus_wasm = "file:${pkgs.zjstatus}/bin/zjstatus.wasm";
+  zj-quit_wasm = "file:${inputs.zj-quit.packages.${pkgs.system}.default}/bin/zj-quit.wasm";
 in {
   programs.zellij = {
     enable = true;
@@ -15,6 +16,21 @@ in {
       unbind "Ctrl h" "Ctrl o" "Alt Left" "Alt Right" "Alt i" "Alt o"
       shared_except "move" "locked" {
         bind "Ctrl k" { SwitchToMode "Move"; }
+      }
+
+      shared_except "locked" {
+        bind "Ctrl q" {
+          LaunchOrFocusPlugin "zj-quit" {
+            floating true
+          }
+        }
+      }
+    }
+
+    plugins {
+      zj-quit location="${zj-quit_wasm}" {
+        confirm_key "q"
+        cancel_key "Esc"
       }
     }
   '';

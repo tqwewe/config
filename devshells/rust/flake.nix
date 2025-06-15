@@ -22,11 +22,14 @@
             overlays = [ rust-overlay.overlays.default ];
           };
           
-          # Define the shell directly here, instead of importing
-          rustToolchain = pkgs.rust-bin.stable.latest.default;
+          rustToolchain = pkgs.rust-bin.stable.latest.default.override {
+            extensions = [ "rust-src" "rustfmt" "rust-analyzer" ];
+            targets = [ "wasm32-wasip1" ];
+          };
           
           devShell = pkgs.mkShell {
             name = "rust-dev";
+
             buildInputs = with pkgs; [
               bacon
               cargo-expand
@@ -36,6 +39,7 @@
               rustToolchain
               pkg-config
               openssl.dev
+              protobuf
             ] ++ pkgs.lib.optionals pkgs.stdenv.isDarwin (with pkgs.darwin.apple_sdk.frameworks; [
               CoreServices
               CoreFoundation
@@ -43,6 +47,11 @@
               System
               SystemConfiguration
             ]);
+
+            env = {
+              PROTOC = "${pkgs.protobuf}/bin/protoc";
+              PROTOC_INCLUDE = "${pkgs.protobuf}/include";
+            };
           };
         in
         {
