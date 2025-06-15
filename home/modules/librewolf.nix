@@ -8,6 +8,10 @@
       "privacy.clearOnShutdown.history" = false;
       "privacy.clearOnShutdown.downloads" = false;
       "privacy.resistFingerprinting" = false;
+      "privacy.clearOnShutdown_v2.cache" = false;
+      "privacy.clearOnShutdown_v2.cookiesAndStorage" = false;
+      "privacy.clearOnShutdown_v2.historyFormDataAndDownloads" = false;
+      "privacy.clearOnShutdown_v2.siteSettings" = false;
       "webgl.disabled" = false;
     };
   };

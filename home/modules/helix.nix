@@ -1,9 +1,15 @@
-{ inputs, pkgs, config, ... }: {
+{
+  inputs,
+  pkgs,
+  ...
+}:
+let
+  crates-lsp = pkgs.callPackage ../../pkgs/crates-lsp.nix { };
+in
+{
   programs.helix = {
     enable = true;
     package = inputs.helix.packages.${pkgs.system}.default;
-    # package = inputs.unstable.legacyPackages.x86_64-linux.helix;
-    # defaultEditor = true;
 
     settings = {
       theme = "nightfox";
@@ -30,9 +36,14 @@
           # display-messages = true;
           # auto-signature-help = false;
         };
-        rulers = [120];
+        rulers = [ 120 ];
         statusline = {
-          left = ["mode" "spinner" "version-control" "file-name"];
+          left = [
+            "mode"
+            "spinner"
+            "version-control"
+            "file-name"
+          ];
         };
         true-color = true;
         whitespace = {
@@ -55,9 +66,12 @@
         "A-x" = "extend_to_line_bounds";
 
         "C-y" = {
-          "y" = ":sh zellij run -c -f -x 10% -y 10% --width 80% --height 80% -- bash ~/.config/helix/yazi-picker.sh";
-          "v" = ":sh zellij run -c -f -x 10% -y 10% --width 80% --height 80% -- bash ~/.config/helix/yazi-picker.sh vsplit";
-          "h" = ":sh zellij run -c -f -x 10% -y 10% --width 80% --height 80% -- bash ~/.config/helix/yazi-picker.sh hsplit";
+          "y" =
+            ":sh zellij run -n Yazi -c -f -x 10%% -y 10%% --width 80%% --height 80%% -- bash ~/.config/helix/yazi-picker.sh open %{buffer_name}";
+          "v" =
+            ":sh zellij run -n Yazi -c -f -x 10%% -y 10%% --width 80%% --height 80%% -- bash ~/.config/helix/yazi-picker.sh vsplit %{buffer_name}";
+          "h" =
+            ":sh zellij run -n Yazi -c -f -x 10%% -y 10%% --width 80%% --height 80%% -- bash ~/.config/helix/yazi-picker.sh hsplit %{buffer_name}";
         };
       };
 
@@ -73,77 +87,118 @@
         {
           name = "javascript";
           formatter.command = "prettier";
-          formatter.args = ["--stdin-filepath" "main.js"];
+          formatter.args = [
+            "--stdin-filepath"
+            "main.js"
+          ];
           auto-format = true;
-          language-servers = ["typescript-language-server" "gpt"];
+          language-servers = [ "typescript-language-server" ];
         }
         {
           name = "jsx";
           formatter.command = "prettier";
-          formatter.args = ["--stdin-filepath" "main.jsx"];
+          formatter.args = [
+            "--stdin-filepath"
+            "main.jsx"
+          ];
           auto-format = true;
-          language-servers = ["typescript-language-server" "gpt"];
+          language-servers = [ "typescript-language-server" ];
         }
         {
           name = "typescript";
           formatter.command = "prettier";
-          formatter.args = ["--parser" "typescript" "--stdin-filepath" "main.ts"];
+          formatter.args = [
+            "--parser"
+            "typescript"
+            "--stdin-filepath"
+            "main.ts"
+          ];
           auto-format = true;
-          language-servers = ["typescript-language-server" "gpt"];
+          language-servers = [ "typescript-language-server" ];
         }
         {
           name = "tsx";
           formatter.command = "prettier";
-          formatter.args = ["--parser" "typescript" "--stdin-filepath" "main.tsx"];
+          formatter.args = [
+            "--parser"
+            "typescript"
+            "--stdin-filepath"
+            "main.tsx"
+          ];
           auto-format = true;
-          language-servers = ["typescript-language-server" "gpt"];
+          language-servers = [ "typescript-language-server" ];
         }
         {
           name = "svelte";
           formatter.command = "prettier";
           # formatter.args = ["--parser" "typescript" "--stdin-filepath" "main.svelte"];
-          formatter.args = ["--stdin-filepath" "main.svelte"];
+          formatter.args = [
+            "--stdin-filepath"
+            "main.svelte"
+          ];
           auto-format = true;
           language-servers = [
             "svelteserver"
-            { name = "tailwindcss-ls"; except-features = ["hover"]; }
+            {
+              name = "tailwindcss-ls";
+              except-features = [ "hover" ];
+            }
             "vscode-eslint-language-server"
-            "gpt"
           ];
           comment-token = "//";
-          block-comment-tokens = { start = "/*"; end = "*/"; };
+          block-comment-tokens = {
+            start = "/*";
+            end = "*/";
+          };
         }
         {
           name = "rust";
-          language-servers = ["rust-analyzer"];
+          language-servers = [ "rust-analyzer" ];
+        }
+        {
+          name = "toml";
+          language-servers = [ "crates-lsp" ];
+        }
+        {
+          name = "nix";
+          formatter = {
+            command = "nixfmt";
+            # args = ["<" "input.nix"];
+          };
+          auto-format = true;
         }
       ];
 
-      language-server.gpt = {
-        command = "bash";
-        args = [
-          "-c"
-          ''
-            /Users/ari/.deno/bin/deno run --allow-env --allow-net https://raw.githubusercontent.com/tqwewe/helix-gpt/refs/heads/deno/src/app.ts \
-            --handler copilot \
-            --copilotApiKey "$(cat ${config.age.secrets.copilotApiKey.path})"
-          ''
-        ];
+      language-server.crates-lsp = {
+        command = "crates-lsp";
+        except-featues = [ "format" ];
       };
 
-      language-server.deepseek = {
-        command = "bash";
-        args = [
-          "-c"
-          ''
-            /Users/ari/.deno/bin/deno run --allow-env --allow-net https://raw.githubusercontent.com/tqwewe/helix-gpt/refs/heads/deno/src/app.ts \
-            --handler openai \
-            --openaiKey "$(cat ${config.age.secrets.deepseekApiKey.path})" \
-            --openaiEndpoint "https://api.deepseek.com/v1/chat/completions" \
-            --openaiModel "deepseek-chat"
-          ''
-        ];
-      };
+      # language-server.gpt = {
+      #   command = "bash";
+      #   args = [
+      #     "-c"
+      #     ''
+      #       /Users/ari/.deno/bin/deno run --allow-env --allow-net https://raw.githubusercontent.com/tqwewe/helix-gpt/refs/heads/deno/src/app.ts \
+      #       --handler copilot \
+      #       --copilotApiKey "$(cat ${config.age.secrets.copilotApiKey.path})"
+      #     ''
+      #   ];
+      # };
+
+      # language-server.deepseek = {
+      #   command = "bash";
+      #   args = [
+      #     "-c"
+      #     ''
+      #       /Users/ari/.deno/bin/deno run --allow-env --allow-net https://raw.githubusercontent.com/tqwewe/helix-gpt/refs/heads/deno/src/app.ts \
+      #       --handler openai \
+      #       --openaiKey "$(cat ${config.age.secrets.deepseekApiKey.path})" \
+      #       --openaiEndpoint "https://api.deepseek.com/v1/chat/completions" \
+      #       --openaiModel "deepseek-chat"
+      #     ''
+      #   ];
+      # };
 
       language-server.rust-analyzer.config = {
         cargo = {
@@ -153,10 +208,18 @@
         check.command = "clippy";
         procMacro = {
           ignored = {
-            leptos_macro = ["component" "server" "island"];
+            leptos_macro = [
+              "component"
+              "server"
+              "island"
+            ];
           };
         };
-        "rust-analyzer.rustfmt.overrideCommand" = ["leptosfmt" "--stdin" "--rustfmt"];
+        "rust-analyzer.rustfmt.overrideCommand" = [
+          "leptosfmt"
+          "--stdin"
+          "--rustfmt"
+        ];
       };
 
       language-server.vscode-css-language-server.config = {
@@ -168,13 +231,24 @@
       };
     };
   };
+
+  home.packages = with pkgs; [
+    crates-lsp
+    nil
+    nixfmt-rfc-style
+    nodePackages.vscode-langservers-extracted
+    nodePackages.typescript-language-server
+    sumneko-lua-language-server
+  ];
+
   home.sessionVariables = {
     EDITOR = "hx";
   };
+
   xdg.configFile."helix/yazi-picker.sh".text = ''
     #!/usr/bin/env bash
 
-    paths=$(yazi --chooser-file=/dev/stdout | while read -r; do printf "%q " "$REPLY"; done)
+    paths=$(yazi "$2" --chooser-file=/dev/stdout | while read -r; do printf "%q " "$REPLY"; done)
 
     if [[ -n "$paths" ]]; then
     	zellij action toggle-floating-panes

@@ -1,11 +1,17 @@
-{ inputs, config, pkgs, ... }: {
+{
+  inputs,
+  config,
+  pkgs,
+  ...
+}:
+{
   imports = [
     ../modules/secrets.nix
   ];
 
   environment = {
     shells = with pkgs; [ fish ];
-    variables = {};
+    variables = { };
   };
 
   programs = {

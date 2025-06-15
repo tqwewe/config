@@ -1,4 +1,5 @@
-{ inputs, ... }: {
+{ inputs, ... }:
+{
   programs.wezterm = {
     enable = true;
     package = inputs.unstable.legacyPackages.x86_64-linux.wezterm;
@@ -10,12 +11,13 @@
 
       config.font = wezterm.font 'monospace'
       config.color_scheme = "Tomorrow Night"
-      config.window_background_image = '/home/ari/Desktop/wp.jpg'
+      -- config.window_background_image = '/home/ari/Desktop/wp.jpg'
       config.window_background_image_hsb = {
         brightness = 0.1
       }
       -- config.window_background_opacity = 0.92
       config.enable_tab_bar = false
+      config.window_decorations = "RESIZE"
 
       local act = wezterm.action
 

@@ -1,4 +1,10 @@
-{ inputs, lib, pkgs, ... }: let
+{
+  inputs,
+  lib,
+  pkgs,
+  ...
+}:
+let
   zjstatus_wasm = "file:${pkgs.zjstatus}/bin/zjstatus.wasm";
   zj-quit_wasm = "file:${inputs.zj-quit.packages.${pkgs.system}.default}/bin/zj-quit.wasm";
 in {
@@ -9,7 +15,7 @@ in {
     enableFishIntegration = false;
     settings = {
       theme = "kanagawa";
-    }; 
+    };
   };
   xdg.configFile."zellij/config.kdl".text = ''
     keybinds {
@@ -103,7 +109,7 @@ in {
 
             datetime          "#[fg=#6C7086,bg=#b1bbfa,bold] {format} "
             datetime_format   "%A, %d %b %Y %I:%M %P"
-            datetime_timezone "Australia/Adelaide"
+            datetime_timezone "Australia/Melbourne"
           }
         }
       }
@@ -112,4 +118,12 @@ in {
   programs.fish.interactiveShellInit = lib.mkOrder 205 ''
     eval (zellij setup --generate-completion fish | string collect)
   '';
+
+  nixpkgs = {
+    overlays = with inputs; [
+      (final: prev: {
+        zjstatus = zjstatus.packages.${prev.system}.default;
+      })
+    ];
+  };
 }

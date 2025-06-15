@@ -3,27 +3,43 @@
 
   inputs = {
     # Nixpkgs
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-24.11";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
     unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     nix-darwin = {
-      url = "github:LnL7/nix-darwin/nix-darwin-24.11";
+      url = "github:LnL7/nix-darwin/nix-darwin-25.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     # Home manager
     home-manager = {
-      url = "github:nix-community/home-manager/release-24.11";
+      url = "github:nix-community/home-manager/release-25.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     # Hardware quirks
     hardware.url = "github:nixos/nixos-hardware";
 
-    # Nh
-    nh = {
-      url = "github:nix-community/nh/master";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    # niri.url = "github:sodiboo/niri-flake";
+
+    # plasma-manager = {
+    #   url = "github:nix-community/plasma-manager";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    #   inputs.home-manager.follows = "home-manager";
+    # };
+
+    # hyprland.url = "github:hyprwm/Hyprland";
+    # hyprland-plugins = {
+    #   url = "github:hyprwm/hyprland-plugins";
+    #   inputs.hyprland.follows = "hyprland";
+    # };
+    # hyprlock.url = "github:hyprwm/hyprlock";
+    # # ashell.url = "github:MalpenZibo/ashell";
+    # ashell = {
+    #   type = "github";
+    #   owner = "tqwewe";
+    #   repo = "ashell";
+    #   ref = "feat/peripherals";
+    # };
 
     # Helix
     helix = {
@@ -52,32 +68,50 @@
     agenix.inputs.home-manager.follows = "home-manager";
   };
 
-  outputs = { nixpkgs, unstable, nix-darwin, home-manager, agenix, rust-devshell, ... }@inputs:
+  outputs =
+    {
+      nixpkgs,
+      unstable,
+      nix-darwin,
+      home-manager,
+      agenix,
+      rust-devshell,
+      ...
+    }@inputs:
     let
-      homeConfig = { module, system ? "x86_64-linux" }: home-manager.lib.homeManagerConfiguration {
-        pkgs = nixpkgs.legacyPackages.${system};
-        extraSpecialArgs = { inherit inputs; };
-        modules = [ module ];
-      };
-      supportedSystems = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
+      homeConfig =
+        {
+          module,
+          system ? "x86_64-linux",
+        }:
+        home-manager.lib.homeManagerConfiguration {
+          pkgs = nixpkgs.legacyPackages.${system};
+          extraSpecialArgs = {
+            inherit inputs;
+            inherit system;
+            unstable = import unstable {
+              inherit system;
+              config.allowUnfree = true;
+            };
+          };
+          modules = [
+            module
+          ];
+        };
+      supportedSystems = [
+        "x86_64-linux"
+        "aarch64-linux"
+        "x86_64-darwin"
+        "aarch64-darwin"
+      ];
       forAllSystems = function: nixpkgs.lib.genAttrs supportedSystems function;
-      pkgsFor = system: import nixpkgs {
-        inherit system;
-      };
     in
     {
       nixosConfigurations = {
-        ari = nixpkgs.lib.nixosSystem {
+        desktop = nixpkgs.lib.nixosSystem {
           specialArgs = { inherit inputs; };
           modules = [
             ./system/desktop/configuration.nix
-          ];
-        };
-
-        cloud-dev = nixpkgs.lib.nixosSystem {
-          specialArgs = { inherit inputs; };
-          modules = [
-            ./system/server/configuration.nix
           ];
         };
       };
@@ -92,15 +126,15 @@
       };
 
       homeConfigurations = {
-        "ari@ari" = homeConfig { module = ./home/pc.nix; };
-        "ari@Aris-MacBook-Pro" = homeConfig { module = ./home/macbook.nix; system = "x86_64-darwin"; };
+        "ari@desktop" = homeConfig { module = ./home/desktop.nix; };
+        "ari@Aris-MacBook-Pro" = homeConfig {
+          module = ./home/macbook.nix;
+          system = "x86_64-darwin";
+        };
       };
 
-      devShells = forAllSystems (system:
-        let pkgs = pkgsFor system;
-        in {
-          rust = rust-devshell.devShells.${system}.default;
-        }
-      );
+      devShells = forAllSystems (system: {
+        rust = rust-devshell.devShells.${system}.default;
+      });
     };
 }

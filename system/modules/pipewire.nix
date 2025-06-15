@@ -1,6 +1,10 @@
 {
-  sound.enable = true;
-  hardware.pulseaudio.enable = false;
+  services.pulseaudio = {
+    enable = false;
+    extraConfig = ''
+      resample-method = speex-float-10
+    '';
+  };
   security.rtkit.enable = true;
   services.pipewire = {
     enable = true;

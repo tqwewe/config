@@ -6,7 +6,7 @@
     userName = "Ari Seyhun";
 
     lfs.enable = true;
-    
+
     extraConfig = {
       init.defaultBranch = "main";
     };

@@ -40,7 +40,7 @@ in
     homeDirectory = "/Users/ari";
     sessionVariables = {
       EDITOR = "hx";
-      BARTIB_FILE="/Users/ari/activities.bartib";
+      BARTIB_FILE = "/Users/ari/activities.bartib";
     };
   };
 
@@ -65,6 +65,11 @@ in
     unstable.yazi
 
     # Fonts
-    (pkgs.nerdfonts.override { fonts = [ "FiraCode" "DroidSansMono" ]; })
+    (pkgs.nerdfonts.override {
+      fonts = [
+        "FiraCode"
+        "DroidSansMono"
+      ];
+    })
   ];
 }
