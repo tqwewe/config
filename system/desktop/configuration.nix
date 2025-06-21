@@ -10,10 +10,10 @@
     ../modules/base.nix
     ../modules/brightness-control.nix
     ../modules/fish.nix
-    ../modules/gnome.nix
+    # ../modules/gnome.nix
     # ../modules/greetd.nix
     # ../modules/hyprland.nix
-    # ../modules/kde.nix
+    ../modules/kde.nix
     ../modules/locale.nix
     ../modules/nh.nix
     ../modules/nvidia.nix
@@ -49,7 +49,7 @@
   # Open WebUI
   services.open-webui.enable = true;
 
-  boot.kernelPackages = pkgs.linuxPackages_6_12;
+  boot.kernelPackages = pkgs.linuxPackages_latest;
   boot.resumeDevice = "/dev/disk/by-uuid/6d614528-903b-4eba-8179-927f7d50ec2f";
   powerManagement.enable = true;
   boot.kernel.sysctl = {
@@ -193,10 +193,6 @@
   # Enable automatic login for the user.
   services.displayManager.autoLogin.enable = true;
   services.displayManager.autoLogin.user = "ari";
-
-  # Fix gnome auto login https://github.com/NixOS/nixpkgs/issues/103746#issuecomment-945091229
-  systemd.services."getty@tty1".enable = false;
-  systemd.services."autovt@tty1".enable = false;
 
   services.upower = {
     enable = true;

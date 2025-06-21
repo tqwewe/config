@@ -7,10 +7,10 @@
 let
   zjstatus_wasm = "file:${pkgs.zjstatus}/bin/zjstatus.wasm";
   zj-quit_wasm = "file:${inputs.zj-quit.packages.${pkgs.system}.default}/bin/zj-quit.wasm";
-in {
+in
+{
   programs.zellij = {
     enable = true;
-    package = inputs.unstable.legacyPackages.${pkgs.system}.zellij;
 
     enableFishIntegration = false;
     settings = {

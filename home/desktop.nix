@@ -5,13 +5,15 @@
 }:
 {
   imports = with inputs; [
+    inputs.plasma-manager.homeManagerModules.plasma-manager
+
     ./modules/base.nix
     ./modules/direnv.nix
     ./modules/docker.nix
     ./modules/fish.nix
     ./modules/gh.nix
     ./modules/git.nix
-    ./modules/gnome.nix
+    # ./modules/gnome.nix
     ./modules/helix.nix
     ./modules/kitty.nix
     ./modules/lazygit.nix
@@ -20,6 +22,7 @@
     ./modules/nur.nix
     ./modules/obs.nix
     ./modules/ollama.nix
+    ./modules/plasma.nix
     ./modules/starship.nix
     ./modules/zellij.nix
 

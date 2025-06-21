@@ -1,8 +1,8 @@
-{ pkgs, unstable, ... }:
+{ pkgs, ... }:
 {
   programs.obs-studio = {
     enable = true;
-    package = unstable.obs-studio.overrideAttrs (oldAttrs: {
+    package = pkgs.obs-studio.overrideAttrs (oldAttrs: {
       src = pkgs.fetchFromGitHub {
         owner = "obsproject";
         repo = "obs-studio";

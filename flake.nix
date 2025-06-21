@@ -3,8 +3,8 @@
 
   inputs = {
     # Nixpkgs
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
-    unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+    # nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     nix-darwin = {
       url = "github:LnL7/nix-darwin/nix-darwin-25.05";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -12,7 +12,8 @@
 
     # Home manager
     home-manager = {
-      url = "github:nix-community/home-manager/release-25.05";
+      # url = "github:nix-community/home-manager/release-25.05";
+      url = "github:nix-community/home-manager/master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -21,11 +22,11 @@
 
     # niri.url = "github:sodiboo/niri-flake";
 
-    # plasma-manager = {
-    #   url = "github:nix-community/plasma-manager";
-    #   inputs.nixpkgs.follows = "nixpkgs";
-    #   inputs.home-manager.follows = "home-manager";
-    # };
+    plasma-manager = {
+      url = "github:nix-community/plasma-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
+    };
 
     # hyprland.url = "github:hyprwm/Hyprland";
     # hyprland-plugins = {
@@ -43,7 +44,7 @@
 
     # Helix
     helix = {
-      url = "github:helix-editor/helix/25.01";
+      url = "github:helix-editor/helix/25.01.1";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -71,7 +72,6 @@
   outputs =
     {
       nixpkgs,
-      unstable,
       nix-darwin,
       home-manager,
       agenix,
@@ -89,10 +89,6 @@
           extraSpecialArgs = {
             inherit inputs;
             inherit system;
-            unstable = import unstable {
-              inherit system;
-              config.allowUnfree = true;
-            };
           };
           modules = [
             module
