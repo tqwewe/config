@@ -157,7 +157,17 @@ in
         }
         {
           name = "toml";
-          language-servers = [ "crates-lsp" ];
+          formatter = {
+            command = "taplo";
+            args = [
+              "format"
+              "-"
+            ];
+          };
+          language-servers = [
+            "taplo"
+            "crates-lsp"
+          ];
         }
         {
           name = "nix";
@@ -239,6 +249,7 @@ in
     nodePackages.vscode-langservers-extracted
     nodePackages.typescript-language-server
     sumneko-lua-language-server
+    taplo
   ];
 
   home.sessionVariables = {

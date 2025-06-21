@@ -20,6 +20,7 @@
 
     shellAliases = {
       cat = "bat";
+      cd = "z";
       ls = "exa --long --group-directories-first --no-permissions --no-user";
       rustdev = "nix develop ~/dev/tqwewe/config#rust -c fish";
     };
@@ -30,29 +31,55 @@
         # echo The time is (set_color yellow; date +%T; set_color normal)
       '';
 
+      fish_title = ''
+        set -l title
+
+        # If we're connected via ssh, we print the hostname.
+        set -l ssh
+        set -q SSH_TTY
+        and set ssh "["(prompt_hostname | string sub -l 10 | string collect)"]"
+        # An override for the current command is passed as the first parameter.
+        # This is used by `fg` to show the true process name, among others.
+        if set -q argv[1]
+            set title $ssh (string sub -l 20 -- $argv[1]) (prompt_pwd -d 1 -D 1)
+        else
+            # Don't print "fish" because it's redundant
+            set -l command (status current-command)
+            if test "$command" = fish
+                set command
+            end
+            set title $ssh (string sub -l 20 -- $command) (prompt_pwd -d 1 -D 1)
+        end
+
+        if set -q ZELLIJ
+            zellij action rename-tab "$title"
+        end
+        echo "$title"
+      '';
+
       fish_user_key_bindings = ''
         bind \e\[1\;5D backward-word
         bind \e\[1\;5C forward-word
         bind \b backward-kill-word
       '';
 
-      cd = ''
-        z $argv
-        if test $status -eq 0
-          # Configure the prefix for auto-generated tab names
-          set prefix "*"
+      # cd = ''
+      #   z $argv
+      #   if test $status -eq 0
+      #     # Configure the prefix for auto-generated tab names
+      #     set prefix "*"
 
-          # Get current tab name
-          set current_tab_name (zellij action dump-layout 2>/dev/null | grep "tab name=.*focus=true" | sed 's/.*name="\([^"]*\)".*/\1/')
+      #     # Get current tab name
+      #     set current_tab_name (zellij action dump-layout 2>/dev/null | grep "tab name=.*focus=true" | sed 's/.*name="\([^"]*\)".*/\1/')
 
-          # Check if it's a default tab name OR an auto-generated one with our prefix
-          # Use string match with literal matching (not glob patterns)
-          if string match -qr '^Tab #[0-9]+$' "$current_tab_name"; or test (string sub --length (string length "$prefix") "$current_tab_name") = "$prefix"
-            set current_dir (basename $PWD)
-            zellij action rename-tab "$prefix$current_dir" 2>/dev/null
-          end
-        end
-      '';
+      #     # Check if it's a default tab name OR an auto-generated one with our prefix
+      #     # Use string match with literal matching (not glob patterns)
+      #     if string match -qr '^Tab #[0-9]+$' "$current_tab_name"; or test (string sub --length (string length "$prefix") "$current_tab_name") = "$prefix"
+      #       set current_dir (basename $PWD)
+      #       zellij action rename-tab "$prefix$current_dir" 2>/dev/null
+      #     end
+      #   end
+      # '';
 
       # Function to clone GitHub repositories into ~/dev/{owner}/{repo} directory.
       # Usage: cr owner/repo

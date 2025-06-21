@@ -46,6 +46,9 @@
     ];
   };
 
+  # Open WebUI
+  services.open-webui.enable = true;
+
   boot.kernelPackages = pkgs.linuxPackages_6_12;
   boot.resumeDevice = "/dev/disk/by-uuid/6d614528-903b-4eba-8179-927f7d50ec2f";
   powerManagement.enable = true;
@@ -96,7 +99,7 @@
   # Kernel Packages
   boot.kernelModules = [ "v4l2loopback" ];
   boot.extraModulePackages = with config.boot.kernelPackages; [
-    pkgs.linuxPackages_6_12.v4l2loopback
+    v4l2loopback
     perf
   ];
   # This will enable additional firmware blobs
@@ -106,6 +109,7 @@
     options iwlwifi power_save=0 11n_disable=8 bt_coex_active=0 swcrypto=1
     options iwlmvm power_scheme=1
   '';
+  # options v4l2loopback devices=1 video_nr=10 card_label="OBS Virtual Camera" exclusive_caps=1
   # boot.extraModprobeConfig = ''
   #   options iwlwifi power_save=0 11n_disable=8 bt_coex_active=0 swcrypto=1
   #   options iwlmvm power_scheme=1
@@ -147,6 +151,7 @@
         "wheel"
         "docker"
         "i2c"
+        "video"
       ];
     };
   };

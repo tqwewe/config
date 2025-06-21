@@ -19,6 +19,7 @@
     ./modules/mangohud.nix
     ./modules/nur.nix
     ./modules/obs.nix
+    ./modules/ollama.nix
     ./modules/starship.nix
     ./modules/zellij.nix
 
