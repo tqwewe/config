@@ -30,7 +30,7 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  # GSConnect ports
+  # KDEConnect/GSConnect ports
   networking.firewall = {
     allowedTCPPortRanges = [
       {
@@ -45,6 +45,24 @@
       }
     ];
   };
+
+  services.avahi = {
+    enable = true;
+    nssmdns4 = true;
+    nssmdns6 = true;
+    publish = {
+      enable = true;
+      addresses = true;
+      domain = true;
+      hinfo = true;
+      userServices = true;
+      workstation = true;
+    };
+    # Add these for better compatibility
+    openFirewall = true;
+    allowPointToPoint = true;
+  };
+  systemd.services.avahi-daemon.enable = true;
 
   # Open WebUI
   services.open-webui.enable = true;
