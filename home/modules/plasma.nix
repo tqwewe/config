@@ -1,4 +1,12 @@
+{ pkgs, ... }:
+let
+  beautifulTreeSplash = pkgs.callPackage ../../pkgs/beautiful-tree-animation-splash.nix { };
+in
 {
+  home.packages = [ beautifulTreeSplash ];
+
+  services.kdeconnect.enable = true;
+
   programs.plasma = {
     enable = true;
 
@@ -26,8 +34,16 @@
     };
 
     workspace = {
-      lookAndFeel = "org.kde.breezedark.desktop";
+      theme = "breeze-dark"; # Plasma theme
+      colorScheme = "BreezeDark"; # Color scheme
+      iconTheme = "breeze-dark"; # Icon theme
+      cursor.theme = "breeze_cursors"; # Cursor theme
+
       wallpaper = "/home/ari/dev/tqwewe/config/backgrounds/astro.jpg";
+
+      splashScreen = {
+        theme = "BeautifulTreeAnimation";
+      };
     };
   };
 }
