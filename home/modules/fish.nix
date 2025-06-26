@@ -16,6 +16,10 @@
       if status is-interactive
         eval (zellij setup --generate-auto-start fish | string collect)
       end
+
+      if command -q nix-shell
+        complete -c nix-shell -f -a "(__nix_packages)"
+      end
     '';
 
     shellAliases = {
@@ -26,6 +30,13 @@
     };
 
     functions = {
+      __nix_packages = ''
+        if not set -q __nix_package_cache
+          set -g __nix_package_cache (nix eval --raw --impure --expr 'builtins.concatStringsSep "\n" (builtins.attrNames (import <nixpkgs> {}))' 2>/dev/null)
+        end
+        printf '%s\n' $__nix_package_cache | string match '*'(commandline -ct)'*'
+      '';
+
       fish_greeting = ''
         # echo Hello Ari!
         # echo The time is (set_color yellow; date +%T; set_color normal)
