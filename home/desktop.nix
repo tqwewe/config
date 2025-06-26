@@ -46,6 +46,7 @@
     with pkgs;
     [
       discord
+      git-cliff
       killall
       libreoffice
       nautilus
