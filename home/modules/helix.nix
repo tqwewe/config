@@ -65,18 +65,16 @@ in
         "X" = "select_line_above";
         "A-x" = "extend_to_line_bounds";
 
-        "C-y" = {
-          "y" =
-            ":sh zellij run -n Yazi -c -f -x 10%% -y 10%% --width 80%% --height 80%% -- bash ~/.config/helix/yazi-picker.sh open %{buffer_name}";
-          "v" =
-            ":sh zellij run -n Yazi -c -f -x 10%% -y 10%% --width 80%% --height 80%% -- bash ~/.config/helix/yazi-picker.sh vsplit %{buffer_name}";
-          "h" =
-            ":sh zellij run -n Yazi -c -f -x 10%% -y 10%% --width 80%% --height 80%% -- bash ~/.config/helix/yazi-picker.sh hsplit %{buffer_name}";
-        };
+        "C-y" = [
+          ":sh rm -f /tmp/unique-file"
+          ":insert-output yazi %{buffer_name} --chooser-file=/tmp/unique-file"
+          '':insert-output echo "\x1b[?1049h\x1b[?2004h" > /dev/tty''
+          ":open %sh{cat /tmp/unique-file}"
+          ":redraw"
+        ];
       };
 
       keys.select = {
-        # "X" = ["extend_line_up" "extend_to_line_bounds"];
         "X" = "select_line_above";
         "A-x" = "extend_to_line_bounds";
       };
@@ -89,7 +87,7 @@ in
           formatter.command = "prettier";
           formatter.args = [
             "--stdin-filepath"
-            "main.js"
+            "%{buffer_name}"
           ];
           auto-format = true;
           language-servers = [ "typescript-language-server" ];
@@ -99,7 +97,7 @@ in
           formatter.command = "prettier";
           formatter.args = [
             "--stdin-filepath"
-            "main.jsx"
+            "%{buffer_name}"
           ];
           auto-format = true;
           language-servers = [ "typescript-language-server" ];
@@ -111,7 +109,7 @@ in
             "--parser"
             "typescript"
             "--stdin-filepath"
-            "main.ts"
+            "%{buffer_name}"
           ];
           auto-format = true;
           language-servers = [ "typescript-language-server" ];
@@ -123,7 +121,7 @@ in
             "--parser"
             "typescript"
             "--stdin-filepath"
-            "main.tsx"
+            "%{buffer_name}"
           ];
           auto-format = true;
           language-servers = [ "typescript-language-server" ];
@@ -173,7 +171,6 @@ in
           name = "nix";
           formatter = {
             command = "nixfmt";
-            # args = ["<" "input.nix"];
           };
           auto-format = true;
         }

@@ -45,28 +45,16 @@
 
           devShell = pkgs.mkShell {
             name = "rust-dev";
-            buildInputs =
-              with pkgs;
-              [
-                bacon
-                cargo-expand
-                cargo-generate
-                cargo-outdated
-                cargo-temp
-                rustToolchain
-                pkg-config
-                openssl.dev
-              ]
-              ++ pkgs.lib.optionals pkgs.stdenv.isDarwin (
-                with pkgs.darwin.apple_sdk.frameworks;
-                [
-                  CoreServices
-                  CoreFoundation
-                  Security
-                  System
-                  SystemConfiguration
-                ]
-              );
+            buildInputs = with pkgs; [
+              bacon
+              cargo-expand
+              cargo-generate
+              cargo-outdated
+              cargo-temp
+              rustToolchain
+              pkg-config
+              openssl.dev
+            ];
           };
         in
         {

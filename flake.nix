@@ -6,7 +6,7 @@
     # nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     nix-darwin = {
-      url = "github:LnL7/nix-darwin/nix-darwin-25.05";
+      url = "github:LnL7/nix-darwin/master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -44,7 +44,7 @@
 
     # Helix
     helix = {
-      url = "github:helix-editor/helix/25.01.1";
+      url = "github:helix-editor/helix/master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 

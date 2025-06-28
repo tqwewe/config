@@ -20,8 +20,6 @@
 
   users.users.ari.shell = pkgs.fish;
 
-  services.nix-daemon.enable = true;
-
   nixpkgs = {
     hostPlatform = "x86_64-darwin";
     config.allowUnfree = true;

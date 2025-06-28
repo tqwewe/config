@@ -1,8 +1,4 @@
 { inputs, pkgs, ... }:
-
-let
-  unstable = inputs.unstable.legacyPackages.x86_64-darwin;
-in
 {
   imports = with inputs; [
     ./modules/alacritty.nix
@@ -22,16 +18,11 @@ in
     ../system/modules/secrets.nix
   ];
 
-  _module.args = {
-    inherit unstable;
-  };
-
   nixpkgs = {
     overlays = with inputs; [
       (final: prev: {
         zjstatus = zjstatus.packages.${prev.system}.default;
       })
-      nh.overlays.default
     ];
   };
 
@@ -58,18 +49,17 @@ in
     nodePackages.typescript-language-server
     pkg-config
     ripgrep
-    unstable.nodePackages.svelte-language-server
+    nodePackages.svelte-language-server
     tailwindcss-language-server
     taplo
     vscode-langservers-extracted
-    unstable.yazi
-
+    yazi
+  ]
+  ++ (with nerd-fonts; [
     # Fonts
-    (pkgs.nerdfonts.override {
-      fonts = [
-        "FiraCode"
-        "DroidSansMono"
-      ];
-    })
-  ];
+    droid-sans-mono
+    fira-code
+    hack
+    noto
+  ]);
 }
