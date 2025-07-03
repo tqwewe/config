@@ -65,12 +65,15 @@ in
         "X" = "select_line_above";
         "A-x" = "extend_to_line_bounds";
 
+        # https://github.com/sxyazi/yazi/pull/2461
         "C-y" = [
           ":sh rm -f /tmp/unique-file"
           ":insert-output yazi %{buffer_name} --chooser-file=/tmp/unique-file"
           '':insert-output echo "\x1b[?1049h\x1b[?2004h" > /dev/tty''
           ":open %sh{cat /tmp/unique-file}"
           ":redraw"
+          ":set mouse false"
+          ":set mouse true"
         ];
       };
 
