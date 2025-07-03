@@ -50,6 +50,7 @@
               cargo-expand
               cargo-generate
               cargo-outdated
+              cargo-semver-checks
               cargo-temp
               rustToolchain
               pkg-config
