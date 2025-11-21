@@ -16,6 +16,7 @@ in
 
       editor = {
         bufferline = "always";
+        clipboard-provider = "termcode";
         cursorline = true;
         cursor-shape = {
           insert = "bar";
@@ -177,6 +178,18 @@ in
           };
           auto-format = true;
         }
+        {
+          name = "sql";
+          formatter = {
+            command = "${pkgs.sqlfluff}/bin/sqlfluff";
+            args = [
+              "format"
+              "--dialect=postgres"
+              "-"
+            ];
+          };
+          auto-format = true;
+        }
       ];
 
       language-server.crates-lsp = {
@@ -248,8 +261,10 @@ in
     nixfmt-rfc-style
     nodePackages.vscode-langservers-extracted
     nodePackages.typescript-language-server
-    sumneko-lua-language-server
+    sqlfluff
+    lua-language-server
     taplo
+    yaml-language-server
   ];
 
   home.sessionVariables = {

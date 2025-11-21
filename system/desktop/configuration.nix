@@ -22,13 +22,45 @@
   ];
 
   # Hostname
-  networking.hostName = "desktop";
+  networking = {
+    dhcpcd.enable = true;
+    enableIPv6 = true;
+    hostName = "desktop";
+  };
   networking.networkmanager.enable = true;
   networking.networkmanager.wifi.powersave = false;
 
   # Bootloader
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+
+  # Realtime permissions
+  security.pam.loginLimits = [
+    {
+      domain = "@audio";
+      item = "memlock";
+      type = "-";
+      value = "unlimited";
+    }
+    {
+      domain = "@audio";
+      item = "rtprio";
+      type = "-";
+      value = "99";
+    }
+    {
+      domain = "@audio";
+      item = "nofile";
+      type = "soft";
+      value = "99999";
+    }
+    {
+      domain = "@audio";
+      item = "nofile";
+      type = "hard";
+      value = "99999";
+    }
+  ];
 
   # KDEConnect/GSConnect ports
   networking.firewall = {
@@ -65,7 +97,11 @@
   systemd.services.avahi-daemon.enable = true;
 
   # Open WebUI
-  services.open-webui.enable = true;
+  services.open-webui = {
+    enable = true;
+    openFirewall = true;
+    host = "0.0.0.0";
+  };
 
   boot.kernelPackages = pkgs.linuxPackages_latest;
   boot.resumeDevice = "/dev/disk/by-uuid/6d614528-903b-4eba-8179-927f7d50ec2f";
@@ -127,11 +163,24 @@
     options iwlwifi power_save=0 11n_disable=8 bt_coex_active=0 swcrypto=1
     options iwlmvm power_scheme=1
   '';
+  # options v4l2loopback video_nr=20 card_label="Virtual GoPro" exclusive_caps=1
   # options v4l2loopback devices=1 video_nr=10 card_label="OBS Virtual Camera" exclusive_caps=1
   # boot.extraModprobeConfig = ''
   #   options iwlwifi power_save=0 11n_disable=8 bt_coex_active=0 swcrypto=1
   #   options iwlmvm power_scheme=1
   # '';
+
+  # systemd.services.gopro-virtual = {
+  #   description = "GoPro Virtual Webcam";
+  #   after = [ "multi-user.target" ];
+  #   wantedBy = [ "multi-user.target" ];
+  #   serviceConfig = {
+  #     ExecStart = "${pkgs.bash}/bin/bash -c 'VIRTUAL=$(${pkgs.v4l-utils}/bin/v4l2-ctl --list-devices | grep -A1 \"Virtual GoPro\" | tail -n1 | xargs) && USB=$(${pkgs.v4l-utils}/bin/v4l2-ctl --list-devices | grep -A2 \"USB Video\" | grep \"/dev/video\" | head -n1 | xargs) && ${pkgs.ffmpeg}/bin/ffmpeg -f v4l2 -input_format mjpeg -video_size 1280x720 -framerate 60 -i $USB -pix_fmt yuyv422 -f v4l2 $VIRTUAL'";
+  #     Restart = "always";
+  #     RestartSec = "5";
+  #     User = "root";
+  #   };
+  # };
 
   boot.postBootCommands = ''
     # Pin ALL WiFi interrupts to cores 1,2 only
@@ -170,9 +219,17 @@
         "docker"
         "i2c"
         "video"
+        "audio"
+        "realtime"
       ];
     };
   };
+  nix.settings.trusted-users = [
+    "root"
+    "ari"
+  ];
+  services.openssh.enable = true;
+  services.fail2ban.enable = true;
 
   # Control monitor brightness from cli
   users.groups.i2c = { };

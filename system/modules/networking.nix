@@ -3,6 +3,7 @@
   # This file was populated at runtime with the networking
   # details gathered from the active system.
   networking = {
+    enableIPv6 = true;
     nameservers = [
       "8.8.8.8"
     ];

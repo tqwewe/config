@@ -34,13 +34,13 @@
             overlays = [ rust-overlay.overlays.default ];
           };
 
-          # Define the shell directly here, instead of importing
-          rustToolchain = pkgs.rust-bin.stable.latest.default.override {
+          rustToolchain = pkgs.rust-bin.stable."1.89.0".default.override {
             extensions = [
               "rust-src"
               "rustfmt"
               "rust-analyzer"
             ];
+            targets = [ "wasm32-unknown-unknown" ];
           };
 
           devShell = pkgs.mkShell {
@@ -49,6 +49,7 @@
               bacon
               cargo-expand
               cargo-generate
+              cargo-msrv
               cargo-outdated
               cargo-semver-checks
               cargo-temp

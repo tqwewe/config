@@ -44,7 +44,7 @@
 
     # Helix
     helix = {
-      url = "github:helix-editor/helix/master";
+      url = "github:helix-editor/helix/25.07";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 

@@ -1,5 +1,6 @@
 {
-  nixpkgs.config.allowUnfree = true;
+  nixpkgs.config = import ./nixpkgs-config.nix;
+  xdg.configFile."nixpkgs/config.nix".source = ./nixpkgs-config.nix;
 
   fonts.fontconfig.enable = true;
 

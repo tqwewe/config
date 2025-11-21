@@ -15,23 +15,36 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-
     src = {
       url = "github:cristiand391/zj-quit";
       flake = false;
     };
   };
 
-  outputs = { self, nixpkgs, crane, flake-utils, rust-overlay, src, ... }:
-    flake-utils.lib.eachDefaultSystem (system:
+  outputs =
+    {
+      self,
+      nixpkgs,
+      crane,
+      flake-utils,
+      rust-overlay,
+      src,
+      ...
+    }:
+    flake-utils.lib.eachDefaultSystem (
+      system:
       let
         pkgs = import nixpkgs {
           inherit system;
           overlays = [ (import rust-overlay) ];
         };
 
-        rustWithWasiTarget = pkgs.rust-bin.stable.latest.default.override {
-          extensions = [ "rust-src" "rust-std" "rust-analyzer" ];
+        rustWithWasiTarget = pkgs.rust-bin.stable."1.89.0".default.override {
+          extensions = [
+            "rust-src"
+            "rust-std"
+            "rust-analyzer"
+          ];
           targets = [ "wasm32-wasip1" ];
         };
 
@@ -41,7 +54,7 @@
         # our specific toolchain there.
         craneLib = (crane.mkLib pkgs).overrideToolchain rustWithWasiTarget;
 
-        patchedSrc = pkgs.runCommand "patched-zj-quit" {} ''
+        patchedSrc = pkgs.runCommand "patched-zj-quit" { } ''
           cp -r ${src} $out
           chmod -R +w $out
           sed -i 's/wasm32-wasi/wasm32-wasip1/' $out/.cargo/config.toml
@@ -59,7 +72,8 @@
 
           buildInputs = [
             # Add additional build inputs here
-          ] ++ pkgs.lib.optionals pkgs.stdenv.isDarwin [
+          ]
+          ++ pkgs.lib.optionals pkgs.stdenv.isDarwin [
             # Additional darwin specific inputs can be set here
           ];
         };

@@ -183,6 +183,28 @@
 
         echo "Rust environment setup complete!"
       '';
+
+      rusttemp = ''
+        if test (count $argv) -lt 1
+          echo "Usage: rusttemp <project-name>"
+          return 1
+        end
+
+        set project_name $argv[1]
+        set project_dir /tmp/$project_name
+
+        if test -d $project_dir
+          echo "Error: $project_dir already exists."
+          return 1
+        end
+
+        mkdir $project_dir
+        and cd $project_dir
+        and devenv init
+        and echo '{ languages.rust.enable = true; }' > devenv.nix
+        and devenv shell cargo init --bin
+        and exec devenv shell fish
+      '';
     };
   };
 }

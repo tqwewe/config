@@ -5,7 +5,7 @@
 }:
 {
   imports = with inputs; [
-    inputs.plasma-manager.homeManagerModules.plasma-manager
+    inputs.plasma-manager.homeModules.plasma-manager
 
     ./modules/base.nix
     ./modules/direnv.nix
@@ -13,8 +13,8 @@
     ./modules/fish.nix
     ./modules/gh.nix
     ./modules/git.nix
-    # ./modules/gnome.nix
     ./modules/helix.nix
+    ./modules/jujutsu.nix
     ./modules/kitty.nix
     ./modules/lazygit.nix
     ./modules/librewolf.nix
@@ -38,15 +38,20 @@
 
   # User programs & packages
   programs.bat.enable = true;
-  programs.bottom.enable = true;
+  programs.btop.enable = true;
   programs.eza.enable = true;
   programs.zoxide.enable = true;
 
   home.packages =
     with pkgs;
     [
+      ardour
+      claude-code
       discord
+      devenv
       git-cliff
+      google-chrome
+      guitarix
       killall
       libreoffice
       nautilus
@@ -55,14 +60,14 @@
       obsidian
       proton-pass
       protonmail-desktop
-      protonvpn-cli
       protonvpn-gui
       qbittorrent
+      qjackctl
+      reaper
       ripgrep
       signal-desktop
       spotify
       vlc
-      whatsie
       yazi
       zoom-us
     ]

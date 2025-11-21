@@ -3,17 +3,12 @@
   programs.git = {
     enable = true;
 
-    userEmail = "dev@tqwewe.com";
-    userName = "Ari Seyhun";
+    settings = {
+      user = {
+        email = "dev@tqwewe.com";
+        name = "Ari Seyhun";
+      };
 
-    lfs.enable = true;
-
-    signing = {
-      key = "${config.home.homeDirectory}/.ssh/id_ed25519.pub";
-      signByDefault = true;
-    };
-
-    extraConfig = {
       init.defaultBranch = "main";
 
       gpg = {
@@ -22,6 +17,13 @@
           program = "${pkgs.openssh}/bin/ssh-keygen";
         };
       };
+    };
+
+    lfs.enable = true;
+
+    signing = {
+      key = "${config.home.homeDirectory}/.ssh/id_ed25519.pub";
+      signByDefault = true;
     };
   };
 }

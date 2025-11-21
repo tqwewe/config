@@ -15,4 +15,13 @@
       "webgl.disabled" = false;
     };
   };
+
+  xdg.mimeApps = {
+    enable = true;
+    defaultApplications = {
+      "x-scheme-handler/http" = [ "librewolf.desktop" ];
+      "x-scheme-handler/https" = [ "librewolf.desktop" ];
+      "text/html" = [ "librewolf.desktop" ];
+    };
+  };
 }
