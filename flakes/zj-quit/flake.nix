@@ -39,7 +39,7 @@
           overlays = [ (import rust-overlay) ];
         };
 
-        rustWithWasiTarget = pkgs.rust-bin.stable."1.89.0".default.override {
+        rustWithWasiTarget = pkgs.rust-bin.stable."1.91.1".default.override {
           extensions = [
             "rust-src"
             "rust-std"

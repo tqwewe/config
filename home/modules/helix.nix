@@ -173,9 +173,7 @@ in
         }
         {
           name = "nix";
-          formatter = {
-            command = "nixfmt";
-          };
+          formatter.command = "nixfmt";
           auto-format = true;
         }
         {
