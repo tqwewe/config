@@ -12,9 +12,6 @@
       set -gx PATH $PATH ~/.cargo/bin
       set -gx ZELLIJ_AUTO_ATTACH true
       set -gx BARTIB_FILE ~/.bartib/activities.bartib
-      # set -gx DYLD_FALLBACK_LIBRARY_PATH /usr/lib $DYLD_FALLBACK_LIBRARY_PATH
-      # set -gx LIBRARY_PATH /usr/lib $LIBRARY_PATH
-      # set -gx RUSTFLAGS "-L/usr/lib $RUSTFLAGS"
 
       zoxide init fish | source
 
