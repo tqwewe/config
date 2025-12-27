@@ -1,6 +1,4 @@
 {
-  inputs,
-  config,
   pkgs,
   ...
 }:
@@ -18,7 +16,11 @@
     fish.enable = true;
   };
 
-  users.users.ari.shell = pkgs.fish;
+  users.users.ari = {
+    name = "ari";
+    home = "/Users/ari";
+    shell = pkgs.fish;
+  };
 
   nixpkgs = {
     hostPlatform = "x86_64-darwin";
@@ -28,6 +30,15 @@
   nix.extraOptions = ''
     extra-experimental-features = nix-command flakes
   '';
+
+  nix = {
+    settings = {
+      trusted-users = [
+        "root"
+        "ari"
+      ];
+    };
+  };
 
   system.stateVersion = 4;
 }

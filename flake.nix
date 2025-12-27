@@ -56,9 +56,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Zellij statusbar
-    zjstatus.url = "github:dj95/zjstatus";
-
     # Zellij quit prompt
     zj-quit = {
       url = "path:./flakes/zj-quit";
@@ -119,11 +116,11 @@
       };
 
       darwinConfigurations."Aris-MacBook-Pro" = nix-darwin.lib.darwinSystem {
+        system = "x86_64-darwin";
         specialArgs = { inherit inputs; };
         modules = [
-          agenix.darwinModules.default
-          home-manager.darwinModules.home-manager
           ./system/macbook/configuration.nix
+          agenix.darwinModules.default
         ];
       };
 

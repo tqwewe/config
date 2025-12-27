@@ -6,7 +6,7 @@
 }:
 let
   zjstatus_wasm = "file:${pkgs.zjstatus}/bin/zjstatus.wasm";
-  zj-quit_wasm = "file:${inputs.zj-quit.packages.${pkgs.system}.default}/bin/zj-quit.wasm";
+  zj-quit_wasm = "file:${inputs.zj-quit.packages.${pkgs.stdenv.hostPlatform.system}.default}/bin/zj-quit.wasm";
 in
 {
   programs.zellij = {
@@ -16,30 +16,30 @@ in
     settings = {
       theme = "kanagawa";
     };
-  };
-  xdg.configFile."zellij/config.kdl".text = ''
-    keybinds {
-      unbind "Ctrl h" "Ctrl o" "Alt Left" "Alt Right" "Alt i" "Alt o"
-      shared_except "move" "locked" {
-        bind "Ctrl k" { SwitchToMode "Move"; }
-      }
+    extraConfig = ''
+      keybinds {
+        unbind "Ctrl h" "Ctrl o" "Alt Left" "Alt Right" "Alt i" "Alt o"
+        shared_except "move" "locked" {
+          bind "Ctrl k" { SwitchToMode "Move"; }
+        }
 
-      shared_except "locked" {
-        bind "Ctrl q" {
-          LaunchOrFocusPlugin "zj-quit" {
-            floating true
+        shared_except "locked" {
+          bind "Ctrl q" {
+            LaunchOrFocusPlugin "zj-quit" {
+              floating true
+            }
           }
         }
       }
-    }
 
-    plugins {
-      zj-quit location="${zj-quit_wasm}" {
-        confirm_key "q"
-        cancel_key "Esc"
+      plugins {
+        zj-quit location="${zj-quit_wasm}" {
+          confirm_key "q"
+          cancel_key "Esc"
+        }
       }
-    }
-  '';
+    '';
+  };
   xdg.configFile."zellij/layouts/default.kdl".text = ''
     layout {
       tab {
@@ -119,11 +119,26 @@ in
     eval (zellij setup --generate-completion fish | string collect)
   '';
 
-  nixpkgs = {
-    overlays = with inputs; [
-      (final: prev: {
-        zjstatus = zjstatus.packages.${prev.system}.default;
-      })
-    ];
-  };
+  # Overlay for standalone home-manager
+  nixpkgs.overlays = [
+    (final: prev: {
+      zjstatus = prev.stdenv.mkDerivation {
+        pname = "zjstatus";
+        version = "0.21.1";
+
+        src = prev.fetchurl {
+          url = "https://github.com/dj95/zjstatus/releases/download/v0.21.1/zjstatus.wasm";
+          sha256 = "sha256-06mfcijmsmvb2gdzsql6w8axpaxizdc190b93s3nczy212i846fw";
+        };
+
+        dontUnpack = true;
+        dontBuild = true;
+
+        installPhase = ''
+          mkdir -p $out/bin
+          cp $src $out/bin/zjstatus.wasm
+        '';
+      };
+    })
+  ];
 }

@@ -51,7 +51,7 @@
               cargo-generate
               cargo-msrv
               cargo-outdated
-              cargo-semver-checks
+              # cargo-semver-checks
               cargo-temp
               rustToolchain
               pkg-config
