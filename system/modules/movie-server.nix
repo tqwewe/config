@@ -23,6 +23,7 @@
   systemd.services.bazarr.serviceConfig = { Group = lib.mkForce "media"; UMask = lib.mkForce "0002"; };
   systemd.services.qbittorrent.serviceConfig = { Group = lib.mkForce "media"; UMask = lib.mkForce "0002"; };
   systemd.services.jellyfin.serviceConfig = { Group = lib.mkForce "media"; UMask = lib.mkForce "0002"; };
+  systemd.services.seerr.serviceConfig = { Group = lib.mkForce "media"; UMask = lib.mkForce "0002"; };
 
   services = {
     bazarr = {
@@ -62,6 +63,11 @@
     };
 
     sonarr = {
+      enable = true;
+      openFirewall = true;
+    };
+
+    seerr = {
       enable = true;
       openFirewall = true;
     };
