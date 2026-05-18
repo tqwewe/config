@@ -62,6 +62,7 @@
   networking.firewall.allowedTCPPorts = [ 2222 8080 ];
 
   hardware.bluetooth.enable = true;
+  hardware.bluetooth.powerOnBoot = true;
   services.blueman.enable = true;
 
   boot.kernelModules = [ "hid-apple" ];
