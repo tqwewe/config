@@ -34,5 +34,6 @@
       colorScheme = "BreezeDark";
       cursor.theme = "breeze_cursors";
     };
+    configFile."kwalletrc"."Wallet".Enabled = false;
   };
 }
