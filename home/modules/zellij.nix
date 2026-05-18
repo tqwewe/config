@@ -134,11 +134,4 @@ in
     eval (zellij setup --generate-completion fish | string collect)
   '';
 
-  nixpkgs = {
-    overlays = with inputs; [
-      (final: prev: {
-        zjstatus = zjstatus.packages.${prev.system}.default;
-      })
-    ];
-  };
 }
