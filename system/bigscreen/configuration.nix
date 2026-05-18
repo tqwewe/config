@@ -59,9 +59,15 @@
     };
   };
 
-  networking.firewall.allowedTCPPorts = [ 80 2222 8080 ];
+  networking.firewall.allowedTCPPorts = [ 53 80 2222 8080 ];
+  networking.firewall.allowedUDPPorts = [ 53 ];
 
   services.tailscale.enable = true;
+
+  services.dnsmasq = {
+    enable = true;
+    settings.address = "/bigscreen/100.106.216.67";
+  };
 
   services.caddy = {
     enable = true;
