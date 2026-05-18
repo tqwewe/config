@@ -97,6 +97,7 @@
   '';
 
   security.sudo.wheelNeedsPassword = false;
+  services.displayManager.sddm.settings.Autologin.Relogin = true;
 
   systemd.sleep.settings.Sleep = {
     AllowSuspend = "no";
