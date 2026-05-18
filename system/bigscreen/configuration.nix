@@ -18,10 +18,7 @@
     hostName = "bigscreen";
     dhcpcd.enable = true;
     enableIPv6 = true;
-    networkmanager = {
-      enable = true;
-      wifi.secretsBackend = "none";
-    };
+    networkmanager.enable = true;
   };
 
   boot.loader.systemd-boot.enable = true;
