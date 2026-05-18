@@ -73,6 +73,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Zellij status bar
+    zjstatus = {
+      url = "github:dj95/zjstatus";
+    };
+
     # Zellij quit prompt
     zj-quit = {
       url = "path:./flakes/zj-quit";
