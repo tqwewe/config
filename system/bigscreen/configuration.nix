@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }:
+{ pkgs, lib, config, ... }:
 {
   imports = [
     ./hardware-configuration.nix
@@ -67,6 +67,7 @@
   boot.kernelModules = [ "hid-apple" ];
 
   hardware.nvidia.open = lib.mkForce false;
+  hardware.nvidia.package = lib.mkForce config.boot.kernelPackages.nvidiaPackages.legacy_580;
 
   boot.kernelParams = [ "drm.edid_firmware=Unknown-1:edid/1920x1080.bin" ];
   boot.extraModprobeConfig = ''
