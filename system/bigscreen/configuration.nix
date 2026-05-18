@@ -61,6 +61,11 @@
   hardware.bluetooth.enable = true;
   services.blueman.enable = true;
 
+  boot.kernelModules = [ "hid-apple" ];
+  boot.extraModprobeConfig = ''
+    options hid_apple fnmode=2
+  '';
+
   security.polkit.enable = true;
 
   hardware.enableAllFirmware = true;
