@@ -69,6 +69,7 @@
     options hid_apple fnmode=2
   '';
 
+  security.sudo.wheelNeedsPassword = false;
   security.polkit.enable = true;
 
   hardware.enableAllFirmware = true;
