@@ -86,6 +86,18 @@
   hardware.bluetooth.powerOnBoot = true;
   services.blueman.enable = true;
 
+  systemd.services.bluetooth-autopower = {
+    description = "Power on Bluetooth adapter";
+    after = [ "bluetooth.service" ];
+    wants = [ "bluetooth.service" ];
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "/run/current-system/sw/bin/bluetoothctl power on";
+      RemainAfterExit = true;
+    };
+  };
+
   boot.kernelModules = [ "hid-apple" ];
 
   hardware.nvidia.open = lib.mkForce false;
