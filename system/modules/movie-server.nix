@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, lib, ... }:
 {
   users.groups.media = { };
 
@@ -18,11 +18,11 @@
     "d /media/downloads 0775 root media -"
   ];
 
-  systemd.services.radarr.serviceConfig = { Group = "media"; UMask = "0002"; };
-  systemd.services.sonarr.serviceConfig = { Group = "media"; UMask = "0002"; };
-  systemd.services.bazarr.serviceConfig = { Group = "media"; UMask = "0002"; };
-  systemd.services.qbittorrent.serviceConfig = { Group = "media"; UMask = "0002"; };
-  systemd.services.jellyfin.serviceConfig = { Group = "media"; UMask = "0002"; };
+  systemd.services.radarr.serviceConfig = { Group = lib.mkForce "media"; UMask = "0002"; };
+  systemd.services.sonarr.serviceConfig = { Group = lib.mkForce "media"; UMask = "0002"; };
+  systemd.services.bazarr.serviceConfig = { Group = lib.mkForce "media"; UMask = "0002"; };
+  systemd.services.qbittorrent.serviceConfig = { Group = lib.mkForce "media"; UMask = "0002"; };
+  systemd.services.jellyfin.serviceConfig = { Group = lib.mkForce "media"; UMask = "0002"; };
 
   services = {
     bazarr = {
