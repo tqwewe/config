@@ -136,6 +136,12 @@
             ./system/desktop/configuration.nix
           ];
         };
+        bigscreen = nixpkgs.lib.nixosSystem {
+          specialArgs = { inherit inputs; };
+          modules = [
+            ./system/bigscreen/configuration.nix
+          ];
+        };
       };
 
       darwinConfigurations."Aris-MacBook-Pro" = nix-darwin.lib.darwinSystem {
@@ -149,6 +155,7 @@
 
       homeConfigurations = {
         "ari@desktop" = homeConfig { module = ./home/desktop.nix; };
+        "ari@bigscreen" = homeConfig { module = ./home/bigscreen.nix; };
         "ari@Aris-MacBook-Pro" = homeConfig {
           module = ./home/macbook.nix;
           system = "x86_64-darwin";
