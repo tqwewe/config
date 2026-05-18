@@ -1,6 +1,8 @@
-{ pkgs, ... }:
+{ inputs, pkgs, ... }:
 {
   imports = [
+    inputs.plasma-manager.homeModules.plasma-manager
+
     ./modules/base.nix
     ./modules/fish.nix
     ./modules/git.nix
@@ -24,4 +26,13 @@
     firefox
     ripgrep
   ];
+
+  programs.plasma = {
+    enable = true;
+    workspace = {
+      theme = "breeze-dark";
+      colorScheme = "BreezeDark";
+      cursor.theme = "breeze_cursors";
+    };
+  };
 }
