@@ -1,4 +1,23 @@
+{ config, ... }:
 {
+  users.groups.media = { };
+
+  users.users = {
+    ari.extraGroups = [ "media" ];
+    radarr.extraGroups = [ "media" ];
+    sonarr.extraGroups = [ "media" ];
+    jellyfin.extraGroups = [ "media" ];
+    qbittorrent.extraGroups = [ "media" ];
+    bazarr.extraGroups = [ "media" ];
+  };
+
+  systemd.tmpfiles.rules = [
+    "d /media          0775 root  media -"
+    "d /media/movies   0775 root  media -"
+    "d /media/tv       0775 root  media -"
+    "d /media/downloads 0775 root media -"
+  ];
+
   services = {
     bazarr = {
       enable = true;
