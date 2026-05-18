@@ -22,10 +22,6 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  environment.systemPackages = with pkgs; [
-    kdePackages.plasma-bigscreen
-  ];
-
   services.displayManager.defaultSession = "plasma";
   services.displayManager.autoLogin.enable = true;
   services.displayManager.autoLogin.user = "ari";
