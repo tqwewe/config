@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 {
   imports = [
     ./hardware-configuration.nix
@@ -66,7 +66,7 @@
 
   boot.kernelModules = [ "hid-apple" ];
 
-  hardware.nvidia.open = false;
+  hardware.nvidia.open = lib.mkForce false;
   boot.extraModprobeConfig = ''
     options hid_apple fnmode=2
   '';
