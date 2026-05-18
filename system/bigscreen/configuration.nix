@@ -59,9 +59,22 @@
     };
   };
 
-  networking.firewall.allowedTCPPorts = [ 2222 8080 ];
+  networking.firewall.allowedTCPPorts = [ 80 2222 8080 ];
 
   services.tailscale.enable = true;
+
+  services.caddy = {
+    enable = true;
+    virtualHosts = {
+      "http://jellyfin.bigscreen".extraConfig     = "reverse_proxy localhost:8096";
+      "http://seerr.bigscreen".extraConfig        = "reverse_proxy localhost:5055";
+      "http://radarr.bigscreen".extraConfig       = "reverse_proxy localhost:7878";
+      "http://sonarr.bigscreen".extraConfig       = "reverse_proxy localhost:8989";
+      "http://prowlarr.bigscreen".extraConfig     = "reverse_proxy localhost:9696";
+      "http://bazarr.bigscreen".extraConfig       = "reverse_proxy localhost:6767";
+      "http://qbittorrent.bigscreen".extraConfig  = "reverse_proxy localhost:8080";
+    };
+  };
 
   hardware.bluetooth.enable = true;
   hardware.bluetooth.powerOnBoot = true;
