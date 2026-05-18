@@ -58,6 +58,9 @@
 
   networking.firewall.allowedTCPPorts = [ 2222 ];
 
+  hardware.bluetooth.enable = true;
+  services.blueman.enable = true;
+
   security.polkit.enable = true;
 
   hardware.enableAllFirmware = true;
