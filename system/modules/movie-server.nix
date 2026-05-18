@@ -18,6 +18,12 @@
     "d /media/downloads 0775 root media -"
   ];
 
+  systemd.services.radarr.serviceConfig = { Group = "media"; UMask = "0002"; };
+  systemd.services.sonarr.serviceConfig = { Group = "media"; UMask = "0002"; };
+  systemd.services.bazarr.serviceConfig = { Group = "media"; UMask = "0002"; };
+  systemd.services.qbittorrent.serviceConfig = { Group = "media"; UMask = "0002"; };
+  systemd.services.jellyfin.serviceConfig = { Group = "media"; UMask = "0002"; };
+
   services = {
     bazarr = {
       enable = true;
