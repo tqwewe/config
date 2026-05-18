@@ -26,7 +26,7 @@
     kdePackages.plasma-bigscreen
   ];
 
-  services.displayManager.defaultSession = "plasma-bigscreen-wayland";
+  services.displayManager.defaultSession = "plasma";
   services.displayManager.autoLogin.enable = true;
   services.displayManager.autoLogin.user = "ari";
 
