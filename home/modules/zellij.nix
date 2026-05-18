@@ -6,40 +6,54 @@
 }:
 let
   zjstatus_wasm = "file:${pkgs.zjstatus}/bin/zjstatus.wasm";
-  zj-quit_wasm = "file:${inputs.zj-quit.packages.${pkgs.stdenv.hostPlatform.system}.default}/bin/zj-quit.wasm";
+  zj-quit_wasm = "file:${inputs.zj-quit.packages.${pkgs.system}.default}/plugin.wasm";
+  zsm_wasm = "file:${inputs.zellij-plugin-zsm.packages.${pkgs.system}.default}/plugin.wasm";
 in
 {
   programs.zellij = {
     enable = true;
 
-    enableFishIntegration = false;
+    attachExistingSession = true;
+    enableFishIntegration = true;
     settings = {
-      theme = "kanagawa";
+      theme = "dracula";
     };
-    extraConfig = ''
-      keybinds {
-        unbind "Ctrl h" "Ctrl o" "Alt Left" "Alt Right" "Alt i" "Alt o"
-        shared_except "move" "locked" {
-          bind "Ctrl k" { SwitchToMode "Move"; }
+  };
+  xdg.configFile."zellij/config.kdl".text = ''
+    keybinds {
+      unbind "Ctrl h" "Ctrl o" "Alt Left" "Alt Right" "Alt i" "Alt o"
+      shared_except "move" "locked" {
+        bind "Ctrl k" { SwitchToMode "Move"; }
+      }
+
+      shared_except "locked" {
+        bind "Ctrl q" {
+          LaunchOrFocusPlugin "zj-quit" {
+            floating true
+            move_to_focused_tab true
+          }
         }
 
-        shared_except "locked" {
-          bind "Ctrl q" {
-            LaunchOrFocusPlugin "zj-quit" {
-              floating true
-            }
+        bind "Ctrl e" {
+          LaunchOrFocusPlugin "zsm" {
+            floating true
+            move_to_focused_tab true
           }
         }
       }
+    }
 
-      plugins {
-        zj-quit location="${zj-quit_wasm}" {
-          confirm_key "q"
-          cancel_key "Esc"
-        }
+    plugins {
+      zj-quit location="${zj-quit_wasm}" {
+        confirm_key "q"
+        cancel_key "Esc"
       }
-    '';
-  };
+
+      zsm location="${zsm_wasm}" {
+        default_layout "default"
+      }
+    }
+  '';
   xdg.configFile."zellij/layouts/default.kdl".text = ''
     layout {
       tab {
@@ -92,13 +106,14 @@ in
         children
         pane size=1 borderless=true {
           plugin location="${zjstatus_wasm}" {
-            format_left  "{mode}#[fg=black,bg=blue,bold]{session}  #[fg=blue,bg=#181825]{tabs}"
-            format_right "#[fg=#181825,bg=#b1bbfa]{datetime}#[fg=#6C7086,bg=#b1bbfa,bold]{swap_layout} "
+            format_left  "#[fg=black,bg=blue,bold]  {session}  #[fg=blue,bg=#181825]{tabs}"
+            format_right "#[fg=#181825,bg=#b1bbfa]{datetime}#[fg=#6C7086,bg=#b1bbfa,bold]{mode} "
             format_space "#[bg=#181825]"
 
             hide_frame_for_single_pane "false"
 
-            mode_normal  "#[bg=blue] "
+            mode_normal  "#[fg=#6C7086,bg=#b1bbfa,bold] {name} "
+            mode_locked  "#[fg=#181825,bg=#f38ba8,bold] [LOCKED] "
 
             tab_normal              "#[fg=#181825,bg=#4C4C59] #[fg=#000000,bg=#4C4C59]{index}  {name} #[fg=#4C4C59,bg=#181825]"
             tab_normal_fullscreen   "#[fg=#6C7086,bg=#181825] {index} {name} [] "
@@ -119,26 +134,11 @@ in
     eval (zellij setup --generate-completion fish | string collect)
   '';
 
-  # Overlay for standalone home-manager
-  nixpkgs.overlays = [
-    (final: prev: {
-      zjstatus = prev.stdenv.mkDerivation {
-        pname = "zjstatus";
-        version = "0.21.1";
-
-        src = prev.fetchurl {
-          url = "https://github.com/dj95/zjstatus/releases/download/v0.21.1/zjstatus.wasm";
-          sha256 = "sha256-06mfcijmsmvb2gdzsql6w8axpaxizdc190b93s3nczy212i846fw";
-        };
-
-        dontUnpack = true;
-        dontBuild = true;
-
-        installPhase = ''
-          mkdir -p $out/bin
-          cp $src $out/bin/zjstatus.wasm
-        '';
-      };
-    })
-  ];
+  nixpkgs = {
+    overlays = with inputs; [
+      (final: prev: {
+        zjstatus = zjstatus.packages.${prev.system}.default;
+      })
+    ];
+  };
 }

@@ -5,11 +5,22 @@
 }:
 let
   crates-lsp = pkgs.callPackage ../../pkgs/crates-lsp.nix { };
+  moonbit-grammar = pkgs.tree-sitter.buildGrammar {
+    language = "moonbit";
+    version = "unstable";
+    src = inputs.tree-sitter-moonbit;
+  };
 in
 {
   programs.helix = {
     enable = true;
-    # package = inputs.helix.packages.${pkgs.system}.default;
+    package = inputs.helix.packages.${pkgs.system}.helix.overrideAttrs (old: {
+      cargoBuildFlags = (old.cargoBuildFlags or [ ]) ++ [
+        "--features"
+        "steel"
+      ];
+      buildInputs = (old.buildInputs or [ ]) ++ [ pkgs.steel ]; # if steel lib is needed
+    });
 
     settings = {
       theme = "nightfox";
@@ -88,7 +99,7 @@ in
       language = [
         {
           name = "javascript";
-          formatter.command = "prettier";
+          formatter.command = "${pkgs.prettier}/bin/prettier";
           formatter.args = [
             "--stdin-filepath"
             "%{buffer_name}"
@@ -98,7 +109,7 @@ in
         }
         {
           name = "jsx";
-          formatter.command = "prettier";
+          formatter.command = "${pkgs.prettier}/bin/prettier";
           formatter.args = [
             "--stdin-filepath"
             "%{buffer_name}"
@@ -108,7 +119,7 @@ in
         }
         {
           name = "typescript";
-          formatter.command = "prettier";
+          formatter.command = "${pkgs.prettier}/bin/prettier";
           formatter.args = [
             "--parser"
             "typescript"
@@ -120,7 +131,7 @@ in
         }
         {
           name = "tsx";
-          formatter.command = "prettier";
+          formatter.command = "${pkgs.prettier}/bin/prettier";
           formatter.args = [
             "--parser"
             "typescript"
@@ -132,7 +143,7 @@ in
         }
         {
           name = "svelte";
-          formatter.command = "prettier";
+          formatter.command = "${pkgs.prettier}/bin/prettier";
           # formatter.args = ["--parser" "typescript" "--stdin-filepath" "main.svelte"];
           formatter.args = [
             "--stdin-filepath"
@@ -188,6 +199,30 @@ in
           };
           auto-format = true;
         }
+        {
+          name = "moonbit";
+          language-id = "moonbit";
+          scope = "source.moonbit";
+          injection-regex = "mbt|moonbit";
+          file-types = [ "mbt" ];
+          roots = [
+            "moon.mod"
+            "moon.mod.json"
+            "moon.pkg.json"
+          ];
+          auto-format = true;
+          comment-tokens = [
+            "//"
+            "///"
+            "///|"
+          ];
+          indent = {
+            tab-width = 4;
+            unit = "    ";
+          };
+          language-servers = [ "moonbit-lsp" ];
+          grammar = "moonbit";
+        }
       ];
 
       language-server.crates-lsp = {
@@ -221,26 +256,47 @@ in
       #   ];
       # };
 
-      language-server.rust-analyzer.config = {
-        cargo = {
-          buildScripts.enable = true;
-          features = "all";
-        };
-        check.command = "clippy";
-        procMacro = {
-          ignored = {
-            leptos_macro = [
-              "component"
-              "server"
-              "island"
+      language-server.rust-analyzer = {
+        config = {
+          cargo = {
+            buildScripts.enable = true;
+            features = "all";
+            allTargets = true;
+          };
+
+          check.command = "clippy";
+
+          files = {
+            excludeDirs = [
+              ".git"
+              "target"
+              ".devenv"
+              ".direnv"
+              "node_modules"
+              ".pnpm"
+              "dist"
+              "build"
+              "result"
+              ".next"
             ];
           };
+
+          # procMacro = {
+          #   ignored = {
+          #     leptos_macro = [
+          #       "component"
+          #       "server"
+          #       "island"
+          #     ];
+          #   };
+          # };
+
+          # "rust-analyzer.rustfmt.overrideCommand" = [
+          #   "leptosfmt"
+          #   "--stdin"
+          #   "--rustfmt"
+          # ];
         };
-        "rust-analyzer.rustfmt.overrideCommand" = [
-          "leptosfmt"
-          "--stdin"
-          "--rustfmt"
-        ];
       };
 
       language-server.vscode-css-language-server.config = {
@@ -250,23 +306,39 @@ in
           lint.unknownAtRules = "ignore";
         };
       };
+
+      language-server.moonbit-lsp = {
+        command = "moonbit-lsp";
+      };
     };
   };
 
   home.packages = with pkgs; [
     crates-lsp
     nil
-    nixfmt-rfc-style
-    nodePackages.vscode-langservers-extracted
-    nodePackages.typescript-language-server
+    nixfmt
+    vscode-langservers-extracted
+    typescript-language-server
+    prettier
     sqlfluff
     lua-language-server
+    inputs.moonbit-overlay.packages.${pkgs.system}.moonbit_latest
     taplo
+    terraform-ls
     yaml-language-server
   ];
 
   home.sessionVariables = {
     EDITOR = "hx";
+  };
+
+  xdg.configFile."helix/runtime/grammars/moonbit.so" = {
+    source = "${moonbit-grammar}/parser";
+    force = true;
+  };
+  xdg.configFile."helix/runtime/queries/moonbit" = {
+    source = "${inputs.tree-sitter-moonbit}/queries";
+    force = true;
   };
 
   xdg.configFile."helix/yazi-picker.sh".text = ''
@@ -282,5 +354,9 @@ in
     else
     	zellij action toggle-floating-panes
     fi
+  '';
+
+  xdg.configFile."helix/init.scm".text = ''
+    (require "scooter/scooter.scm")
   '';
 }

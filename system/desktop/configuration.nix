@@ -26,9 +26,19 @@
     dhcpcd.enable = true;
     enableIPv6 = true;
     hostName = "desktop";
+    hosts = {
+      "5.223.66.115" = [ "oddselite" ];
+    };
+    networkmanager = {
+      enable = true;
+      wifi = {
+        backend = "iwd";
+        powersave = false;
+      };
+    };
   };
-  networking.networkmanager.enable = true;
-  networking.networkmanager.wifi.powersave = false;
+
+  # programs.nix-ld.enable = true;
 
   # Bootloader
   boot.loader.systemd-boot.enable = true;
@@ -100,11 +110,20 @@
   };
   systemd.services.avahi-daemon.enable = true;
 
+  services.tailscale = {
+    enable = true;
+  };
+
   # Open WebUI
   services.open-webui = {
-    enable = false;
-    openFirewall = true;
+    enable = true;
+    openFirewall = false;
     host = "0.0.0.0";
+  };
+
+  nix.settings = {
+    substituters = [ "https://cache.nixos-cuda.org" ];
+    trusted-public-keys = [ "cache.nixos-cuda.org:74DUi4Ye579gUqzH4ziL9IyiJBlDpMRn9MBN8oNan9M=" ];
   };
 
   boot.kernelPackages = pkgs.linuxPackages_latest;

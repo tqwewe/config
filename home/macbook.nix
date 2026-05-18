@@ -1,5 +1,7 @@
 { inputs, pkgs, ... }:
 {
+  age.secrets.copilotApiKey.file = ../secrets/copilotApiKey.age;
+
   imports = with inputs; [
     ./modules/alacritty.nix
     ./modules/base.nix
@@ -17,6 +19,14 @@
     agenix.homeManagerModules.default
     ../system/modules/secrets.nix
   ];
+
+  nixpkgs = {
+    overlays = with inputs; [
+      (final: prev: {
+        zjstatus = zjstatus.packages.${prev.system}.default;
+      })
+    ];
+  };
 
   home = {
     username = "ari";
@@ -42,11 +52,11 @@
       devenv
       helix-gpt
       nodejs
-      nodePackages.vscode-langservers-extracted
-      nodePackages.typescript-language-server
+      vscode-langservers-extracted
+      typescript-language-server
       pkg-config
       ripgrep
-      nodePackages.svelte-language-server
+      svelte-language-server
       tailwindcss-language-server
       taplo
       vscode-langservers-extracted

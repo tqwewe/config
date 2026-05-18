@@ -1,5 +1,5 @@
 {
-  description = "A friendly `quit` plugin for zellij";
+  description = "Zoxide Session Manager";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
@@ -15,9 +15,9 @@
     flake-utils.lib.eachDefaultSystem (
       system:
       let
-        owner = "cristiand391";
-        repo = "zj-quit";
-        version = "0.3.1";
+        owner = "liam-mackie";
+        repo = "zsm";
+        version = "0.4.1";
         wasm = "${repo}.wasm";
 
         pkgs = import nixpkgs { inherit system; };
@@ -28,8 +28,8 @@
           version = version;
 
           src = pkgs.fetchurl {
-            url = "https://github.com/${owner}/${repo}/releases/download/${version}/${wasm}";
-            hash = "sha256-JSYnGGN2SLNComhMg4P814dV3TV6jRvTv9fts9oTf5Q=";
+            url = "https://github.com/${owner}/${repo}/releases/download/v${version}/${wasm}";
+            hash = "sha256-+VCf9MEHQVmr2q8lu95jAOsvCQU0iJa3ljqbnIC9ywg=";
           };
 
           dontUnpack = true;

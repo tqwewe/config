@@ -33,7 +33,7 @@ let
           "preferred://browser"
           "preferred://filemanager"
           "applications:steam.desktop"
-          "applications:discord.desktop"
+          "applications:vesktop.desktop"
           "applications:spotify.desktop"
           "applications:kitty.desktop"
         ];
@@ -103,6 +103,29 @@ in
     watchDogsSplash
   ];
 
+  home.file = {
+    ".local/share/icons/hicolor/256x256/apps/vesktop.png".source =
+      "${pkgs.discord}/share/icons/hicolor/256x256/apps/discord.png";
+
+    ".local/share/pixmaps/vesktop.png".source = "${pkgs.discord}/share/pixmaps/discord.png";
+
+    ".local/share/applications/vesktop.desktop" = {
+      text = ''
+        [Desktop Entry]
+        Name=Vesktop
+        Comment=Vesktop is a custom Discord app
+        GenericName=Internet Messenger
+        Exec=vesktop --ozone-platform=x11 %U
+        Icon=discord
+        Type=Application
+        Categories=Network;InstantMessaging;
+        StartupNotify=true
+        StartupWMClass=vesktop
+        Terminal=false
+      '';
+    };
+  };
+
   services.kdeconnect.enable = true;
 
   programs.plasma = {
@@ -110,11 +133,12 @@ in
 
     configFile = {
       kwinrc.Xwayland.Scale = 1;
+      kwinrc.Xwayland.XwaylandEavesdrops = false;
 
-      "autostart/discord.desktop" = {
+      "autostart/vesktop.desktop" = {
         "Desktop Entry" = {
           Categories = "Network;InstantMessaging";
-          Exec = "Discord --start-minimized";
+          Exec = "vesktop --start-minimized --ozone-platform=x11";
           "GenericName[en_AU]" = "All-in-one cross-platform voice and text chat for gamers";
           GenericName = "All-in-one cross-platform voice and text chat for gamers";
           Icon = "discord";
@@ -129,21 +153,21 @@ in
         };
       };
 
-      "autostart/steam.desktop" = {
-        "Desktop Entry" = {
-          Type = "Application";
-          Name = "Steam";
-          Comment = "Application for managing and playing games on Steam";
-          Exec = "steam -silent %U";
-          Icon = "steam";
-          Categories = "Network;FileTransfer;Game";
-          StartupNotify = true;
-          Terminal = false;
-          PrefersNonDefaultGPU = true;
-          "X-KDE-RunOnDiscreteGpu" = true;
-          "X-KDE-SubstituteUID" = false;
-        };
-      };
+      # "autostart/steam.desktop" = {
+      #   "Desktop Entry" = {
+      #     Type = "Application";
+      #     Name = "Steam";
+      #     Comment = "Application for managing and playing games on Steam";
+      #     Exec = "steam -silent %U";
+      #     Icon = "steam";
+      #     Categories = "Network;FileTransfer;Game";
+      #     StartupNotify = true;
+      #     Terminal = false;
+      #     PrefersNonDefaultGPU = true;
+      #     "X-KDE-RunOnDiscreteGpu" = true;
+      #     "X-KDE-SubstituteUID" = false;
+      #   };
+      # };
     };
 
     input = {

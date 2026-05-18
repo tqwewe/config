@@ -1,5 +1,5 @@
 {
-  description = "A friendly `quit` plugin for zellij";
+  description = "Zellij plugin for a floating vimput notepad with toggle behavior";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
@@ -15,10 +15,10 @@
     flake-utils.lib.eachDefaultSystem (
       system:
       let
-        owner = "cristiand391";
-        repo = "zj-quit";
-        version = "0.3.1";
-        wasm = "${repo}.wasm";
+        owner = "0xble";
+        repo = "zellij-notepad";
+        version = "0.2.1";
+        wasm = "notepad.wasm";
 
         pkgs = import nixpkgs { inherit system; };
       in
@@ -28,8 +28,8 @@
           version = version;
 
           src = pkgs.fetchurl {
-            url = "https://github.com/${owner}/${repo}/releases/download/${version}/${wasm}";
-            hash = "sha256-JSYnGGN2SLNComhMg4P814dV3TV6jRvTv9fts9oTf5Q=";
+            url = "https://github.com/${owner}/${repo}/releases/download/v${version}/${wasm}";
+            hash = "sha256-eyCBJwPwdrBo2f19Y94YpJvwzt70+H317lbqyKBT8og=";
           };
 
           dontUnpack = true;

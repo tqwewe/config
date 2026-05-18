@@ -7,8 +7,8 @@
     gamescopeSession.enable = true;
   };
   programs.gamemode.enable = true;
-  powerManagement.cpuFreqGovernor = "performance";
   hardware.xpadneo.enable = true;
+  boot.kernel.sysctl."vm.swappiness" = 10;
 
   # Systemd user service that auto-configures Steam shader threads
   systemd.user.services.steam-shader-config = {
@@ -33,6 +33,19 @@
       echo "unShaderBackgroundProcessingThreads $STEAM_THREADS" > ~/.steam/steam/steam_dev.cfg
     '';
   };
+
+  # If fps stutter, can try this
+  # powerManagement.cpuFreqGovernor = "performance";
+  # systemd.services.cpu-performance = {
+  #   description = "Set CPU to performance mode";
+  #   after = [ "multi-user.target" ];
+  #   wantedBy = [ "multi-user.target" ];
+  #   serviceConfig.Type = "oneshot";
+  #   script = ''
+  #     echo performance | tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor
+  #     echo performance | tee /sys/devices/system/cpu/cpu*/cpufreq/energy_performance_preference
+  #   '';
+  # };
 
   environment.systemPackages = with pkgs; [
     protonup-ng

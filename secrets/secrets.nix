@@ -6,6 +6,17 @@ let
 in
 {
   "copilotApiKey.age".publicKeys = [ macbook ];
-  "deepseekApiKey.age".publicKeys = [ macbook ];
+  "deepseekApiKey.age".publicKeys = [
+    macbook
+    pc
+  ];
+  "openclawGatewayPassword.age".publicKeys = [
+    macbook
+    pc
+  ];
+  "openclawTelegramBotToken.age".publicKeys = [
+    macbook
+    pc
+  ];
   "weatherApiKey.age".publicKeys = [ pc ];
 }

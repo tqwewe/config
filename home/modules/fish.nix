@@ -10,14 +10,9 @@
       set -gx GPG_TTY $(tty)
       set -gx EDITOR "hx"
       set -gx PATH $PATH ~/.cargo/bin
-      set -gx ZELLIJ_AUTO_ATTACH true
       set -gx BARTIB_FILE ~/.bartib/activities.bartib
 
       zoxide init fish | source
-
-      if status is-interactive
-        eval (zellij setup --generate-auto-start fish | string collect)
-      end
 
       if command -q nix-shell
         complete -c nix-shell -f -a "(__nix_packages)"
@@ -94,38 +89,79 @@
       #   end
       # '';
 
-      setup-rust-env = ''
-        # Create the .envrc file
-        echo 'use flake ~/dev/tqwewe/config#rust' > ./.envrc
-        echo "Created .envrc file"
+      jj = ''
+        if test "$argv[1]" = "commit" && not contains -- --message $argv && not contains -- -m $argv
+            # Extract path arguments (non-flag args after "commit")
+            set paths
+            for arg in $argv[2..]
+                if not string match -q -- '-*' $arg
+                    set -a paths $arg
+                end
+            end
 
-        # Allow the .envrc file with direnv
-        direnv allow
+            # Diff only the specified paths, or everything if none given
+            if test (count $paths) -gt 0
+                set diff (command jj diff --git $paths)
+            else
+                set diff (command jj diff --git)
+            end
 
-        # Check if .gitignore exists
-        if test -f .gitignore
-          # Check if .direnv is already in .gitignore
-          if not grep -q '\.direnv' .gitignore
-            # Add .direnv to .gitignore
-            echo ".direnv" >> .gitignore
-            echo "Added .direnv to .gitignore"
-          else
-            echo ".direnv already in .gitignore"
-          end
+            if test -z "$diff"
+                command jj $argv
+                return
+            end
 
-          # Check if .envrc is already in .gitignore
-          if not grep -q '\.envrc' .gitignore
-            # Add .envrc to .gitignore
-            echo ".envrc" >> .gitignore
-            echo "Added .envrc to .gitignore"
-          else
-            echo ".envrc already in .gitignore"
-          end
+            echo "Generating commit message..."
+
+            set recent_commits (command jj log -n 10 --no-graph -T 'description ++ "\n"' 2>/dev/null | string trim)
+
+            # Build context string mentioning specific files if applicable
+            if test (count $paths) -gt 0
+                set files_context "This commit covers only these paths: "(string join ", " $paths)". "
+            else
+                set files_context ""
+            end
+
+            set message (printf 'Diff:\n%s\n\nRecent commits for style reference:\n%s' $diff $recent_commits \
+                | claude -p \
+                $files_context"Generate a concise conventional commit message for this diff. \
+                Match the style and scope conventions shown in the recent commits. \
+                Output ONLY the commit message, no explanation, no fenced code blocks, no surrounding quotes. \
+                Backticks around code identifiers, function names, or flags are fine." \
+                --output-format text 2>/dev/null | string trim)
+
+                if test -z "$message"
+                echo "⚠ Could not generate message, falling back to interactive commit"
+                command jj $argv
+                return
+            end
+
+            echo "$message"
+            read --prompt-str "Commit with this message? [Y/n/e(dit)] " confirm
+            if test $status -ne 0
+                echo "Aborted."
+                return 1
+            end
+
+            switch $confirm
+                case "" Y y
+                    command jj commit -m $message $paths
+                case e E
+                    # Let them edit it
+                    set edited (echo $message | vipe 2>/dev/null; or read --prompt-str "Edit: " --command-line $message)
+                    command jj commit -m $edited $paths
+                case '*'
+                    echo "Aborted. Use 'jj commit -m \"your message\"' to commit manually."
+            end
         else
-          echo "No .gitignore found, skipping .gitignore update"
+            command jj $argv
         end
+      '';
 
-        echo "Rust environment setup complete!"
+      setup-rust-env = ''
+        devenv init
+        and echo '{ languages.rust.enable = true; }' > devenv.nix
+        and exec devenv shell fish
       '';
 
       rusttemp = ''

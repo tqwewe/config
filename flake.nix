@@ -46,8 +46,25 @@
 
     # Helix
     helix = {
-      url = "github:helix-editor/helix/25.07";
+      url = "github:mattwparas/helix/steel-event-system";
       inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    steel = {
+      url = "github:mattwparas/steel";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    nix-openclaw.url = "github:openclaw/nix-openclaw";
+
+    moonbit-overlay = {
+      url = "github:moonbit-community/moonbit-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    tree-sitter-moonbit = {
+      url = "github:moonbitlang/tree-sitter-moonbit";
+      flake = false;
     };
 
     # Rust devshell
@@ -59,6 +76,12 @@
     # Zellij quit prompt
     zj-quit = {
       url = "path:./flakes/zj-quit";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # Zellij session manager
+    zellij-plugin-zsm = {
+      url = "path:./flakes/zellij-plugin-zsm";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 

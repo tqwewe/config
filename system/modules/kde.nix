@@ -18,9 +18,22 @@
     kdePackages.isoimagewriter # Optional: Program to write hybrid ISO files onto USB disks
     kdePackages.partitionmanager # Optional Manage the disk devices, partitions and file systems on your computer
     kdePackages.plasma-browser-integration # Browser integration features
+    kdePackages.alligator # RSS feed reader
+    kdePackages.plasma-vault
+    kdePackages.kdenlive
+    cryfs
     hardinfo2 # System information and benchmarks for Linux systems
     haruna # Open source video player built with Qt/QML and libmpv
     wayland-utils # Wayland utilities
     wl-clipboard # Command-line copy/paste utilities for Wayland
+
+    # Spectacle
+    (pkgs.kdePackages.spectacle.overrideAttrs (old: {
+      nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ pkgs.makeWrapper ];
+      postFixup = (old.postFixup or "") + ''
+        wrapProgram $out/bin/spectacle \
+          --set LIBVA_DRIVER_NAME ""
+      '';
+    }))
   ];
 }
