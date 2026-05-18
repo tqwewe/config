@@ -24,6 +24,7 @@
 
   home.packages = with pkgs; [
     firefox
+    jellyfin-media-player
     ripgrep
   ];
 
