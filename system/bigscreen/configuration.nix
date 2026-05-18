@@ -67,6 +67,8 @@
   boot.kernelModules = [ "hid-apple" ];
 
   hardware.nvidia.open = lib.mkForce false;
+
+  boot.kernelParams = [ "drm.edid_firmware=Unknown-1:edid/1920x1080.bin" ];
   boot.extraModprobeConfig = ''
     options hid_apple fnmode=2
   '';
