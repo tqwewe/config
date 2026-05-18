@@ -59,7 +59,7 @@
     };
   };
 
-  networking.firewall.allowedTCPPorts = [ 2222 ];
+  networking.firewall.allowedTCPPorts = [ 2222 8080 ];
 
   hardware.bluetooth.enable = true;
   services.blueman.enable = true;

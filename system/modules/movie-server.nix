@@ -45,6 +45,7 @@
             Password_PBKDF2 = "@ByteArray(Jo434KrgIzAgdJ/kRg/I0A==:wtF5EPUmEPd7vGLq3WzjHy66FUlZWg34KycyAKEsWsNxRlIq6UR2XKx2itYQ0FGOgrOKae0cZApsheTR5swLzQ==)";
           };
           General.Locale = "en";
+          Downloads.SavePath = "/media/downloads";
         };
       };
     };
