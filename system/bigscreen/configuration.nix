@@ -65,6 +65,8 @@
   services.blueman.enable = true;
 
   boot.kernelModules = [ "hid-apple" ];
+
+  hardware.nvidia.open = false;
   boot.extraModprobeConfig = ''
     options hid_apple fnmode=2
   '';
