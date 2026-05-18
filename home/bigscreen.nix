@@ -6,7 +6,6 @@
     ./modules/git.nix
     ./modules/kitty.nix
     ./modules/starship.nix
-    ./modules/zellij.nix
   ];
 
   home = {
