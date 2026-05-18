@@ -5,8 +5,10 @@
 
     ../modules/base.nix
     ../modules/fish.nix
+    ../modules/jellyfin.nix
     ../modules/kde.nix
     ../modules/locale.nix
+    ../modules/movie-server.nix
     ../modules/nh.nix
     ../modules/nvidia.nix
     ../modules/pipewire.nix

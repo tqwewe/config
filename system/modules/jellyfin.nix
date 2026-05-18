@@ -1,20 +1,18 @@
 { pkgs, ... }:
 {
-  nixpkgs.config.packageOverrides = pkgs: {
-    vaapiIntel = pkgs.vaapiIntel.override { enableHybridCodec = true; };
-  };
-  hardware.opengl = {
+  hardware.graphics = {
     enable = true;
     extraPackages = with pkgs; [
-      intel-media-driver
-      vaapiIntel
+      nvidia-vaapi-driver
       vaapiVdpau
       libvdpau-va-gl
-      intel-compute-runtime # OpenCL filter support (hardware tonemapping and subtitle burn-in)
     ];
   };
-  services.jellyfin.enable = true;
-  services.jellyfin.openFirewall = true;
+
+  services.jellyfin = {
+    enable = true;
+    openFirewall = true;
+  };
 
   environment.systemPackages = with pkgs; [
     jellyfin-ffmpeg
