@@ -127,6 +127,8 @@ in
           };
         };
 
+        tools.exec.security = "full";
+
         plugins.entries."device-pair" = {
           enabled = true;
           config.publicUrl = "https://desktop.tailad8772.ts.net";
