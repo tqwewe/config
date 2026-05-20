@@ -3,7 +3,8 @@ let
   openclawNodeExec = pkgs.writeShellScript "openclaw-node-exec" ''
     set -euo pipefail
     exec ${pkgs.openclaw-gateway}/bin/openclaw node run \
-      --host wss://desktop.tailad8772.ts.net \
+      --host desktop.tailad8772.ts.net \
+      --tls \
       --display-name bigscreen
   '';
 in
