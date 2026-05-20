@@ -57,10 +57,7 @@ in
       config = {
         gateway = {
           mode = "local";
-          bind = "loopback";
-          tailscale = {
-            mode = "funnel";
-          };
+          bind = "tailnet";
           auth = {
             mode = "password";
           };
