@@ -33,8 +33,10 @@
   home.packages = with pkgs; [
     firefox
     jellyfin-media-player
+    playerctl
     ripgrep
     spotify
+    spotify-player
     vlc
   ];
 
