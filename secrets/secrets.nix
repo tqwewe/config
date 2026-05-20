@@ -21,5 +21,5 @@ in
     desktop
     bigscreen
   ];
-  "weatherApiKey.age".publicKeys = [ desktop ];
+  "weatherApiKey.age".publicKeys = [ desktop bigscreen ];
 }
