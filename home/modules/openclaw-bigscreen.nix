@@ -2,11 +2,11 @@
 let
   openclawNodeExec = pkgs.writeShellScript "openclaw-node-exec" ''
     set -euo pipefail
+    export OPENCLAW_GATEWAY_PASSWORD="$(${lib.getExe' pkgs.coreutils "cat"} ${config.age.secrets.openclawGatewayPassword.path})"
     exec ${pkgs.openclaw-gateway}/bin/openclaw node run \
       --host 127.0.0.1 \
       --port 18789 \
-      --display-name bigscreen \
-      --password "$(${lib.getExe' pkgs.coreutils "cat"} ${config.age.secrets.openclawGatewayPassword.path})"
+      --display-name bigscreen
   '';
 in
 {
