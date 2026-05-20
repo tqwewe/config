@@ -1,123 +1,24 @@
-{ config, inputs, lib, pkgs, ... }:
+{ inputs, pkgs, ... }:
 let
-  openclawDocuments = ./openclaw-documents;
-  workspaceDir = "${config.home.homeDirectory}/.openclaw/workspace";
-  managedWorkspaceDocs = [
-    "AGENTS.md"
-    "SOUL.md"
-    "TOOLS.md"
-    "IDENTITY.md"
-    "USER.md"
-  ];
-  defaultOpenclawInstance = config.programs.openclaw.instances.default;
-  openclawGatewayExec = pkgs.writeShellScript "openclaw-gateway-exec" ''
+  openclawNodeExec = pkgs.writeShellScript "openclaw-node-exec" ''
     set -euo pipefail
-    export OPENCLAW_GATEWAY_PASSWORD="$(${lib.getExe' pkgs.coreutils "cat"} ${config.age.secrets.openclawGatewayPassword.path})"
-    export DEEPSEEK_API_KEY="$(${lib.getExe' pkgs.coreutils "cat"} ${config.age.secrets.deepseekApiKey.path})"
-    exec ${defaultOpenclawInstance.package}/bin/openclaw gateway --port ${toString defaultOpenclawInstance.gatewayPort}
+    exec ${pkgs.openclaw-gateway}/bin/openclaw node run \
+      --host https://desktop.tailad8772.ts.net \
+      --display-name bigscreen
   '';
 in
 {
-  imports = [
-    inputs.nix-openclaw.homeManagerModules.openclaw
+  nixpkgs.overlays = with inputs; [
+    nix-openclaw.overlays.default
   ];
 
-  nixpkgs = {
-    overlays = with inputs; [
-      nix-openclaw.overlays.default
-    ];
-  };
-
-  home.packages = with pkgs; [ whisper-cpp ];
-
-  home.activation.openclawMigrateWorkspaceDocs = lib.hm.dag.entryBefore [ "openclawDocumentGuard" ] ''
-    for name in ${lib.escapeShellArgs managedWorkspaceDocs}; do
-      file="${workspaceDir}/$name"
-      if [ -e "$file" ] && [ ! -L "$file" ]; then
-        mv "$file" "$file.pre-nix-managed.$(date +%s)"
-      fi
-    done
-  '';
-
-  programs.openclaw = {
-    documents = openclawDocuments;
-
-    bundledPlugins = {
-      summarize.enable = true;
-      peekaboo.enable = false;
-      sag.enable = true;
-    };
-
-    instances.default = {
-      enable = true;
-      plugins = [];
-      config = {
-        gateway = {
-          mode = "local";
-          bind = "loopback";
-          tailscale = {
-            mode = "funnel";
-          };
-          auth = {
-            mode = "password";
-          };
-        };
-
-        tools.media.audio = {
-          enabled = true;
-          models = [{
-            command = "/home/ari/.openclaw/bin/whisper-transcribe";
-            type = "cli";
-            args = [ "{{MediaPath}}" ];
-            timeoutSeconds = 60;
-          }];
-        };
-
-        env.vars.PATH = "/home/ari/.openclaw/bin:/home/ari/.local/bin:$PATH";
-
-        models = {
-          providers = {
-            deepseek = {
-              api = "openai-completions";
-              baseUrl = "https://api.deepseek.com";
-              models = [
-                {
-                  id = "deepseek-v4-flash";
-                  name = "DeepSeek V4 Flash";
-                }
-                {
-                  id = "deepseek-v4-pro";
-                  name = "DeepSeek V4 Pro";
-                }
-              ];
-            };
-          };
-        };
-
-        agents.defaults = {
-          model = {
-            primary = "deepseek/deepseek-v4-flash";
-            fallbacks = [ "deepseek/deepseek-v4-pro" ];
-          };
-
-          heartbeat = null;
-
-          compaction.memoryFlush = {
-            enabled = true;
-            softThresholdTokens = 4000;
-          };
-        };
-
-        plugins.entries."device-pair" = {
-          enabled = true;
-          config.publicUrl = "https://bigscreen.tailad8772.ts.net";
-        };
-      };
-    };
-  };
-
-  systemd.user.services."openclaw-gateway" = {
+  systemd.user.services."openclaw-node" = {
+    Unit.Description = "OpenClaw node (bigscreen)";
     Install.WantedBy = [ "default.target" ];
-    Service.ExecStart = lib.mkForce "${openclawGatewayExec}";
+    Service = {
+      ExecStart = "${openclawNodeExec}";
+      Restart = "always";
+      RestartSec = "5s";
+    };
   };
 }

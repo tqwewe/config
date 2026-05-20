@@ -13,9 +13,6 @@
     ./modules/openclaw-bigscreen.nix
     ./modules/starship.nix
 
-    # Secrets
-    inputs.agenix.homeManagerModules.default
-    ../system/modules/secrets.nix
   ];
 
   home = {
