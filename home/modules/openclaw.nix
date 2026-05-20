@@ -57,7 +57,7 @@ in
       config = {
         gateway = {
           mode = "local";
-          bind = "tailnet";
+          bind = "loopback";
           auth = {
             mode = "password";
           };
