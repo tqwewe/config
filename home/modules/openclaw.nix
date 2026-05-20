@@ -135,6 +135,9 @@ in
     };
   };
 
-  systemd.user.services."openclaw-gateway".Service.ExecStart = lib.mkForce "${openclawGatewayExec}";
+  systemd.user.services."openclaw-gateway" = {
+    Install.WantedBy = [ "default.target" ];
+    Service.ExecStart = lib.mkForce "${openclawGatewayExec}";
+  };
 
 }
