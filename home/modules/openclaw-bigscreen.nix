@@ -1,4 +1,14 @@
-{ inputs, pkgs, ... }:
+{ config, inputs, lib, pkgs, ... }:
+let
+  openclawNodeExec = pkgs.writeShellScript "openclaw-node-exec" ''
+    set -euo pipefail
+    exec ${pkgs.openclaw-gateway}/bin/openclaw node run \
+      --host 127.0.0.1 \
+      --port 18789 \
+      --display-name bigscreen \
+      --password "$(${lib.getExe' pkgs.coreutils "cat"} ${config.age.secrets.openclawGatewayPassword.path})"
+  '';
+in
 {
   nixpkgs.overlays = with inputs; [
     nix-openclaw.overlays.default
@@ -26,7 +36,7 @@
     };
     Install.WantedBy = [ "default.target" ];
     Service = {
-      ExecStart = "${pkgs.openclaw-gateway}/bin/openclaw node run --host 127.0.0.1 --port 18789 --display-name bigscreen";
+      ExecStart = "${openclawNodeExec}";
       Restart = "always";
       RestartSec = "10s";
     };
