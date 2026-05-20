@@ -127,7 +127,12 @@ in
           };
         };
 
-        tools.exec.security = "allowlist";
+        tools.exec = {
+          security = "full";
+          ask = "off";
+          host = "node";
+          node = "bigscreen";
+        };
 
         plugins.entries."device-pair" = {
           enabled = true;
