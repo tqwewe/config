@@ -61,6 +61,9 @@ in
           auth = {
             mode = "password";
           };
+          nodes = {
+            allowCommands = [ "*" ];
+          };
         };
 
         channels.telegram = {
