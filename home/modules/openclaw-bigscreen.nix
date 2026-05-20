@@ -4,6 +4,7 @@ let
     set -euo pipefail
     exec ${pkgs.openclaw-gateway}/bin/openclaw node run \
       --host desktop.tailad8772.ts.net \
+      --port 443 \
       --tls \
       --display-name bigscreen
   '';
