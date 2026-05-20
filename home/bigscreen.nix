@@ -31,8 +31,10 @@
   };
 
   home.packages = with pkgs; [
+    claude-code
     firefox
     jellyfin-media-player
+    netflix
     playerctl
     ripgrep
     spotify

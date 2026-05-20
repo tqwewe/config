@@ -29,8 +29,8 @@
         STEAM_THREADS=4
       fi
 
-      mkdir -p ~/.steam/steam
-      echo "unShaderBackgroundProcessingThreads $STEAM_THREADS" > ~/.steam/steam/steam_dev.cfg
+      mkdir -p ~/.local/share/Steam
+      echo "unShaderBackgroundProcessingThreads $STEAM_THREADS" > ~/.local/share/Steam/steam_dev.cfg
     '';
   };
 

@@ -12,6 +12,7 @@
     ../modules/nh.nix
     ../modules/nvidia.nix
     ../modules/pipewire.nix
+    ../modules/steam.nix
   ];
 
   networking = {
