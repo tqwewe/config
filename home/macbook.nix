@@ -1,7 +1,5 @@
 { inputs, pkgs, ... }:
 {
-  age.secrets.copilotApiKey.file = ../secrets/copilotApiKey.age;
-
   imports = with inputs; [
     ./modules/alacritty.nix
     ./modules/base.nix

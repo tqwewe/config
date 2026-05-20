@@ -8,7 +8,14 @@
     ./modules/git.nix
     ./modules/helix.nix
     ./modules/kitty.nix
+    ./modules/lazygit.nix
+    ./modules/nh.nix
+    ./modules/openclaw-bigscreen.nix
     ./modules/starship.nix
+
+    # Secrets
+    inputs.agenix.homeManagerModules.default
+    ../system/modules/secrets.nix
   ];
 
   home = {
