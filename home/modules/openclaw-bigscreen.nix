@@ -12,7 +12,7 @@
     };
     Install.WantedBy = [ "default.target" ];
     Service = {
-      ExecStart = "${pkgs.openssh}/bin/ssh -N -o StrictHostKeyChecking=no -o ServerAliveInterval=30 -o ExitOnForwardFailure=yes -L 18789:127.0.0.1:18789 ari@100.118.150.103";
+      ExecStart = "${pkgs.openssh}/bin/ssh -N -p 2222 -o StrictHostKeyChecking=no -o ServerAliveInterval=30 -o ExitOnForwardFailure=yes -L 18789:127.0.0.1:18789 ari@100.118.150.103";
       Restart = "always";
       RestartSec = "5s";
     };
