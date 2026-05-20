@@ -100,8 +100,6 @@ in
             fallbacks = [ "deepseek/deepseek-v4-pro" ];
           };
 
-          heartbeat.enabled = false;
-
           compaction.memoryFlush = {
             enabled = true;
             softThresholdTokens = 4000;
