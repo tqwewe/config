@@ -1,6 +1,9 @@
 {
-  virtualisation.docker.enable = true;
-  virtualisation.docker.liveRestore = false; # Not compatible with docker swarm
+  virtualisation.docker = {
+    enable = true;
+    liveRestore = false; # Not compatible with docker swarm
+  };
+  hardware.nvidia-container-toolkit.enable = true;
   users.extraGroups.docker.members = [ "ari" ];
   networking.firewall.trustedInterfaces = [
     "docker"

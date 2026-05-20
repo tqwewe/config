@@ -228,6 +228,7 @@
     enable = true;
     enableOnBoot = false;
   };
+  hardware.nvidia-container-toolkit.enable = true;
 
   # Users
   users.users = {
