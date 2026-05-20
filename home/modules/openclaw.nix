@@ -127,7 +127,7 @@ in
           };
         };
 
-        tools.exec.security = "full";
+        tools.exec.security = "allowlist";
 
         plugins.entries."device-pair" = {
           enabled = true;
