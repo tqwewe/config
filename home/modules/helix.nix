@@ -1,5 +1,5 @@
 {
-  # inputs,
+  inputs,
   pkgs,
   ...
 }:
@@ -356,7 +356,5 @@ in
     fi
   '';
 
-  xdg.configFile."helix/init.scm".text = ''
-    (require "scooter/scooter.scm")
-  '';
+  xdg.configFile."helix/init.scm".text = "";
 }

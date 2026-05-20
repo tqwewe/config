@@ -6,6 +6,7 @@
     ./modules/base.nix
     ./modules/fish.nix
     ./modules/git.nix
+    ./modules/helix.nix
     ./modules/kitty.nix
     ./modules/starship.nix
   ];
@@ -26,6 +27,8 @@
     firefox
     jellyfin-media-player
     ripgrep
+    spotify
+    vlc
   ];
 
   programs.plasma = {
