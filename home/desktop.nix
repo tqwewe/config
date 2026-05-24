@@ -78,7 +78,7 @@ in
       (withWaylandFix obsidian)
       (withWaylandFix proton-pass)
       (withWaylandFix protonmail-desktop)
-      protonvpn-gui
+      proton-vpn
       qbittorrent
       qjackctl
       reaper
