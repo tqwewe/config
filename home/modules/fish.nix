@@ -158,6 +158,10 @@
         end
       '';
 
+      fish_postexec = ''
+        stty sane 2>/dev/null
+      '';
+
       setup-rust-env = ''
         devenv init
         and echo '{ languages.rust.enable = true; }' > devenv.nix
