@@ -12,6 +12,8 @@
     ./modules/nh.nix
     ./modules/openclaw-bigscreen.nix
     ./modules/starship.nix
+    ./modules/mpv.nix
+    ./modules/zellij.nix
 
     # Secrets
     inputs.agenix.homeManagerModules.default
@@ -32,10 +34,14 @@
 
   home.packages = with pkgs; [
     claude-code
+    devenv
+    discord
     firefox
     jellyfin-media-player
+    jellyfin-mpv-shim
     netflix
     playerctl
+    proton-vpn
     ripgrep
     spotify
     spotify-player
