@@ -12,10 +12,10 @@
   };
 
   systemd.tmpfiles.rules = [
-    "d /media          0775 root  media -"
-    "d /media/movies   0775 root  media -"
-    "d /media/tv       0775 root  media -"
-    "d /media/downloads 0775 root media -"
+    "d /mnt/storage              0775 root  media -"
+    "d /mnt/storage/movies       0775 root  media -"
+    "d /mnt/storage/tvshows      0775 root  media -"
+    "d /mnt/storage/downloads    0775 root  media -"
   ];
 
   systemd.services.radarr.serviceConfig = { Group = lib.mkForce "media"; UMask = lib.mkForce "0002"; };
@@ -36,6 +36,10 @@
       openFirewall = true;
     };
 
+    flaresolverr = {
+      enable = true;
+    };
+
     prowlarr = {
       enable = true;
       openFirewall = true;
@@ -45,6 +49,13 @@
       enable = true;
       serverConfig = {
         LegalNotice.Accepted = true;
+        BitTorrent.Session = {
+          DefaultSavePath = "/mnt/storage/downloads";
+          MaxActiveDownloads = 5;
+          MaxActiveTorrents = 20;
+          MaxActiveUploads = 10;
+          QueueingSystemEnabled = true;
+        };
         Preferences = {
           WebUI = {
             Enabled = true;
@@ -52,7 +63,7 @@
             Password_PBKDF2 = "@ByteArray(Jo434KrgIzAgdJ/kRg/I0A==:wtF5EPUmEPd7vGLq3WzjHy66FUlZWg34KycyAKEsWsNxRlIq6UR2XKx2itYQ0FGOgrOKae0cZApsheTR5swLzQ==)";
           };
           General.Locale = "en";
-          Downloads.SavePath = "/media/downloads";
+          Downloads.SavePath = "/mnt/storage/downloads";
         };
       };
     };
