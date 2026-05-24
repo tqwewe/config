@@ -14,6 +14,8 @@
     openFirewall = true;
   };
 
+  users.users.jellyfin.extraGroups = [ "video" "render" ];
+
   environment.systemPackages = with pkgs; [
     jellyfin-ffmpeg
   ];
