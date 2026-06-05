@@ -9,6 +9,8 @@
 
     ../modules/base.nix
     ../modules/brightness-control.nix
+    ../modules/hermes.nix
+    ../modules/signal-cli.nix
     ../modules/fish.nix
     # ../modules/gnome.nix
     # ../modules/greetd.nix
@@ -38,7 +40,7 @@
     };
   };
 
-  # programs.nix-ld.enable = true;
+  programs.nix-ld.enable = true;
 
   # Bootloader
   boot.loader.systemd-boot.enable = true;

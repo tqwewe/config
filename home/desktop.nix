@@ -15,7 +15,7 @@ let
 in
 {
   imports = with inputs; [
-    inputs.plasma-manager.homeModules.plasma-manager
+    plasma-manager.homeModules.plasma-manager
 
     ./modules/base.nix
     ./modules/direnv.nix
@@ -58,6 +58,16 @@ in
 
   home.sessionVariables = {
     ELECTRON_EXTRA_LAUNCH_ARGS = "--disable-features=WaylandPerSurfaceScale";
+  };
+
+  services.protonmail-bridge.enable = true;
+
+  systemd.user.services.protonmail-bridge = {
+    Unit = {
+      After = [ "graphical-session.target" "network-online.target" ];
+      Wants = [ "network-online.target" ];
+    };
+    Service.ExecStartPre = "${pkgs.networkmanager}/bin/nm-online -t 60 -q";
   };
 
   home.packages =

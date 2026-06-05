@@ -56,6 +56,7 @@
     };
 
     nix-openclaw.url = "github:openclaw/nix-openclaw";
+    hermes-agent.url = "github:NousResearch/hermes-agent";
 
     moonbit-overlay = {
       url = "github:moonbit-community/moonbit-overlay";
@@ -139,6 +140,7 @@
           specialArgs = { inherit inputs; };
           modules = [
             ./system/desktop/configuration.nix
+            agenix.nixosModules.default
           ];
         };
         bigscreen = nixpkgs.lib.nixosSystem {

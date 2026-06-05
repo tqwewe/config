@@ -27,6 +27,10 @@
     };
 
     functions = {
+      hermes = ''
+        sudo -u hermes env HERMES_HOME=/var/lib/hermes/.hermes hermes $argv
+      '';
+
       __nix_packages = ''
         if not set -q __nix_package_cache
           set -g __nix_package_cache (nix eval --raw --impure --expr 'builtins.concatStringsSep "\n" (builtins.attrNames (import <nixpkgs> {}))' 2>/dev/null)
