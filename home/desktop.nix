@@ -32,7 +32,7 @@ in
     ./modules/nur.nix
     ./modules/obs.nix
     ./modules/ollama.nix
-    ./modules/openclaw.nix
+    # ./modules/openclaw.nix  # disabled: upstream removed programs.openclaw.documents
     ./modules/plasma.nix
     ./modules/starship.nix
     ./modules/taskwarrior.nix
@@ -66,8 +66,22 @@ in
     Unit = {
       After = [ "graphical-session.target" "network-online.target" ];
       Wants = [ "network-online.target" ];
+      # rapid Restart=always restarts raced on the bridge lock file -> start-limit-hit
+      StartLimitIntervalSec = 0;
     };
-    Service.ExecStartPre = "${pkgs.networkmanager}/bin/nm-online -t 60 -q";
+    Service = {
+      # DNS lives entirely behind Tailscale MagicDNS, which isn't serving yet when
+      # network-online.target is reached, so the bridge starts into a dead resolver.
+      # Wait until the API host actually resolves before launching.
+      ExecStartPre = pkgs.writeShellScript "wait-for-proton-dns" ''
+        for i in $(seq 1 60); do
+          ${pkgs.getent}/bin/getent ahosts mail-api.proton.me > /dev/null && exit 0
+          sleep 1
+        done
+        exit 0
+      '';
+      RestartSec = 5;
+    };
   };
 
   home.packages =
