@@ -200,6 +200,14 @@ in
           auto-format = true;
         }
         {
+          name = "markdown";
+          soft-wrap = {
+            enable = true;
+            wrap-at-text-width = true;
+          };
+          text-width = 120;
+        }
+        {
           name = "moonbit";
           language-id = "moonbit";
           scope = "source.moonbit";

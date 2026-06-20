@@ -34,7 +34,7 @@
             overlays = [ rust-overlay.overlays.default ];
           };
 
-          rustToolchain = pkgs.rust-bin.stable."1.91.1".default.override {
+          rustToolchain = pkgs.rust-bin.stable."1.96.0".default.override {
             extensions = [
               "rust-src"
               "rustfmt"

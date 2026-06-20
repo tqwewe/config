@@ -23,5 +23,5 @@ in
     bigscreen
   ];
   "weatherApiKey.age".publicKeys = [ desktop bigscreen ];
-  "hermesEnv.age".publicKeys = [ desktopHost ];
+  "hermesEnv.age".publicKeys = [ desktop desktopHost ];
 }

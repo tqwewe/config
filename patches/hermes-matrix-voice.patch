@@ -1,0 +1,19 @@
+--- a/gateway/platforms/matrix.py	2026-06-06 21:28:48.527227773 +1000
++++ b/gateway/platforms/matrix.py	2026-06-06 21:28:55.650444286 +1000
+@@ -1915,6 +1915,16 @@
+             if source_content.get("org.matrix.msc3245.voice") is not None:
+                 is_voice_message = True
+                 msg_type = MessageType.VOICE
++            elif event_mimetype in ("audio/ogg", "audio/opus"):
++                # Element sends voice recordings as Ogg/Opus but often
++                # omits the MSC3245 voice flag. Treat these as voice.
++                is_voice_message = True
++                msg_type = MessageType.VOICE
++            elif body.lower().endswith(".ogg") or body.lower().endswith(".opus"):
++                # Fallback: UUID-named .ogg files from Matrix clients
++                # are voice recordings, not file uploads.
++                is_voice_message = True
++                msg_type = MessageType.VOICE
+             else:
+                 msg_type = MessageType.AUDIO
+             media_type = event_mimetype or "audio/ogg"
