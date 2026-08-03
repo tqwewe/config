@@ -5,5 +5,6 @@
   permittedInsecurePackages = [
     "librewolf-151.0.2-1"
     "librewolf-unwrapped-151.0.2-1"
+    "pnpm-10.29.2"
   ];
 }
