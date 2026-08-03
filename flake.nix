@@ -68,6 +68,13 @@
       flake = false;
     };
 
+    tree-sitter-bsn = {
+      # Local checkout of the feat/rust-expressions branch for testing before the
+      # upstream PR (erasin/tree-sitter-bsn) is merged.
+      url = "git+file:///home/ari/dev/erasin/tree-sitter-bsn?ref=feat/rust-expressions";
+      flake = false;
+    };
+
     # Rust devshell
     rust-devshell = {
       url = "path:./devshells/rust";

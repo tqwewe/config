@@ -10,6 +10,25 @@ let
     version = "unstable";
     src = inputs.tree-sitter-moonbit;
   };
+  bsn-grammar = pkgs.tree-sitter.buildGrammar {
+    language = "bsn";
+    version = "unstable";
+    src = inputs.tree-sitter-bsn;
+  };
+  # Merge helix's bundled rust injections with a bsn injection so `bsn!`/`bsn_list!`
+  # macro bodies get BSN highlighting. A user runtime queries file fully shadows the
+  # bundled one, so we re-include the defaults and append the bsn rule last (last
+  # match wins, overriding the generic rust token_tree injection).
+  rust-injections = ''
+    ${builtins.readFile "${inputs.helix}/runtime/queries/rust/injections.scm"}
+
+    ; Inject BSN highlighting for bsn! and bsn_list! macros in Rust
+    ((macro_invocation
+        macro: (identifier) @_macro
+        (token_tree) @injection.content)
+      (#match? @_macro "^(bsn|bsn_list)$")
+      (#set! injection.language "bsn"))
+  '';
 in
 {
   programs.helix = {
@@ -241,6 +260,24 @@ in
           language-servers = [ "moonbit-lsp" ];
           grammar = "moonbit";
         }
+        {
+          name = "bsn";
+          scope = "source.bsn";
+          injection-regex = "bsn";
+          file-types = [ "bsn" ];
+          roots = [ ];
+          auto-format = false;
+          comment-token = "//";
+          block-comment-tokens = {
+            start = "/*";
+            end = "*/";
+          };
+          indent = {
+            tab-width = 2;
+            unit = "  ";
+          };
+          grammar = "bsn";
+        }
       ];
 
       language-server.crates-lsp = {
@@ -358,6 +395,15 @@ in
     source = "${inputs.tree-sitter-moonbit}/queries";
     force = true;
   };
+  xdg.configFile."helix/runtime/grammars/bsn.so" = {
+    source = "${bsn-grammar}/parser";
+    force = true;
+  };
+  xdg.configFile."helix/runtime/queries/bsn" = {
+    source = "${inputs.tree-sitter-bsn}/queries";
+    force = true;
+  };
+  xdg.configFile."helix/runtime/queries/rust/injections.scm".text = rust-injections;
 
   xdg.configFile."helix/yazi-picker.sh".text = ''
     #!/usr/bin/env bash
@@ -374,5 +420,7 @@ in
     fi
   '';
 
-  xdg.configFile."helix/init.scm".text = "";
+  xdg.configFile."helix/init.scm".text = "
+    (require \"oil/oil.scm\")
+  ";
 }
