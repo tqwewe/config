@@ -1,0 +1,15 @@
+--- a/gateway/config.py
++++ b/gateway/config.py
+@@ -467,6 +467,12 @@
+         cfg.extra.get("phone_number_id") and cfg.extra.get("access_token")
+     ),
+     Platform.SIGNAL: lambda cfg: bool(cfg.extra.get("http_url")),
++    # Matrix authenticates via password (MATRIX_PASSWORD) too, not just an
++    # access token. Upstream only marks it "connected" when cfg.token is set,
++    # which hides password-auth Matrix from the dashboard and skips it in cron
++    # / home-channel delivery. The homeserver is always populated from
++    # MATRIX_HOMESERVER when the platform is configured, so key off that too.
++    Platform.MATRIX: lambda cfg: bool(cfg.token or cfg.extra.get("homeserver")),
+     Platform.EMAIL: lambda cfg: bool(cfg.extra.get("address")),
+     Platform.SMS: lambda cfg: bool(os.getenv("TWILIO_ACCOUNT_SID")),
+     Platform.API_SERVER: lambda cfg: True,

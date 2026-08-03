@@ -13,6 +13,7 @@ let
     src = inputs.hermes-agent;
     patches = [
       ../../patches/hermes-matrix-voice.patch
+      ../../patches/hermes-matrix-connected-checker.patch
       ../../patches/hermes-npm-deps-hash.patch
     ];
   };
@@ -65,6 +66,13 @@ in
     package = customHermesAgent;
     settings = {
       approvals.mode = "smart";
+      # Pin the agent's working directory to the hermes-owned workspace.
+      # Without an explicit cwd the gateway falls back to $HOME, and any
+      # path under /home/ari is unreadable by the hermes user (home is
+      # mode 0700), so git-root discovery on each message raises
+      # "[Errno 13] Permission denied: '/home/ari/.git'". config.yaml wins
+      # over the .env bridge, so this overrides any stale TERMINAL_CWD too.
+      terminal.cwd = "/var/lib/hermes/workspace";
       model = {
         default = "deepseek-v4-flash";
         provider = "deepseek";
@@ -77,6 +85,12 @@ in
       };
     };
     extraDependencyGroups = [ "voice" "matrix" ];
+    # Use `run --replace` so systemd owns the foreground process and any
+    # orphan left by hermes's own SIGTERM restart handler gets killed first.
+    # Without this, a nixos-rebuild switch causes hermes to spawn a child
+    # (gateway restart) that survives the SIGTERM, then every subsequent
+    # systemd restart attempt sees "Gateway already running" and fails.
+    extraArgs = [ "run" ];
     environment = {
       MATRIX_HOMESERVER = "https://matrix.org";
       MATRIX_USER_ID = "@tqwewe_bot:matrix.org";

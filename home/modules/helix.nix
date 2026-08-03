@@ -98,6 +98,16 @@ in
     languages = {
       language = [
         {
+          name = "html";
+          formatter.command = "${pkgs.prettier}/bin/prettier";
+          formatter.args = [
+            "--stdin-filepath"
+            "%{buffer_name}"
+          ];
+          auto-format = true;
+          language-servers = [ "vscode-html-language-server" ];
+        }
+        {
           name = "javascript";
           formatter.command = "${pkgs.prettier}/bin/prettier";
           formatter.args = [

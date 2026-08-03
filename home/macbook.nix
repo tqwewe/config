@@ -3,6 +3,7 @@
   imports = with inputs; [
     ./modules/alacritty.nix
     ./modules/base.nix
+    ./modules/devenv.nix
     ./modules/direnv.nix
     ./modules/fish.nix
     ./modules/gh.nix
@@ -47,7 +48,6 @@
     [
       bartib
       claude-code
-      devenv
       helix-gpt
       nodejs
       vscode-langservers-extracted

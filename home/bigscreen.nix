@@ -4,6 +4,7 @@
     inputs.plasma-manager.homeModules.plasma-manager
 
     ./modules/base.nix
+    ./modules/devenv.nix
     ./modules/fish.nix
     ./modules/git.nix
     ./modules/helix.nix
@@ -34,7 +35,6 @@
 
   home.packages = with pkgs; [
     claude-code
-    devenv
     discord
     firefox
     jellyfin-media-player

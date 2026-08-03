@@ -9,7 +9,7 @@ let
     pkg.overrideAttrs (old: {
       postFixup = (old.postFixup or "") + ''
         wrapProgram $out/bin/${pkg.meta.mainProgram or pkg.pname} \
-          --append-flags "--disable-features=WaylandPerSurfaceScale"
+          --append-flags "--disable-features=WaylandPerSurfaceScale,WaylandFractionalScaleV1"
       '';
     });
 in
@@ -18,6 +18,7 @@ in
     plasma-manager.homeModules.plasma-manager
 
     ./modules/base.nix
+    ./modules/devenv.nix
     ./modules/direnv.nix
     ./modules/docker.nix
     ./modules/fish.nix
@@ -57,14 +58,17 @@ in
   };
 
   home.sessionVariables = {
-    ELECTRON_EXTRA_LAUNCH_ARGS = "--disable-features=WaylandPerSurfaceScale";
+    ELECTRON_EXTRA_LAUNCH_ARGS = "--disable-features=WaylandPerSurfaceScale,WaylandFractionalScaleV1";
   };
 
   services.protonmail-bridge.enable = true;
 
   systemd.user.services.protonmail-bridge = {
     Unit = {
-      After = [ "graphical-session.target" "network-online.target" ];
+      After = [
+        "graphical-session.target"
+        "network-online.target"
+      ];
       Wants = [ "network-online.target" ];
       # rapid Restart=always restarts raced on the bridge lock file -> start-limit-hit
       StartLimitIntervalSec = 0;
@@ -89,8 +93,8 @@ in
     [
       ardour
       bacon
+      (blender.override { cudaSupport = true; })
       claude-code
-      devenv
       element-desktop
       git-cliff
       (withWaylandFix google-chrome)
