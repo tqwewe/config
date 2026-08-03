@@ -1,4 +1,10 @@
-{ config, inputs, lib, pkgs, ... }:
+{
+  config,
+  inputs,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cudaLibPath = lib.makeLibraryPath [
@@ -13,8 +19,6 @@ let
     src = inputs.hermes-agent;
     patches = [
       ../../patches/hermes-matrix-voice.patch
-      ../../patches/hermes-matrix-connected-checker.patch
-      ../../patches/hermes-npm-deps-hash.patch
     ];
   };
 
@@ -84,7 +88,10 @@ in
         session_scope = "room";
       };
     };
-    extraDependencyGroups = [ "voice" "matrix" ];
+    extraDependencyGroups = [
+      "voice"
+      "matrix"
+    ];
     # Use `run --replace` so systemd owns the foreground process and any
     # orphan left by hermes's own SIGTERM restart handler gets killed first.
     # Without this, a nixos-rebuild switch causes hermes to spawn a child
