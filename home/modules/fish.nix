@@ -12,7 +12,7 @@
       set -gx PATH $PATH ~/.cargo/bin
       set -gx BARTIB_FILE ~/.bartib/activities.bartib
 
-      zoxide init fish | source
+      zoxide init --cmd=cd fish | source
 
       if command -q nix-shell
         complete -c nix-shell -f -a "(__nix_packages)"
@@ -21,7 +21,6 @@
 
     shellAliases = {
       cat = "bat";
-      cd = "z";
       ls = "exa --long --group-directories-first --no-permissions --no-user";
       rustdev = "nix develop ~/dev/tqwewe/config#rust -c fish";
     };
