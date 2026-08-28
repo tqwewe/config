@@ -229,6 +229,14 @@ in
           auto-format = true;
         }
         {
+          name = "starlark";
+          formatter = {
+            command = "${pkgs.bazel-buildtools}/bin/buildifier";
+            args = [ "-path=%{buffer_name}" ];
+          };
+          auto-format = true;
+        }
+        {
           name = "markdown";
           soft-wrap = {
             enable = true;
@@ -369,6 +377,7 @@ in
   };
 
   home.packages = with pkgs; [
+    bazel-buildtools
     crates-lsp
     nil
     nixfmt
