@@ -10,7 +10,7 @@
     ../modules/base.nix
     ../modules/brightness-control.nix
     ../modules/hermes.nix
-    ../modules/signal-cli.nix
+    # ../modules/signal-cli.nix
     ../modules/fish.nix
     # ../modules/gnome.nix
     # ../modules/greetd.nix
@@ -107,7 +107,7 @@
     nssmdns4 = true;
     nssmdns6 = true;
     publish = {
-      enable = true;
+      enable = false;
       addresses = true;
       domain = true;
       hinfo = true;
@@ -126,7 +126,7 @@
 
   # Open WebUI
   services.open-webui = {
-    enable = true;
+    enable = false;
     openFirewall = false;
     host = "0.0.0.0";
   };
