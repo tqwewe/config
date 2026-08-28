@@ -5,10 +5,10 @@
     # Nixpkgs
     # nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    nix-darwin = {
-      url = "github:LnL7/nix-darwin/master";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    # nix-darwin = {
+    #   url = "github:LnL7/nix-darwin/master";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
 
     # Home manager
     home-manager = {
@@ -52,7 +52,11 @@
 
     steel = {
       url = "github:mattwparas/steel";
-      inputs.nixpkgs.follows = "nixpkgs";
+      # steel's flake (flake-parts) enumerates x86_64-darwin, and nixpkgs 26.11
+      # throws on darwin eval, which breaks evaluating even its linux package.
+      # Pin steel to a darwin-supporting nixpkgs so its unused darwin outputs
+      # stay evaluable.
+      inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
     };
 
     nix-openclaw.url = "github:openclaw/nix-openclaw";
@@ -111,7 +115,7 @@
   outputs =
     {
       nixpkgs,
-      nix-darwin,
+      # nix-darwin,
       home-manager,
       agenix,
       rust-devshell,
@@ -136,8 +140,8 @@
       supportedSystems = [
         "x86_64-linux"
         "aarch64-linux"
-        "x86_64-darwin"
-        "aarch64-darwin"
+        # "x86_64-darwin"
+        # "aarch64-darwin"
       ];
       forAllSystems = function: nixpkgs.lib.genAttrs supportedSystems function;
     in
@@ -158,22 +162,22 @@
         };
       };
 
-      darwinConfigurations."Aris-MacBook-Pro" = nix-darwin.lib.darwinSystem {
-        system = "x86_64-darwin";
-        specialArgs = { inherit inputs; };
-        modules = [
-          ./system/macbook/configuration.nix
-          agenix.darwinModules.default
-        ];
-      };
+      # darwinConfigurations."Aris-MacBook-Pro" = nix-darwin.lib.darwinSystem {
+      #   system = "x86_64-darwin";
+      #   specialArgs = { inherit inputs; };
+      #   modules = [
+      #     ./system/macbook/configuration.nix
+      #     agenix.darwinModules.default
+      #   ];
+      # };
 
       homeConfigurations = {
         "ari@desktop" = homeConfig { module = ./home/desktop.nix; };
         "ari@bigscreen" = homeConfig { module = ./home/bigscreen.nix; };
-        "ari@Aris-MacBook-Pro" = homeConfig {
-          module = ./home/macbook.nix;
-          system = "x86_64-darwin";
-        };
+        # "ari@Aris-MacBook-Pro" = homeConfig {
+        #   module = ./home/macbook.nix;
+        #   system = "x86_64-darwin";
+        # };
       };
 
       devShells = forAllSystems (system: {
