@@ -40,6 +40,13 @@
     };
   };
 
+  xdg.portal = {
+    enable = true;
+    extraPortals = [
+      pkgs.kdePackages.xdg-desktop-portal-kde
+    ];
+  };
+
   programs.nix-ld.enable = true;
 
   # Bootloader
@@ -78,6 +85,7 @@
   networking.firewall = {
     allowedTCPPorts = [
       2222
+      3389
     ];
     allowedUDPPorts = [ 5000 ];
     allowedTCPPortRanges = [
