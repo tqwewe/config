@@ -21,7 +21,7 @@
     kdePackages.alligator # RSS feed reader
     kdePackages.plasma-vault
     kdePackages.kdenlive
-    cryfs
+    gocryptfs
     hardinfo2 # System information and benchmarks for Linux systems
     haruna # Open source video player built with Qt/QML and libmpv
     wayland-utils # Wayland utilities
