@@ -32,7 +32,7 @@ in
     ./modules/mangohud.nix
     ./modules/nur.nix
     ./modules/obs.nix
-    ./modules/ollama.nix
+    # ./modules/ollama.nix
     # ./modules/openclaw.nix  # disabled: upstream removed programs.openclaw.documents
     ./modules/plasma.nix
     ./modules/starship.nix
@@ -107,6 +107,7 @@ in
       git-cliff
       (withWaylandFix google-chrome)
       # guitarix
+      hubstaff
       killall
       libreoffice
       nautilus
