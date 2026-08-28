@@ -622,6 +622,7 @@
         "rust-devshell": "rust-devshell",
         "steel": "steel",
         "tree-sitter-bsn": "tree-sitter-bsn",
+        "tree-sitter-hek": "tree-sitter-hek",
         "tree-sitter-moonbit": "tree-sitter-moonbit",
         "zellij-plugin-zsm": "zellij-plugin-zsm",
         "zj-quit": "zj-quit",
@@ -835,6 +836,19 @@
         "ref": "feat/rust-expressions",
         "type": "git",
         "url": "file:///home/ari/dev/erasin/tree-sitter-bsn"
+      }
+    },
+    "tree-sitter-hek": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1787936427,
+        "narHash": "sha256-/DyDhwlAZMRAWTrP4tFEE8HZLLvUwpzRkJSRMgUxniY=",
+        "path": "/home/ari/dev/tephradb/heklang/tree-sitter-hek",
+        "type": "path"
+      },
+      "original": {
+        "path": "/home/ari/dev/tephradb/heklang/tree-sitter-hek",
+        "type": "path"
       }
     },
     "tree-sitter-moonbit": {

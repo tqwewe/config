@@ -79,6 +79,14 @@
       flake = false;
     };
 
+    tree-sitter-hek = {
+      # The grammar lives beside the language, in the heklang repo. A `path:` rather than
+      # a `git+file:` input because it is not committed yet; once it is, this can become
+      # `git+file:///home/ari/dev/tephradb/heklang` with `src` gaining `/tree-sitter-hek`.
+      url = "path:/home/ari/dev/tephradb/heklang/tree-sitter-hek";
+      flake = false;
+    };
+
     # Rust devshell
     rust-devshell = {
       url = "path:./devshells/rust";

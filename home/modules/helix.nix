@@ -15,6 +15,11 @@ let
     version = "unstable";
     src = inputs.tree-sitter-bsn;
   };
+  hek-grammar = pkgs.tree-sitter.buildGrammar {
+    language = "hek";
+    version = "unstable";
+    src = inputs.tree-sitter-hek;
+  };
   # Merge helix's bundled rust injections with a bsn injection so `bsn!`/`bsn_list!`
   # macro bodies get BSN highlighting. A user runtime queries file fully shadows the
   # bundled one, so we re-include the defaults and append the bsn rule last (last
@@ -286,6 +291,21 @@ in
           };
           grammar = "bsn";
         }
+        {
+          name = "hek";
+          scope = "source.hek";
+          injection-regex = "hek";
+          file-types = [ "hk" ];
+          roots = [ ];
+          auto-format = false;
+          # hek has `//` and no block comment form, so there is nothing to pair here.
+          comment-token = "//";
+          indent = {
+            tab-width = 2;
+            unit = "  ";
+          };
+          grammar = "hek";
+        }
       ];
 
       language-server.crates-lsp = {
@@ -410,6 +430,14 @@ in
   };
   xdg.configFile."helix/runtime/queries/bsn" = {
     source = "${inputs.tree-sitter-bsn}/queries";
+    force = true;
+  };
+  xdg.configFile."helix/runtime/grammars/hek.so" = {
+    source = "${hek-grammar}/parser";
+    force = true;
+  };
+  xdg.configFile."helix/runtime/queries/hek" = {
+    source = "${inputs.tree-sitter-hek}/queries";
     force = true;
   };
   xdg.configFile."helix/runtime/queries/rust/injections.scm".text = rust-injections;
