@@ -93,7 +93,15 @@ in
     [
       ardour
       bacon
-      (blender.override { cudaSupport = true; })
+      # Only build the Cycles CUDA kernel for this machine's GPU (RTX 4070 =
+      # sm_89). nixpkgs otherwise builds cubins for every arch
+      # (sm_75..sm_121), ~9x the ptxas work for no benefit here. Replace the
+      # injected arch flag rather than appending, so there's exactly one.
+      ((blender.override { cudaSupport = true; }).overrideAttrs (old: {
+        cmakeFlags =
+          builtins.filter (f: !lib.hasInfix "CYCLES_CUDA_BINARIES_ARCH" f) (old.cmakeFlags or [ ])
+          ++ [ (lib.cmakeFeature "CYCLES_CUDA_BINARIES_ARCH" "sm_89") ];
+      }))
       claude-code
       element-desktop
       git-cliff
