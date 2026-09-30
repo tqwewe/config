@@ -17,6 +17,10 @@ in
     enableFishIntegration = true;
     settings = {
       theme = "dracula";
+      advanced_mouse_actions = false;
+      mouse_scroll_resize = false;
+      support_kitty_image_protocol = true;
+      support_kitty_keyboard_protocol = true;
     };
   };
   xdg.configFile."zellij/config.kdl".text = ''

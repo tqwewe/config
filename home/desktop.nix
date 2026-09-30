@@ -17,6 +17,7 @@ in
   imports = with inputs; [
     plasma-manager.homeModules.plasma-manager
 
+    ./modules/atuin.nix
     ./modules/base.nix
     ./modules/devenv.nix
     ./modules/direnv.nix
@@ -32,7 +33,7 @@ in
     ./modules/mangohud.nix
     ./modules/nur.nix
     ./modules/obs.nix
-    # ./modules/ollama.nix
+    ./modules/ollama.nix
     # ./modules/openclaw.nix  # disabled: upstream removed programs.openclaw.documents
     ./modules/plasma.nix
     ./modules/starship.nix
@@ -54,6 +55,7 @@ in
     bat.enable = true;
     btop.enable = true;
     eza.enable = true;
+    thunderbird.enable = true;
     zoxide.enable = true;
   };
 
@@ -103,7 +105,8 @@ in
           ++ [ (lib.cmakeFeature "CYCLES_CUDA_BINARIES_ARCH" "sm_89") ];
       }))
       claude-code
-      element-desktop
+      (withWaylandFix element-desktop)
+      fd
       git-cliff
       (withWaylandFix google-chrome)
       # guitarix
