@@ -9,9 +9,10 @@
 
     ../modules/base.nix
     ../modules/brightness-control.nix
-    ../modules/hermes.nix
+    # ../modules/hermes.nix
     # ../modules/signal-cli.nix
     ../modules/fish.nix
+    ../modules/forgejo-runner.nix
     # ../modules/gnome.nix
     # ../modules/greetd.nix
     # ../modules/hyprland.nix
@@ -22,6 +23,10 @@
     ../modules/pipewire.nix
     ../modules/steam.nix
   ];
+
+  # CI for git.tqwewe.com. zion has Actions enabled but deliberately runs no
+  # runner; this box is it. See the CI section of ~/dev/tqwewe/zion/README.md.
+  services.forgejoRunner.enable = true;
 
   # Hostname
   networking = {
@@ -126,9 +131,17 @@
 
   # Open WebUI
   services.open-webui = {
-    enable = false;
+    enable = true;
     openFirewall = false;
     host = "0.0.0.0";
+
+    # Builtin tool schemas are injected into every chat and eat the context
+    # window; only keep the categories that actually get used.
+    environment = {
+      ENABLE_AUTOMATIONS = "False";
+      ENABLE_CALENDAR = "False";
+      ENABLE_NOTES = "False";
+    };
   };
 
   nix.settings = {
