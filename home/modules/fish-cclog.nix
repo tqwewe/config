@@ -97,8 +97,6 @@
                       echo "cclog: no session matching '$_flag_session'" >&2
                       return 1
                   end
-              else if test (count $picks) -eq 1
-                  set chosen $picks[1]
               else
                   set -l now (date +%s)
                   set -l rows
@@ -120,9 +118,15 @@
                   else
                       printf '%s\n' $rows
                       echo
-                      read -P 'session [1]: ' -l reply
+                      # ctrl-c and ctrl-d both come back as an empty reply, so the exit
+                      # status is what has to decide: an empty $reply alone would look
+                      # like a bare enter and silently open session 1
+                      read -P 'session [1], q to quit: ' -l reply
+                      or return 1
+                      set reply (string trim -- "$reply")
+                      string match -qir '^q(uit)?$' -- "$reply"; and return 1
                       test -z "$reply"; and set reply 1
-                      if not string match -qr '^[0-9]+$' -- $reply; or test $reply -gt (count $picks); or test $reply -lt 1
+                      if not string match -qr '^[0-9]{1,4}$' -- $reply; or test $reply -gt (count $picks); or test $reply -lt 1
                           echo 'cclog: not a listed session' >&2
                           return 1
                       end

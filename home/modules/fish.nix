@@ -1,5 +1,6 @@
 {
   imports = [
+    ./fish-cclog.nix
     ./fish-cr.nix
   ];
 
