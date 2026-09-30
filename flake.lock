@@ -209,6 +209,26 @@
         "type": "github"
       }
     },
+    "heklang": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1788667443,
+        "narHash": "sha256-LzbGCtcHXun4mCReLVlPYCdW5WPKPGPqe5Wq5YQbVCI=",
+        "ref": "refs/heads/main",
+        "rev": "2b19518a78f674161dcbe7084e52c10715368e77",
+        "revCount": 144,
+        "type": "git",
+        "url": "file:///home/ari/dev/tephradb/heklang"
+      },
+      "original": {
+        "type": "git",
+        "url": "file:///home/ari/dev/tephradb/heklang"
+      }
+    },
     "helix": {
       "inputs": {
         "nixpkgs": [
@@ -612,6 +632,7 @@
       "inputs": {
         "agenix": "agenix",
         "hardware": "hardware",
+        "heklang": "heklang",
         "helix": "helix",
         "hermes-agent": "hermes-agent",
         "home-manager": "home-manager_2",
@@ -620,6 +641,7 @@
         "nixpkgs": "nixpkgs_5",
         "plasma-manager": "plasma-manager",
         "rust-devshell": "rust-devshell",
+        "rust-overlay": "rust-overlay_3",
         "steel": "steel",
         "tree-sitter-bsn": "tree-sitter-bsn",
         "tree-sitter-hek": "tree-sitter-hek",
@@ -689,6 +711,26 @@
       }
     },
     "rust-overlay_3": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1788456718,
+        "narHash": "sha256-TxHC0sBjV2pmsBLKAX02JTXlye/EOLt6Do+WNtGofGw=",
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "rev": "0b20a18e84d9164464739189c2b2a1b00f6f0e4b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "type": "github"
+      }
+    },
+    "rust-overlay_4": {
       "inputs": {
         "nixpkgs": [
           "zjstatus",
@@ -841,8 +883,8 @@
     "tree-sitter-hek": {
       "flake": false,
       "locked": {
-        "lastModified": 1787936427,
-        "narHash": "sha256-/DyDhwlAZMRAWTrP4tFEE8HZLLvUwpzRkJSRMgUxniY=",
+        "lastModified": 1789484514,
+        "narHash": "sha256-UZiVUp+KrfdTBRiXxiuYEz60xt23vymSRKdemsDOt0Q=",
         "path": "/home/ari/dev/tephradb/heklang/tree-sitter-hek",
         "type": "path"
       },
@@ -973,7 +1015,7 @@
         "crane": "crane",
         "flake-utils": "flake-utils_4",
         "nixpkgs": "nixpkgs_7",
-        "rust-overlay": "rust-overlay_3"
+        "rust-overlay": "rust-overlay_4"
       },
       "locked": {
         "lastModified": 1784107634,

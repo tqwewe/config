@@ -87,6 +87,29 @@
       flake = false;
     };
 
+    heklang = {
+      # The same repository again, as a flake this time, for the `hek` binary helix formats
+      # `.hk` with. It defines its own package, so there is nothing to build here.
+      #
+      # `git+file:` rather than the `path:` above, and the difference is not taste: a
+      # `path:` input copies the directory as it stands, and this one carries a 4 GB
+      # `target/`. A flake's source is the tracked files alone. The cost is that a change
+      # reaches helix when it is committed rather than when it is saved, which is the right
+      # trade for a binary and the wrong one for the grammar. Hence two inputs onto one
+      # repo; `inputs.heklang.packages.<system>.tree-sitter-hek` is there if the grammar
+      # should ever follow the binary's commit instead.
+      url = "git+file:///home/ari/dev/tephradb/heklang";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # Rust toolchains for the Forgejo Actions runner. nixpkgs' rustc carries std for the
+    # host alone, and CI cross-compiles; system/modules/forgejo-runner.nix is the only
+    # consumer, and applies the overlay itself.
+    rust-overlay = {
+      url = "github:oxalica/rust-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # Rust devshell
     rust-devshell = {
       url = "path:./devshells/rust";
