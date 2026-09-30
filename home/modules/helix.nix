@@ -5,6 +5,10 @@
 }:
 let
   crates-lsp = pkgs.callPackage ../../pkgs/crates-lsp.nix { };
+  # The `hek` binary, for the `.hk` formatter below. heklang defines its own package, so
+  # this takes it rather than describing how to build someone else's crate. `hek-grammar`
+  # below comes from the same repository through a second input; `flake.nix` has why.
+  hek = inputs.heklang.packages.${pkgs.system}.hek;
   moonbit-grammar = pkgs.tree-sitter.buildGrammar {
     language = "moonbit";
     version = "unstable";
@@ -297,7 +301,16 @@ in
           injection-regex = "hek";
           file-types = [ "hk" ];
           roots = [ ];
-          auto-format = false;
+          # `hek fmt -` reads one module on stdin and writes it back on stdout. On a module
+          # that does not parse it exits non-zero with stdout empty, which is what makes
+          # format-on-save safe: helix reports the error and keeps the buffer rather than
+          # replacing it with nothing, so a half-typed file is never emptied.
+          formatter.command = "${hek}/bin/hek";
+          formatter.args = [
+            "fmt"
+            "-"
+          ];
+          auto-format = true;
           # hek has `//` and no block comment form, so there is nothing to pair here.
           comment-token = "//";
           indent = {
