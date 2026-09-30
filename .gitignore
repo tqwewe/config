@@ -1,2 +1,7 @@
 /result
 openclaw_bot_token
+
+# never commit the decrypted recovery sheet or passphrase
+zion-recovery.txt
+zion-passphrase.txt
+*-recovery.txt
