@@ -13,6 +13,7 @@
     ./modules/nh.nix
     ./modules/openclaw-bigscreen.nix
     ./modules/starship.nix
+    ./modules/jellyfin-desktop.nix
     ./modules/mpv.nix
     ./modules/zellij.nix
 
@@ -37,8 +38,6 @@
     claude-code
     discord
     firefox
-    jellyfin-media-player
-    jellyfin-mpv-shim
     netflix
     playerctl
     proton-vpn
