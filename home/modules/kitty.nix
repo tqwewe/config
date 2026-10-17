@@ -1,4 +1,49 @@
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
+let
+  # herdr's notification sounds, so finished agents ding exactly like they did there.
+  herdrSound =
+    name: hash:
+    pkgs.fetchurl {
+      url = "https://raw.githubusercontent.com/herdrdev/herdr/v0.9.3/assets/sounds/${name}.mp3";
+      inherit hash;
+    };
+
+  agentHook = pkgs.writeShellApplication {
+    name = "kitty-agent-hook";
+    runtimeInputs = [ pkgs.jq ];
+    text = builtins.readFile ./kitty-agent-hook.sh;
+  };
+
+  agentHookEvents = [
+    "SessionStart"
+    "SessionEnd"
+    "UserPromptSubmit"
+    "PreToolUse"
+    "PostToolUse"
+    "Notification"
+    "Stop"
+  ];
+
+  # Paints over a snapshot of the focused pane with falling-sand. kitty marks
+  # wrapped lines with a lone \r (real line ends are \r\n), which falling-sand
+  # needs as real row breaks.
+  annotate = pkgs.writeShellScript "kitty-annotate" ''
+    ${lib.getExe pkgs.gnused} -e 's/\r$//' -e 's/\r/\n/g' | "$HOME/.cargo/bin/falling-sand" -a
+  '';
+  annotateAction = "launch --type=overlay --var annotate=1 --stdin-source=@screen --stdin-add-formatting --stdin-add-line-wrap-markers ${annotate}";
+
+  # Every pane runs in a shpool session; `kitty-shpool pick` resumes one, e.g.
+  # `ssh desktop -t kitty-shpool pick` from the laptop.
+  kittyShpool = pkgs.writeShellApplication {
+    name = "kitty-shpool";
+    runtimeInputs = [
+      pkgs.shpool
+      pkgs.jq
+      pkgs.fzf
+    ];
+    text = builtins.readFile ./kitty-shpool.sh;
+  };
+in
 {
   programs.kitty = {
     enable = true;
@@ -13,11 +58,14 @@
     settings = {
       background_opacity = 0.98;
       enabled_layouts = "splits,stack";
+      shell = lib.getExe kittyShpool;
+      allow_remote_control = "yes";
+      listen_on = "unix:@kitty";
 
       tab_bar_edge = "top";
-      tab_bar_style = "powerline";
+      tab_bar_style = "custom";
       tab_powerline_style = "round";
-      tab_bar_min_tabs = 2;
+      tab_bar_min_tabs = 1;
       tab_bar_margin_height = "4.0 0.0";
       tab_title_max_length = 28;
       tab_title_template = "{fmt.fg.red}{bell_symbol}{activity_symbol}{fmt.fg.tab}{index}: {title}";
@@ -41,10 +89,13 @@
       "alt+shift+l" = "next_tab";
       "alt+f" = "toggle_layout stack";
       "ctrl+t>n" = "new_tab_with_cwd";
-      "ctrl+t>x" = "close_tab";
-      "ctrl+p>x" = "close_window";
+      "ctrl+t>x" = "kitten close.py tab";
+      "ctrl+p>x" = "kitten close.py";
+      "ctrl+shift+w" = "kitten close.py";
+      "ctrl+t>s" = "launch --type=tab ${lib.getExe kittyShpool} pick";
       "ctrl+p>d" = "launch --location=hsplit --cwd=current";
       "ctrl+p>r" = "launch --location=vsplit --cwd=current";
+      "ctrl+p>a" = "kitten annotate.py";
     };
 
     # Sticky modes like zellij: ctrl+k moves panes, ctrl+n resizes them.
@@ -71,4 +122,61 @@
 
   xdg.configFile."kitty/resize.py".source = ./kitty-resize.py;
   xdg.configFile."kitty/focus.py".source = ./kitty-focus.py;
+  xdg.configFile."kitty/close.py".source = pkgs.replaceVars ./kitty-close.py {
+    shpool = lib.getExe pkgs.shpool;
+  };
+  xdg.configFile."kitty/annotate.py".source = pkgs.replaceVars ./kitty-annotate.py {
+    inherit annotateAction;
+  };
+  xdg.configFile."kitty/tab_bar.py".source = pkgs.replaceVars ./kitty-tab-bar.py {
+    pwPlay = "${pkgs.pipewire}/bin/pw-play";
+    doneSound = herdrSound "done" "sha256-y5yTSSyAjjOUbtrCq1kVdYJn5lkUvEt5Slym3G5lV0E=";
+    requestSound = herdrSound "request" "sha256-RMB3ziigpIzsKdogS+tif9FxQOW94fktuuzz1Hi92m8=";
+  };
+
+  # settings.json is also written by Claude Code itself, so merge our hooks into it
+  # rather than owning the file. Also drops the hook herdr left behind.
+  home.activation.claudeKittyHooks = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    settings="$HOME/.claude/settings.json"
+    mkdir -p "$HOME/.claude"
+    [ -s "$settings" ] || echo '{}' > "$settings"
+    tmp="$(mktemp "$settings.XXXXXX")"
+    ${lib.getExe pkgs.jq} \
+      --arg hook "${lib.getExe agentHook}" \
+      --argjson events '${builtins.toJSON agentHookEvents}' '
+        def ours: (.command // "") | test("kitty-agent-hook|herdr-agent-state\\.sh");
+        .hooks = (.hooks // {})
+        | .hooks |= with_entries(
+            .value |= (map(.hooks |= map(select(ours | not))) | map(select(.hooks | length > 0)))
+          )
+        | .hooks |= with_entries(select(.value | length > 0))
+        | reduce $events[] as $event (.;
+            .hooks[$event] += [
+              (if $event == "Notification" then { matcher: "permission_prompt|elicitation_dialog" } else {} end)
+              + { hooks: [{ type: "command", command: "\($hook) \($event)", timeout: 5 }] }
+            ]
+          )
+      ' "$settings" > "$tmp" && run mv -f "$tmp" "$settings" || rm -f "$tmp"
+  '';
+
+  home.packages = [ kittyShpool ];
+
+  services.shpool = {
+    enable = true;
+    settings = {
+      prompt_prefix = "";
+      motd = "never";
+      # Copied into a session's shell when it's created, so kitty's shell
+      # integration and colours work in panes. Ignored on later attaches.
+      forward_env = [
+        "COLORTERM"
+        "KITTY_INSTALLATION_DIR"
+        "KITTY_LISTEN_ON"
+        "KITTY_PID"
+        "KITTY_PUBLIC_KEY"
+        "KITTY_WINDOW_ID"
+        "TERMINFO"
+      ];
+    };
+  };
 }
