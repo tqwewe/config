@@ -38,17 +38,34 @@ let
       (#match? @_macro "^(bsn|bsn_list)$")
       (#set! injection.language "bsn"))
   '';
+  # glibc 2.42 turned bsearch into a type-generic macro (sys/cdefs.h's
+  # __glibc_const_generic), live whenever __STDC_VERSION__ is C23 or later, which gcc 15+
+  # is by default. tree-sitter-perl's tsp_unicode.h includes a vendored bsearch.c that
+  # *defines* bsearch, so the macro swallows the definition and the grammar stops
+  # compiling: "expected identifier or '(' before '_Generic'". Dropping the macro just
+  # above the definition leaves both it and the call sites below it in tsp_unicode.h
+  # binding to the vendored function, exactly as they did before glibc changed.
+  perl-bsearch-fix = _: prev: {
+    perl = prev.perl.overrideAttrs (old: {
+      postPatch = (old.postPatch or "") + ''
+        sed -i '/^void \*bsearch(/i #undef bsearch' src/bsearch.c
+      '';
+    });
+  };
 in
 {
   programs.helix = {
     enable = true;
-    package = inputs.helix.packages.${pkgs.system}.helix.overrideAttrs (old: {
-      cargoBuildFlags = (old.cargoBuildFlags or [ ]) ++ [
-        "--features"
-        "steel"
-      ];
-      buildInputs = (old.buildInputs or [ ]) ++ [ pkgs.steel ]; # if steel lib is needed
-    });
+    package =
+      (inputs.helix.packages.${pkgs.system}.helix.override { grammarOverlays = [ perl-bsearch-fix ]; })
+      .overrideAttrs
+        (old: {
+          cargoBuildFlags = (old.cargoBuildFlags or [ ]) ++ [
+            "--features"
+            "steel"
+          ];
+          buildInputs = (old.buildInputs or [ ]) ++ [ pkgs.steel ]; # if steel lib is needed
+        });
 
     settings = {
       theme = "nightfox";
