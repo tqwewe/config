@@ -133,6 +133,15 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Terminal multiplexer for coding agents
+    herdr = {
+      url = "github:herdrdev/herdr/v0.9.3";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        rust-overlay.follows = "rust-overlay";
+      };
+    };
+
     # Secrets & encryption
     agenix = {
       url = "github:ryantm/agenix";
