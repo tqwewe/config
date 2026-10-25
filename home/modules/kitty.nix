@@ -30,6 +30,27 @@ let
   annotate = pkgs.writeShellScript "kitty-annotate" ''
     ${lib.getExe pkgs.gnused} -e 's/\r$//' -e 's/\r/\n/g' | "$HOME/.cargo/bin/falling-sand" -a
   '';
+  globalKeys = {
+    "alt+n" = "launch --location=split --cwd=current";
+    "alt+h" = "kitten focus.py left";
+    "alt+j" = "neighboring_window down";
+    "alt+k" = "neighboring_window up";
+    "alt+l" = "kitten focus.py right";
+    "alt+shift+h" = "previous_tab";
+    "alt+shift+l" = "next_tab";
+    "alt+f" = "toggle_layout stack";
+  };
+
+  # In a mode, kitty swallows an unbound key with a bell instead of running its
+  # normal binding, so the global keys are mapped in each mode too, leaving it first.
+  modeGlobalKeys =
+    mode:
+    lib.concatStringsSep "\n" (
+      lib.mapAttrsToList (
+        key: action: "map --mode ${mode} ${key} combine : pop_keyboard_mode : ${action}"
+      ) globalKeys
+    );
+
   annotateAction = "launch --type=overlay --var annotate=1 --stdin-source=@screen --stdin-add-formatting --stdin-add-line-wrap-markers ${annotate}";
 
   # Every pane runs in a shpool session; `kitty-shpool pick` resumes one, e.g.
@@ -79,15 +100,7 @@ in
       tab_bar_background = "#1b1b1a";
     };
 
-    keybindings = {
-      "alt+n" = "launch --location=split --cwd=current";
-      "alt+h" = "kitten focus.py left";
-      "alt+j" = "neighboring_window down";
-      "alt+k" = "neighboring_window up";
-      "alt+l" = "kitten focus.py right";
-      "alt+shift+h" = "previous_tab";
-      "alt+shift+l" = "next_tab";
-      "alt+f" = "toggle_layout stack";
+    keybindings = globalKeys // {
       "ctrl+t>n" = "new_tab_with_cwd";
       "ctrl+t>x" = "kitten close.py tab";
       "ctrl+p>x" = "kitten close.py";
@@ -107,6 +120,9 @@ in
       map --mode move l move_window right
       map --mode move esc pop_keyboard_mode
       map --mode move enter pop_keyboard_mode
+      map --mode move ctrl+k pop_keyboard_mode
+      map --mode move ctrl+n combine : pop_keyboard_mode : push_keyboard_mode resize
+      ${modeGlobalKeys "move"}
 
       map --new-mode resize --on-unknown end ctrl+n
       map --mode resize h kitten resize.py left 5
@@ -115,6 +131,9 @@ in
       map --mode resize k kitten resize.py up 5
       map --mode resize esc pop_keyboard_mode
       map --mode resize enter pop_keyboard_mode
+      map --mode resize ctrl+n pop_keyboard_mode
+      map --mode resize ctrl+k combine : pop_keyboard_mode : push_keyboard_mode move
+      ${modeGlobalKeys "resize"}
     '';
 
     themeFile = "MaterialDark";

@@ -6,7 +6,8 @@ import time
 import kitty.tab_bar as kitty_tab_bar
 import kitty.tabs as kitty_tabs
 from kitty.boss import get_boss
-from kitty.fast_data_types import GLFW_MOUSE_BUTTON_LEFT, GLFW_PRESS, GLFW_RELEASE, add_timer, current_focused_os_window_id
+from kitty.colors import patch_colors
+from kitty.fast_data_types import GLFW_MOUSE_BUTTON_LEFT, GLFW_PRESS, GLFW_RELEASE, add_timer, current_focused_os_window_id, get_options
 from kitty.tab_bar import as_rgb, draw_tab_with_powerline
 from kitty.utils import color_as_int, log_error
 
@@ -29,6 +30,9 @@ COLORS = {
     'idle': 0x9E9E9E,
 }
 ORDER = {'blocked': 0, 'working': 1, 'done': 2, 'idle': 3}
+# Active border colour per keyboard mode; 'prefix' covers ctrl+p / ctrl+t.
+MODE_COLORS = {'move': 0xFEE92E, 'resize': 0xF5971D, 'prefix': 0x53A4F3}
+FULL_BORDER_MODES = ('move', 'resize')
 
 # Shared across config reloads, which re-run this module with runpy.
 if not hasattr(kitty_tab_bar, '_agents'):
@@ -267,9 +271,45 @@ def draw_right(draw_data, screen, os_window_id, min_x):
     agents['segments'][os_window_id] = ranges
 
 
+def sync_mode():
+    """While a keyboard mode is active, like zellij, the active border takes the
+    mode's colour (MODE_COLORS), and move/resize draw it as a full box round the
+    active pane rather than only between panes. kitty redraws the tab bar on
+    every mode change, which is what calls this."""
+    boss = get_boss()
+    mode = boss.mappings.current_keyboard_mode_name
+    if mode == agents.get('mode', ''):
+        return
+    agents['mode'] = mode
+    # Patching colors and relayouts redraw the tab bar, so not from inside its draw.
+    add_timer(lambda timer_id: apply_mode(mode), 0, False)
+
+
+def apply_mode(mode):
+    boss = get_boss()
+    if mode:
+        color = MODE_COLORS.get(mode, MODE_COLORS['prefix'])
+    else:
+        color = boss.color_settings_at_startup.get('active_border_color')
+    color = None if color is None else int(color)
+    if color != agents.get('border_color'):
+        agents['border_color'] = color
+        patch_colors({'active_border_color': color})
+
+    # kitty rereads this option on each relayout.
+    agents.setdefault('minimal_borders', get_options().draw_minimal_borders)
+    minimal = agents['minimal_borders'] and mode not in FULL_BORDER_MODES
+    if get_options().draw_minimal_borders != minimal:
+        get_options().draw_minimal_borders = minimal
+        for tm in boss.all_tab_managers:
+            if tm.active_tab is not None:
+                tm.active_tab.relayout()
+
+
 def draw_tab(draw_data, screen, tab, before, max_tab_length, index, is_last, extra_data):
     end = draw_tab_with_powerline(draw_data, screen, tab, before, max_tab_length, index, is_last, extra_data)
     if is_last and not extra_data.for_layout:
+        sync_mode()
         # kitty truncates titles by backing up over them, so wipe the overflow
         # here, since we move the cursor away from where kitty would clear it.
         screen.erase_in_line(0, False)
