@@ -194,8 +194,8 @@ in
     goVersions = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       default = [
-        "1.25"
         "1.26"
+        "1.27"
       ];
       description = ''
         Go versions exposed under `$GO_VERSIONS_DIR/<version>/bin`, for a test matrix across
