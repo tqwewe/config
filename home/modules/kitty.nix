@@ -1,4 +1,9 @@
-{ lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   # herdr's notification sounds, so finished agents ding exactly like they did there.
   herdrSound =
@@ -61,6 +66,9 @@ let
       pkgs.shpool
       pkgs.jq
       pkgs.fzf
+      pkgs.procps
+      pkgs.gawk
+      config.programs.kitty.package
     ];
     text = builtins.readFile ./kitty-shpool.sh;
   };
@@ -105,6 +113,7 @@ in
       "ctrl+t>x" = "kitten close.py tab";
       "ctrl+p>x" = "kitten close.py";
       "ctrl+shift+w" = "kitten close.py";
+      "ctrl+t>r" = "kitten restore.py";
       "ctrl+t>s" = "launch --type=tab ${lib.getExe kittyShpool} pick";
       "ctrl+p>d" = "launch --location=hsplit --cwd=current";
       "ctrl+p>r" = "launch --location=vsplit --cwd=current";
@@ -141,6 +150,10 @@ in
 
   xdg.configFile."kitty/resize.py".source = ./kitty-resize.py;
   xdg.configFile."kitty/focus.py".source = ./kitty-focus.py;
+  xdg.configFile."kitty/restore.py".source = pkgs.replaceVars ./kitty-restore.py {
+    shpool = lib.getExe pkgs.shpool;
+    kittyShpool = lib.getExe kittyShpool;
+  };
   xdg.configFile."kitty/close.py".source = pkgs.replaceVars ./kitty-close.py {
     shpool = lib.getExe pkgs.shpool;
   };
