@@ -32,6 +32,7 @@ in
     ./modules/lazygit.nix
     ./modules/librewolf.nix
     ./modules/mangohud.nix
+    ./modules/murmur.nix
     ./modules/nur.nix
     ./modules/obs.nix
     ./modules/ollama.nix

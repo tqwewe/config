@@ -142,6 +142,12 @@
       };
     };
 
+    # Hold-to-talk dictation; not a flake, so home/modules/murmur.nix builds its package.nix
+    murmur = {
+      url = "git+ssh://git@git.tqwewe.com/tqwewe/murmur.git";
+      flake = false;
+    };
+
     # Secrets & encryption
     agenix = {
       url = "github:ryantm/agenix";
