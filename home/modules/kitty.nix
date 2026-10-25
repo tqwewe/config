@@ -148,6 +148,11 @@ in
     themeFile = "MaterialDark";
   };
 
+  # home-manager reloads kitty with `pkill kitty`, which also matches (and, via
+  # SIGUSR1, kills) every pane's kitty-shpool wrapper, closing kitty on switch.
+  xdg.configFile."kitty/kitty.conf".onChange = lib.mkForce ''
+    ${pkgs.procps}/bin/pkill -USR1 -u $USER '^(\.kitty-wrapped|kitty)$' || true
+  '';
   xdg.configFile."kitty/resize.py".source = ./kitty-resize.py;
   xdg.configFile."kitty/focus.py".source = ./kitty-focus.py;
   xdg.configFile."kitty/restore.py".source = pkgs.replaceVars ./kitty-restore.py {
@@ -211,4 +216,8 @@ in
       ];
     };
   };
+
+  # Restarting the daemon kills every session, so a switch that changes the
+  # service (e.g. a shpool update) leaves the running one until the next login.
+  systemd.user.services.shpool.Unit.X-SwitchMethod = "keep-old";
 }

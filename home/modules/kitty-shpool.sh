@@ -6,6 +6,10 @@
 #   kitty-shpool pick       choose sessions with fzf: the first attaches here, any
 #                           others (tab to multi-select) open in new kitty tabs
 
+# home-manager signals kitty with `pkill kitty` on switch, which also matches
+# this script's process name. Ignore it rather than taking the pane down.
+trap '' USR1
+
 session_exists() {
   shpool list --json 2>/dev/null | jq -e --arg name "$1" 'any(.sessions[]; .name == $name)' >/dev/null
 }
