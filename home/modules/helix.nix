@@ -432,7 +432,16 @@ in
     nil
     nixfmt
     vscode-langservers-extracted
-    typescript-language-server
+    # nixpkgs' 5.3.0 -> 6.0.2 bump (7191cc1b, 2026-10-07) landed the wrong pnpmDeps hash.
+    # The correction (ac7b1aaed03d) is on master but has not reached the nixos-unstable
+    # channel, whose tip is still the rev this flake locks, so bumping the input cannot
+    # fix it. Pin the corrected hash, which is what cache.nixos.org already serves.
+    # Remove this once the channel advances past that commit.
+    (typescript-language-server.overrideAttrs (old: {
+      pnpmDeps = old.pnpmDeps.overrideAttrs {
+        outputHash = "sha256-xR/EF60lVBsITKgH7wCM2wHM46PFQevD51KfCENSUH4=";
+      };
+    }))
     prettier
     sqlfluff
     lua-language-server
