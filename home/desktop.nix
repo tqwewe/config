@@ -20,6 +20,7 @@ in
     ./modules/atuin.nix
     ./modules/base.nix
     ./modules/devenv.nix
+    ./modules/dictation.nix
     ./modules/direnv.nix
     ./modules/docker.nix
     ./modules/fish.nix

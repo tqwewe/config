@@ -283,9 +283,13 @@
         "video"
         "audio"
         "realtime"
+        "input"
+        "ydotool"
+        "dialout"
       ];
     };
   };
+  programs.ydotool.enable = true;
   nix.settings.trusted-users = [
     "root"
     "ari"
