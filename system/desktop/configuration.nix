@@ -24,6 +24,13 @@
     ../modules/steam.nix
   ];
 
+  services.sunshine = {
+    enable = true;
+    autoStart = true;
+    capSysAdmin = true; # KMS capture, so KDE's portal doesn't prompt
+    openFirewall = true;
+  };
+
   # CI for git.tqwewe.com. zion has Actions enabled but deliberately runs no
   # runner; this box is it. See the CI section of ~/dev/tqwewe/zion/README.md.
   services.forgejoRunner.enable = true;
@@ -92,7 +99,10 @@
       2222
       3389
     ];
-    allowedUDPPorts = [ 5000 ];
+    allowedUDPPorts = [
+      5000
+      5920
+    ];
     allowedTCPPortRanges = [
       {
         from = 1716;
