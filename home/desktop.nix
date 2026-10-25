@@ -26,6 +26,7 @@ in
     ./modules/gh.nix
     ./modules/git.nix
     ./modules/helix.nix
+    # ./modules/herdr.nix
     ./modules/jujutsu.nix
     ./modules/kitty.nix
     ./modules/lazygit.nix
@@ -38,7 +39,7 @@ in
     ./modules/plasma.nix
     ./modules/starship.nix
     ./modules/taskwarrior.nix
-    ./modules/zellij.nix
+    # ./modules/zellij.nix
 
     # Secrets
     agenix.homeManagerModules.default
@@ -104,8 +105,9 @@ in
           builtins.filter (f: !lib.hasInfix "CYCLES_CUDA_BINARIES_ARCH" f) (old.cmakeFlags or [ ])
           ++ [ (lib.cmakeFeature "CYCLES_CUDA_BINARIES_ARCH" "sm_89") ];
       }))
+      cinny-desktop
       claude-code
-      (withWaylandFix element-desktop)
+      # (withWaylandFix element-desktop)
       fd
       git-cliff
       (withWaylandFix google-chrome)
