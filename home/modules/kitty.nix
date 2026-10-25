@@ -36,7 +36,7 @@ let
     ${lib.getExe pkgs.gnused} -e 's/\r$//' -e 's/\r/\n/g' | "$HOME/.cargo/bin/falling-sand" -a
   '';
   globalKeys = {
-    "alt+n" = "launch --location=split --cwd=current";
+    "alt+n" = "kitten launch.py --location=split";
     "alt+h" = "kitten focus.py left";
     "alt+j" = "neighboring_window down";
     "alt+k" = "neighboring_window up";
@@ -109,14 +109,14 @@ in
     };
 
     keybindings = globalKeys // {
-      "ctrl+t>n" = "new_tab_with_cwd";
+      "ctrl+t>n" = "kitten launch.py --type=tab";
       "ctrl+t>x" = "kitten close.py tab";
       "ctrl+p>x" = "kitten close.py";
       "ctrl+shift+w" = "kitten close.py";
       "ctrl+t>r" = "kitten restore.py";
       "ctrl+t>s" = "launch --type=tab ${lib.getExe kittyShpool} pick";
-      "ctrl+p>d" = "launch --location=hsplit --cwd=current";
-      "ctrl+p>r" = "launch --location=vsplit --cwd=current";
+      "ctrl+p>d" = "kitten launch.py --location=hsplit";
+      "ctrl+p>r" = "kitten launch.py --location=vsplit";
       "ctrl+p>a" = "kitten annotate.py";
     };
 
@@ -155,6 +155,7 @@ in
   '';
   xdg.configFile."kitty/resize.py".source = ./kitty-resize.py;
   xdg.configFile."kitty/focus.py".source = ./kitty-focus.py;
+  xdg.configFile."kitty/launch.py".source = ./kitty-launch.py;
   xdg.configFile."kitty/restore.py".source = pkgs.replaceVars ./kitty-restore.py {
     shpool = lib.getExe pkgs.shpool;
     kittyShpool = lib.getExe kittyShpool;
