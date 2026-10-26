@@ -153,6 +153,16 @@ in
   xdg.configFile."kitty/kitty.conf".onChange = lib.mkForce ''
     ${pkgs.procps}/bin/pkill -USR1 -u $USER '^(\.kitty-wrapped|kitty)$' || true
   '';
+  xdg.configFile."kitty/open-actions.conf".text = ''
+    protocol file
+    mime text/*
+    action launch --type=overlay hx ''${FILE_PATH}
+
+    protocol file
+    ext nix,rs,toml,md,json,yaml,yml,sh,fish,lock
+    action launch --type=overlay hx ''${FILE_PATH}
+  '';
+
   xdg.configFile."kitty/resize.py".source = ./kitty-resize.py;
   xdg.configFile."kitty/focus.py".source = ./kitty-focus.py;
   xdg.configFile."kitty/launch.py".source = ./kitty-launch.py;
