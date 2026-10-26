@@ -16,17 +16,18 @@
 # firewall needs a hole, and a dynamic home IP is irrelevant. The desktop being
 # off just means jobs queue until it is back.
 #
-# Registration, once:
+# Registration, once. The runner does not register itself: it needs the UUID and permanent
+# token of a runner that already exists.
 #
-#   1. Forgejo -> Site Administration -> Actions -> Runners -> Create new runner
-#   2. Put the token in the environment file (root-owned, 0400):
-#        printf 'TOKEN=%s\n' '<registration token>' > /etc/forgejo-runner.env
-#        chmod 0400 /etc/forgejo-runner.env
-#   3. Rebuild. On first start the runner exchanges the registration token for a
-#      permanent one in /var/lib/gitea-runner/zion/.runner.
+#   1. Forgejo -> Site Administration -> Actions -> Runners -> Create new runner,
+#      which shows a UUID and a token.
+#   2. Set services.forgejoRunner.uuid to the UUID, and put the token alone in the
+#      token file (root-owned, 0400):
+#        printf '%s' '<token>' | sudo install -m 0400 -o root /dev/stdin /etc/forgejo-runner.token
+#   3. Rebuild.
 #
-# The registration token is single-use and short-lived; the file is only read
-# again if the token or the label set changes, which forces re-registration.
+# A runner registered by the old gitea-actions-runner module already has both, in
+# /var/lib/gitea-runner/zion/.runner as "uuid" and "token".
 #
 # Jobs run natively on this host rather than in a container. That is the entire
 # point: the cargo registry, the sccache and the actions cache stay warm between
@@ -123,20 +124,17 @@ in
       description = "Base URL of the Forgejo instance to poll.";
     };
 
-    name = lib.mkOption {
+    uuid = lib.mkOption {
       type = lib.types.str;
-      default = config.networking.hostName;
-      defaultText = lib.literalExpression "config.networking.hostName";
-      description = "Name the runner reports to Forgejo, shown in the runner list.";
+      description = "UUID of the runner as registered on the forge. Not a secret on its own; the token is.";
     };
 
     tokenFile = lib.mkOption {
       type = lib.types.path;
-      default = "/etc/forgejo-runner.env";
+      default = "/etc/forgejo-runner.token";
       description = ''
-        Path to a root-owned 0400 environment file containing the registration
-        token, as `TOKEN=<token>`. Keep it out of the Nix store: everything in
-        the store is world-readable.
+        Path to a root-owned 0400 file containing only the runner's token. Keep
+        it out of the Nix store: everything in the store is world-readable.
       '';
     };
 
@@ -227,18 +225,11 @@ in
     # else on the system changes shape because of it.
     nixpkgs.overlays = [ inputs.rust-overlay.overlays.default ];
 
-    services.gitea-actions-runner = {
-      # The NixOS module is gitea-named and predates the fork; the Forgejo
-      # runner is a separate package that speaks the same protocol.
-      package = pkgs.forgejo-runner;
-
+    services.forgejo-runner = {
       instances.${instance} = {
         enable = true;
-        inherit (cfg) name url tokenFile;
 
-        # ":host" is what selects native execution. Changing this list forces
-        # re-registration, so a fresh token is needed with it.
-        labels = [ "native:host" ];
+        secrets.server.connections.default.token_url = cfg.tokenFile;
 
         # In host mode PATH is exactly this list plus coreutils. Anything a
         # workflow calls and does not find here does not exist.
@@ -333,8 +324,15 @@ in
           ++ cfg.extraPackages;
 
         settings = {
+          server.connections.default = {
+            inherit (cfg) url uuid;
+          };
+
           runner = {
             inherit (cfg) capacity;
+
+            # ":host" is what selects native execution.
+            labels = [ "native:host" ];
 
             envs = {
               # Out of the per-job working directory, so crates are fetched once
@@ -422,35 +420,47 @@ in
 
     # This is a workstation before it is a build server. CI gets the whole
     # machine while it is idle and yields as soon as Ari is doing something.
-    systemd.services."gitea-runner-${instance}".serviceConfig = {
-      # See the users.users block above. The unit already names User=gitea-runner; this
-      # only stops systemd from inventing the user, and the directory, for itself.
-      DynamicUser = lib.mkForce false;
+    systemd.services."forgejo-runner-${instance}" = {
+      # The module's own state directory is /var/lib/forgejo-runner. This one predates the
+      # switch from gitea-actions-runner and holds the warm cargo, sccache and action caches.
+      environment.HOME = lib.mkForce stateDir;
 
-      # DynamicUser implied this, and turning it off took it away with it: jobs then share
-      # the host's /tmp, where a file left by another user is a permission error rather
-      # than a clean slate. heklang's CLI tests write to a fixed /tmp/hek-cli-<case> path
-      # and fail outright on someone else's leftovers. A private /tmp is both the isolation
-      # the service had before and the thing that makes a test like that safe here.
-      PrivateTmp = true;
+      serviceConfig = {
+        # See the users.users block above. The module defaults to a DynamicUser; this names
+        # the account and keeps systemd from inventing the user and the directory.
+        DynamicUser = lib.mkForce false;
+        User = "gitea-runner";
+        Group = "gitea-runner";
+        StateDirectory = lib.mkForce "gitea-runner/${instance}";
+        WorkingDirectory = lib.mkForce stateDir;
+        # Only needed to undo noexec on a DynamicUser's directory, which this no longer is.
+        ExecPaths = lib.mkForce [ ];
 
-      # nixpkgs sets RestartSec=2, which is right for a forge restarting under it.
-      # It is wrong for a rejected registration token: that loops forever, and at
-      # two seconds it is re-POSTing to the forge before you can read the log.
-      # Slow enough to be ignorable, still fast enough to ride out a reboot.
-      # mkForce because the upstream module sets it at the same priority.
-      RestartSec = lib.mkForce 30;
+        # DynamicUser implied this, and turning it off took it away with it: jobs then share
+        # the host's /tmp, where a file left by another user is a permission error rather
+        # than a clean slate. heklang's CLI tests write to a fixed /tmp/hek-cli-<case> path
+        # and fail outright on someone else's leftovers. A private /tmp is both the isolation
+        # the service had before and the thing that makes a test like that safe here.
+        PrivateTmp = true;
 
-      # systemd hands a service 1024 open files by default, which is a desktop-daemon
-      # number, not a CI one: tephra's integration tests flood a connection pool and hit
-      # EMFILE well before they finish. A hosted GitHub runner gives a job 65536, so this
-      # is matching what the tests were written against rather than inventing headroom.
-      # Soft:hard -- the hard limit is systemd's own default and is left alone.
-      LimitNOFILE = "65536:524288";
+        # nixpkgs sets RestartSec=2, which is right for a forge restarting under it.
+        # It is wrong for a rejected registration token: that loops forever, and at
+        # two seconds it is re-POSTing to the forge before you can read the log.
+        # Slow enough to be ignorable, still fast enough to ride out a reboot.
+        # mkForce because the upstream module sets it at the same priority.
+        RestartSec = lib.mkForce 30;
 
-      Nice = 10;
-      CPUWeight = 50;
-      IOWeight = 50;
+        # systemd hands a service 1024 open files by default, which is a desktop-daemon
+        # number, not a CI one: tephra's integration tests flood a connection pool and hit
+        # EMFILE well before they finish. A hosted GitHub runner gives a job 65536, so this
+        # is matching what the tests were written against rather than inventing headroom.
+        # Soft:hard -- the hard limit is systemd's own default and is left alone.
+        LimitNOFILE = "65536:524288";
+
+        Nice = 10;
+        CPUWeight = 50;
+        IOWeight = 50;
+      };
     };
   };
 }

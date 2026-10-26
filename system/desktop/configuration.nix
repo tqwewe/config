@@ -34,7 +34,10 @@
 
   # CI for git.tqwewe.com. zion has Actions enabled but deliberately runs no
   # runner; this box is it. See the CI section of ~/dev/tqwewe/zion/README.md.
-  services.forgejoRunner.enable = true;
+  services.forgejoRunner = {
+    enable = true;
+    uuid = "930735fe-b449-4303-ba37-12e6a7441385";
+  };
 
   # Hostname
   networking = {
@@ -122,17 +125,24 @@
     enable = true;
     nssmdns4 = true;
     nssmdns6 = true;
-    publish = {
-      enable = false;
-      addresses = true;
-      domain = true;
-      hinfo = true;
-      userServices = true;
-      workstation = true;
+    settings = {
+      publish = {
+        disable-publishing = true;
+        disable-user-service-publishing = false;
+        publish-addresses = true;
+        publish-domain = true;
+        publish-hinfo = true;
+        publish-workstation = true;
+      };
+      # Add these for better compatibility
+      server.allow-point-to-point = true;
     };
-    # Add these for better compatibility
     openFirewall = true;
-    allowPointToPoint = true;
+
+    # nixpkgs' sunshine module still sets these obsolete options, which warns. The settings
+    # above carry the same values, so this only stops the warning.
+    publish.enable = lib.mkForce null;
+    publish.userServices = lib.mkForce null;
   };
   systemd.services.avahi-daemon.enable = true;
 
@@ -142,7 +152,8 @@
 
   # Open WebUI
   services.open-webui = {
-    enable = true;
+    # Off while nixpkgs marks python3.14-posthog broken, which open-webui depends on.
+    enable = false;
     openFirewall = false;
     host = "0.0.0.0";
 
@@ -221,7 +232,6 @@
   boot.kernelModules = [ "v4l2loopback" ];
   boot.extraModulePackages = with config.boot.kernelPackages; [
     v4l2loopback
-    perf
   ];
   # This will enable additional firmware blobs
   hardware.enableAllFirmware = true;
