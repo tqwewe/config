@@ -1,5 +1,6 @@
 {
   config,
+  lib,
   pkgs,
   ...
 }:
@@ -160,7 +161,17 @@
   };
 
   boot.kernelPackages = pkgs.linuxPackages_latest;
-  boot.resumeDevice = "/dev/disk/by-uuid/6d614528-903b-4eba-8179-927f7d50ec2f";
+  # Swap is encrypted with a fresh random key every boot, because the disk is not
+  # and RAM can be paged out to it, including the vault's decrypted tmpfs cache.
+  # That rules out hibernation, which never worked here anyway. Addressed by
+  # partition UUID: re-keying wipes the swap signature and its filesystem UUID
+  # with it, and the NVMe device names swap between boots.
+  swapDevices = lib.mkForce [
+    {
+      device = "/dev/disk/by-partuuid/b2b44c04-b0ba-44c3-b20d-7b5d8a6af80d";
+      randomEncryption.enable = true;
+    }
+  ];
   powerManagement.enable = true;
   boot.kernel.sysctl = {
     # Queue management for low latency
