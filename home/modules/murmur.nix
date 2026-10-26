@@ -15,10 +15,13 @@ in
       Description = "Murmur hold-to-talk dictation";
       After = [ "graphical-session.target" ];
       PartOf = [ "graphical-session.target" ];
+      # keep retrying while outputs are gone (e.g. monitors off), instead of hitting the start limit
+      StartLimitIntervalSec = 0;
     };
     Service = {
       ExecStart = lib.getExe murmur;
-      Restart = "on-failure";
+      # the compositor closes the overlay when its output disappears, and iced then exits cleanly
+      Restart = "always";
       RestartSec = 3;
       # user services don't inherit the login session's environment, which is where nixos sets this
       Environment = [ "YDOTOOL_SOCKET=/run/ydotoold/socket" ];

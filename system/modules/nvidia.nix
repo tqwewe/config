@@ -39,4 +39,7 @@
     # Optionally, you may need to select the appropriate driver version for your specific GPU.
     package = config.boot.kernelPackages.nvidiaPackages.latest;
   };
+
+  # kwin freezes a whole output when a client buffer on an overlay plane never becomes ready
+  environment.sessionVariables.KWIN_USE_OVERLAYS = "0";
 }
