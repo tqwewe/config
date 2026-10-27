@@ -24,7 +24,11 @@ in
       Restart = "always";
       RestartSec = 3;
       # user services don't inherit the login session's environment, which is where nixos sets this
-      Environment = [ "YDOTOOL_SOCKET=/run/ydotoold/socket" ];
+      Environment = [
+        "YDOTOOL_SOCKET=/run/ydotoold/socket"
+        # primary monitor; otherwise kwin picks whichever output is active at startup
+        "MURMUR_OUTPUT=DP-1"
+      ];
     };
     Install.WantedBy = [ "graphical-session.target" ];
   };

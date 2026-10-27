@@ -386,11 +386,11 @@
     "murmur": {
       "flake": false,
       "locked": {
-        "lastModified": 1793027934,
-        "narHash": "sha256-fh8mSc7IzT2QNpBPdKgpGv3opYvm9FHU5RpRtErGSec=",
+        "lastModified": 1793087495,
+        "narHash": "sha256-kupGqJ/w2pv6Qxp5frWU3iJEPyQBeNK7E9BNAvD+a/w=",
         "ref": "refs/heads/main",
-        "rev": "594d3ee125aa18e347ea49cfd450aa4ca995e3f1",
-        "revCount": 4,
+        "rev": "3d5dc7dcc5cffe06c6f1c3062b55f035b95a0207",
+        "revCount": 5,
         "type": "git",
         "url": "ssh://git@git.tqwewe.com/tqwewe/murmur.git"
       },
