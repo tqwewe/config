@@ -40,6 +40,7 @@
     package = config.boot.kernelPackages.nvidiaPackages.latest;
   };
 
-  # kwin freezes a whole output when a client buffer on an overlay plane never becomes ready
-  environment.sessionVariables.KWIN_USE_OVERLAYS = "0";
+  # kwin 6.8 on nvidia intermittently stops repainting one output for seconds to minutes
+  # https://bugs.kde.org/show_bug.cgi?id=527704
+  environment.sessionVariables.KWIN_DRM_DISABLE_TRIPLE_BUFFERING = "1";
 }
