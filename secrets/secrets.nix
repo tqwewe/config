@@ -24,4 +24,5 @@ in
   ];
   "weatherApiKey.age".publicKeys = [ desktop bigscreen ];
   "hermesEnv.age".publicKeys = [ desktop desktopHost ];
+  "zionWireguardKey.age".publicKeys = [ desktop desktopHost ];
 }

@@ -23,7 +23,14 @@
     ../modules/nvidia.nix
     ../modules/pipewire.nix
     ../modules/steam.nix
+    ../modules/zion-wireguard.nix
   ];
+
+  services.zionWireguard = {
+    enable = true;
+    address = "10.100.0.2/24";
+    privateKeyFile = ../../secrets/zionWireguardKey.age;
+  };
 
   services.sunshine = {
     enable = true;
