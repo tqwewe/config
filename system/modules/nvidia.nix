@@ -39,4 +39,8 @@
     # Optionally, you may need to select the appropriate driver version for your specific GPU.
     package = config.boot.kernelPackages.nvidiaPackages.latest;
   };
+
+  # kwin 6.8 on nvidia intermittently stops repainting one output for seconds to minutes
+  # https://bugs.kde.org/show_bug.cgi?id=527704
+  environment.sessionVariables.KWIN_DRM_DISABLE_TRIPLE_BUFFERING = "1";
 }

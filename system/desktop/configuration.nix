@@ -1,5 +1,6 @@
 {
   config,
+  lib,
   pkgs,
   ...
 }:
@@ -24,9 +25,19 @@
     ../modules/steam.nix
   ];
 
+  services.sunshine = {
+    enable = true;
+    autoStart = true;
+    capSysAdmin = true; # KMS capture, so KDE's portal doesn't prompt
+    openFirewall = true;
+  };
+
   # CI for git.tqwewe.com. zion has Actions enabled but deliberately runs no
   # runner; this box is it. See the CI section of ~/dev/tqwewe/zion/README.md.
-  services.forgejoRunner.enable = true;
+  services.forgejoRunner = {
+    enable = true;
+    uuid = "930735fe-b449-4303-ba37-12e6a7441385";
+  };
 
   # Hostname
   networking = {
@@ -92,7 +103,10 @@
       2222
       3389
     ];
-    allowedUDPPorts = [ 5000 ];
+    allowedUDPPorts = [
+      5000
+      5920
+    ];
     allowedTCPPortRanges = [
       {
         from = 1716;
@@ -111,17 +125,24 @@
     enable = true;
     nssmdns4 = true;
     nssmdns6 = true;
-    publish = {
-      enable = false;
-      addresses = true;
-      domain = true;
-      hinfo = true;
-      userServices = true;
-      workstation = true;
+    settings = {
+      publish = {
+        disable-publishing = true;
+        disable-user-service-publishing = false;
+        publish-addresses = true;
+        publish-domain = true;
+        publish-hinfo = true;
+        publish-workstation = true;
+      };
+      # Add these for better compatibility
+      server.allow-point-to-point = true;
     };
-    # Add these for better compatibility
     openFirewall = true;
-    allowPointToPoint = true;
+
+    # nixpkgs' sunshine module still sets these obsolete options, which warns. The settings
+    # above carry the same values, so this only stops the warning.
+    publish.enable = lib.mkForce null;
+    publish.userServices = lib.mkForce null;
   };
   systemd.services.avahi-daemon.enable = true;
 
@@ -131,7 +152,8 @@
 
   # Open WebUI
   services.open-webui = {
-    enable = true;
+    # Off while nixpkgs marks python3.14-posthog broken, which open-webui depends on.
+    enable = false;
     openFirewall = false;
     host = "0.0.0.0";
 
@@ -150,7 +172,17 @@
   };
 
   boot.kernelPackages = pkgs.linuxPackages_latest;
-  boot.resumeDevice = "/dev/disk/by-uuid/6d614528-903b-4eba-8179-927f7d50ec2f";
+  # Swap is encrypted with a fresh random key every boot, because the disk is not
+  # and RAM can be paged out to it, including the vault's decrypted tmpfs cache.
+  # That rules out hibernation, which never worked here anyway. Addressed by
+  # partition UUID: re-keying wipes the swap signature and its filesystem UUID
+  # with it, and the NVMe device names swap between boots.
+  swapDevices = lib.mkForce [
+    {
+      device = "/dev/disk/by-partuuid/b2b44c04-b0ba-44c3-b20d-7b5d8a6af80d";
+      randomEncryption.enable = true;
+    }
+  ];
   powerManagement.enable = true;
   boot.kernel.sysctl = {
     # Queue management for low latency
@@ -200,7 +232,6 @@
   boot.kernelModules = [ "v4l2loopback" ];
   boot.extraModulePackages = with config.boot.kernelPackages; [
     v4l2loopback
-    perf
   ];
   # This will enable additional firmware blobs
   hardware.enableAllFirmware = true;
@@ -273,9 +304,13 @@
         "video"
         "audio"
         "realtime"
+        "input"
+        "ydotool"
+        "dialout"
       ];
     };
   };
+  programs.ydotool.enable = true;
   nix.settings.trusted-users = [
     "root"
     "ari"

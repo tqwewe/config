@@ -31,6 +31,18 @@
         sudo -u hermes env HERMES_HOME=/var/lib/hermes/.hermes hermes $argv
       '';
 
+      # Panes run in shpool, whose long-lived daemon freezes its environment at start,
+      # so take the graphical session's variables from the user manager instead.
+      __graphical_env = {
+        onEvent = "fish_preexec";
+        body = ''
+          for line in (systemctl --user show-environment 2>/dev/null | string match -r '^(?:WAYLAND_DISPLAY|XDG_SESSION_TYPE|DISPLAY|XAUTHORITY)=.*')
+            set -l kv (string split -m1 = -- $line)
+            set -gx $kv[1] $kv[2]
+          end
+        '';
+      };
+
       __nix_packages = ''
         if not set -q __nix_package_cache
           set -g __nix_package_cache (nix eval --raw --impure --expr 'builtins.concatStringsSep "\n" (builtins.attrNames (import <nixpkgs> {}))' 2>/dev/null)

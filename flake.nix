@@ -72,39 +72,35 @@
       flake = false;
     };
 
-    # Temporarily disabled: local checkout /home/ari/dev/erasin/tree-sitter-bsn is
-    # absent on this machine (bigscreen), which breaks evaluation. Restore to re-enable.
-    # tree-sitter-bsn = {
-    #   # Local checkout of the feat/rust-expressions branch for testing before the
-    #   # upstream PR (erasin/tree-sitter-bsn) is merged.
-    #   url = "git+file:///home/ari/dev/erasin/tree-sitter-bsn?ref=feat/rust-expressions";
-    #   flake = false;
-    # };
+    tree-sitter-bsn = {
+      # Local checkout of the feat/rust-expressions branch for testing before the
+      # upstream PR (erasin/tree-sitter-bsn) is merged.
+      url = "git+file:///home/ari/dev/erasin/tree-sitter-bsn?ref=feat/rust-expressions";
+      flake = false;
+    };
 
-    # Temporarily disabled: local checkout /home/ari/dev/tephradb/heklang is absent on
-    # this machine (bigscreen), which breaks evaluation. Restore to re-enable.
-    # tree-sitter-hek = {
-    #   # The grammar lives beside the language, in the heklang repo. A `path:` rather than
-    #   # a `git+file:` input because it is not committed yet; once it is, this can become
-    #   # `git+file:///home/ari/dev/tephradb/heklang` with `src` gaining `/tree-sitter-hek`.
-    #   url = "path:/home/ari/dev/tephradb/heklang/tree-sitter-hek";
-    #   flake = false;
-    # };
+    tree-sitter-hek = {
+      # The grammar lives beside the language, in the heklang repo. A `path:` rather than
+      # a `git+file:` input because it is not committed yet; once it is, this can become
+      # `git+file:///home/ari/dev/tephradb/heklang` with `src` gaining `/tree-sitter-hek`.
+      url = "path:/home/ari/dev/tephradb/heklang/tree-sitter-hek";
+      flake = false;
+    };
 
-    # heklang = {
-    #   # The same repository again, as a flake this time, for the `hek` binary helix formats
-    #   # `.hk` with. It defines its own package, so there is nothing to build here.
-    #   #
-    #   # `git+file:` rather than the `path:` above, and the difference is not taste: a
-    #   # `path:` input copies the directory as it stands, and this one carries a 4 GB
-    #   # `target/`. A flake's source is the tracked files alone. The cost is that a change
-    #   # reaches helix when it is committed rather than when it is saved, which is the right
-    #   # trade for a binary and the wrong one for the grammar. Hence two inputs onto one
-    #   # repo; `inputs.heklang.packages.<system>.tree-sitter-hek` is there if the grammar
-    #   # should ever follow the binary's commit instead.
-    #   url = "git+file:///home/ari/dev/tephradb/heklang";
-    #   inputs.nixpkgs.follows = "nixpkgs";
-    # };
+    heklang = {
+      # The same repository again, as a flake this time, for the `hek` binary helix formats
+      # `.hk` with. It defines its own package, so there is nothing to build here.
+      #
+      # `git+file:` rather than the `path:` above, and the difference is not taste: a
+      # `path:` input copies the directory as it stands, and this one carries a 4 GB
+      # `target/`. A flake's source is the tracked files alone. The cost is that a change
+      # reaches helix when it is committed rather than when it is saved, which is the right
+      # trade for a binary and the wrong one for the grammar. Hence two inputs onto one
+      # repo; `inputs.heklang.packages.<system>.tree-sitter-hek` is there if the grammar
+      # should ever follow the binary's commit instead.
+      url = "git+file:///home/ari/dev/tephradb/heklang";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # Rust toolchains for the Forgejo Actions runner. nixpkgs' rustc carries std for the
     # host alone, and CI cross-compiles; system/modules/forgejo-runner.nix is the only
@@ -135,6 +131,21 @@
     zellij-plugin-zsm = {
       url = "path:./flakes/zellij-plugin-zsm";
       inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # Terminal multiplexer for coding agents
+    herdr = {
+      url = "github:herdrdev/herdr/v0.9.3";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        rust-overlay.follows = "rust-overlay";
+      };
+    };
+
+    # Hold-to-talk dictation; not a flake, so home/modules/murmur.nix builds its package.nix
+    murmur = {
+      url = "git+ssh://git@git.tqwewe.com/tqwewe/murmur.git";
+      flake = false;
     };
 
     # Secrets & encryption
