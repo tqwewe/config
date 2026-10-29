@@ -46,7 +46,7 @@ in
 
   xdg.desktopEntries.jellyfin-desktop = {
     name = "Jellyfin Desktop";
-    exec = "jellyfin-desktop %U";
+    exec = "jellyfin-desktop --tv %U";
     icon = "${config.home.homeDirectory}/.local/share/icons/hicolor/scalable/apps/jellyfin-desktop.svg";
     comment = "Jellyfin native desktop client";
     categories = [ "AudioVideo" "Video" ];

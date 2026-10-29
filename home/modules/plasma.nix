@@ -133,7 +133,7 @@ in
 
     configFile = {
       kwinrc.Xwayland.Scale = 1;
-      kwinrc.Xwayland.XwaylandEavesdrops = false;
+      kwinrc.Xwayland.XwaylandEavesdrops = "NonCharacter";
 
       "autostart/vesktop.desktop" = {
         "Desktop Entry" = {

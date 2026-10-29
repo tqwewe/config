@@ -5,25 +5,44 @@
 }:
 let
   crates-lsp = pkgs.callPackage ../../pkgs/crates-lsp.nix { };
+  # The moonbit toolchain swaps in nixpkgs' tinycc, whose installCheck test suite no
+  # longer passes under GCC 16 (its reference compile rejects `int x[3] = { 1, 2, {{3}} }`
+  # with "braces around scalar initializer"). tinycc itself builds fine, so take the
+  # moonbit overlay against a pkgs where that self-test is skipped. Done here via a scoped
+  # nixpkgs import rather than `inputs.moonbit-overlay.packages`, because the flake's own
+  # package set evaluates with its own pkgs and would not see this override.
+  moonbit-pkgs = import inputs.nixpkgs {
+    inherit (pkgs) system;
+    config.allowUnfree = true;
+    overlays = [
+      inputs.moonbit-overlay.overlays.default
+      (_final: prev: {
+        tinycc = prev.tinycc.overrideAttrs (_: { doInstallCheck = false; });
+      })
+    ];
+  };
+  # Temporarily disabled alongside the heklang flake input (missing locally).
   # The `hek` binary, for the `.hk` formatter below. heklang defines its own package, so
   # this takes it rather than describing how to build someone else's crate. `hek-grammar`
   # below comes from the same repository through a second input; `flake.nix` has why.
-  hek = inputs.heklang.packages.${pkgs.system}.hek;
+  # hek = inputs.heklang.packages.${pkgs.system}.hek;
   moonbit-grammar = pkgs.tree-sitter.buildGrammar {
     language = "moonbit";
     version = "unstable";
     src = inputs.tree-sitter-moonbit;
   };
-  bsn-grammar = pkgs.tree-sitter.buildGrammar {
-    language = "bsn";
-    version = "unstable";
-    src = inputs.tree-sitter-bsn;
-  };
-  hek-grammar = pkgs.tree-sitter.buildGrammar {
-    language = "hek";
-    version = "unstable";
-    src = inputs.tree-sitter-hek;
-  };
+  # Temporarily disabled alongside the tree-sitter-bsn flake input (missing locally).
+  # bsn-grammar = pkgs.tree-sitter.buildGrammar {
+  #   language = "bsn";
+  #   version = "unstable";
+  #   src = inputs.tree-sitter-bsn;
+  # };
+  # Temporarily disabled alongside the tree-sitter-hek flake input (missing locally).
+  # hek-grammar = pkgs.tree-sitter.buildGrammar {
+  #   language = "hek";
+  #   version = "unstable";
+  #   src = inputs.tree-sitter-hek;
+  # };
   # Merge helix's bundled rust injections with a bsn injection so `bsn!`/`bsn_list!`
   # macro bodies get BSN highlighting. A user runtime queries file fully shadows the
   # bundled one, so we re-include the defaults and append the bsn rule last (last
@@ -42,13 +61,33 @@ in
 {
   programs.helix = {
     enable = true;
-    package = inputs.helix.packages.${pkgs.system}.helix.overrideAttrs (old: {
-      cargoBuildFlags = (old.cargoBuildFlags or [ ]) ++ [
-        "--features"
-        "steel"
-      ];
-      buildInputs = (old.buildInputs or [ ]) ++ [ pkgs.steel ]; # if steel lib is needed
-    });
+    package =
+      (inputs.helix.packages.${pkgs.system}.helix.override {
+        # GCC 16 (from the nixpkgs bump) defaults to gnu23, which switches on glibc 2.44's
+        # type-generic `bsearch` macro. That collides with the plain `bsearch` several
+        # tree-sitter scanners bundle (perl, php, pest, picat, ...), so grammar compilation
+        # fails with "expected identifier or '(' before '_Generic'". Build every grammar as
+        # C11 to keep the macro off; the editor itself still builds with the default stdenv.
+        grammarOverlays = [
+          (
+            _final: prev:
+            pkgs.lib.mapAttrs (
+              _name: drv:
+              if pkgs.lib.isDerivation drv then
+                drv.overrideAttrs (o: { FLAGS = (o.FLAGS or [ ]) ++ [ "-std=gnu11" ]; })
+              else
+                drv
+            ) prev
+          )
+        ];
+      }).overrideAttrs
+        (old: {
+          cargoBuildFlags = (old.cargoBuildFlags or [ ]) ++ [
+            "--features"
+            "steel"
+          ];
+          buildInputs = (old.buildInputs or [ ]) ++ [ pkgs.steel ]; # if steel lib is needed
+        });
 
     settings = {
       theme = "nightfox";
@@ -277,48 +316,50 @@ in
           language-servers = [ "moonbit-lsp" ];
           grammar = "moonbit";
         }
-        {
-          name = "bsn";
-          scope = "source.bsn";
-          injection-regex = "bsn";
-          file-types = [ "bsn" ];
-          roots = [ ];
-          auto-format = false;
-          comment-token = "//";
-          block-comment-tokens = {
-            start = "/*";
-            end = "*/";
-          };
-          indent = {
-            tab-width = 2;
-            unit = "  ";
-          };
-          grammar = "bsn";
-        }
-        {
-          name = "hek";
-          scope = "source.hek";
-          injection-regex = "hek";
-          file-types = [ "hk" ];
-          roots = [ ];
-          # `hek fmt -` reads one module on stdin and writes it back on stdout. On a module
-          # that does not parse it exits non-zero with stdout empty, which is what makes
-          # format-on-save safe: helix reports the error and keeps the buffer rather than
-          # replacing it with nothing, so a half-typed file is never emptied.
-          formatter.command = "${hek}/bin/hek";
-          formatter.args = [
-            "fmt"
-            "-"
-          ];
-          auto-format = true;
-          # hek has `//` and no block comment form, so there is nothing to pair here.
-          comment-token = "//";
-          indent = {
-            tab-width = 2;
-            unit = "  ";
-          };
-          grammar = "hek";
-        }
+        # Temporarily disabled: tree-sitter-bsn grammar is unavailable locally.
+        # {
+        #   name = "bsn";
+        #   scope = "source.bsn";
+        #   injection-regex = "bsn";
+        #   file-types = [ "bsn" ];
+        #   roots = [ ];
+        #   auto-format = false;
+        #   comment-token = "//";
+        #   block-comment-tokens = {
+        #     start = "/*";
+        #     end = "*/";
+        #   };
+        #   indent = {
+        #     tab-width = 2;
+        #     unit = "  ";
+        #   };
+        #   grammar = "bsn";
+        # }
+        # Temporarily disabled: tree-sitter-hek grammar / hek binary unavailable locally.
+        # {
+        #   name = "hek";
+        #   scope = "source.hek";
+        #   injection-regex = "hek";
+        #   file-types = [ "hk" ];
+        #   roots = [ ];
+        #   # `hek fmt -` reads one module on stdin and writes it back on stdout. On a module
+        #   # that does not parse it exits non-zero with stdout empty, which is what makes
+        #   # format-on-save safe: helix reports the error and keeps the buffer rather than
+        #   # replacing it with nothing, so a half-typed file is never emptied.
+        #   formatter.command = "${hek}/bin/hek";
+        #   formatter.args = [
+        #     "fmt"
+        #     "-"
+        #   ];
+        #   auto-format = true;
+        #   # hek has `//` and no block comment form, so there is nothing to pair here.
+        #   comment-token = "//";
+        #   indent = {
+        #     tab-width = 2;
+        #     unit = "  ";
+        #   };
+        #   grammar = "hek";
+        # }
       ];
 
       language-server.crates-lsp = {
@@ -419,7 +460,7 @@ in
     prettier
     sqlfluff
     lua-language-server
-    inputs.moonbit-overlay.packages.${pkgs.system}.moonbit_latest
+    moonbit-pkgs.moonbit-bin.latest
     taplo
     terraform-ls
     yaml-language-server
@@ -437,22 +478,24 @@ in
     source = "${inputs.tree-sitter-moonbit}/queries";
     force = true;
   };
-  xdg.configFile."helix/runtime/grammars/bsn.so" = {
-    source = "${bsn-grammar}/parser";
-    force = true;
-  };
-  xdg.configFile."helix/runtime/queries/bsn" = {
-    source = "${inputs.tree-sitter-bsn}/queries";
-    force = true;
-  };
-  xdg.configFile."helix/runtime/grammars/hek.so" = {
-    source = "${hek-grammar}/parser";
-    force = true;
-  };
-  xdg.configFile."helix/runtime/queries/hek" = {
-    source = "${inputs.tree-sitter-hek}/queries";
-    force = true;
-  };
+  # Temporarily disabled: tree-sitter-bsn grammar is unavailable locally.
+  # xdg.configFile."helix/runtime/grammars/bsn.so" = {
+  #   source = "${bsn-grammar}/parser";
+  #   force = true;
+  # };
+  # xdg.configFile."helix/runtime/queries/bsn" = {
+  #   source = "${inputs.tree-sitter-bsn}/queries";
+  #   force = true;
+  # };
+  # Temporarily disabled: tree-sitter-hek grammar is unavailable locally.
+  # xdg.configFile."helix/runtime/grammars/hek.so" = {
+  #   source = "${hek-grammar}/parser";
+  #   force = true;
+  # };
+  # xdg.configFile."helix/runtime/queries/hek" = {
+  #   source = "${inputs.tree-sitter-hek}/queries";
+  #   force = true;
+  # };
   xdg.configFile."helix/runtime/queries/rust/injections.scm".text = rust-injections;
 
   xdg.configFile."helix/yazi-picker.sh".text = ''
