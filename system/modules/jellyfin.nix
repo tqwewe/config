@@ -14,6 +14,11 @@
     openFirewall = true;
   };
 
+  systemd.services.jellyfin.environment = {
+    NVD_BACKEND = "direct";
+    LIBVA_DRIVER_NAME = "nvidia";
+  };
+
   users.users.jellyfin.extraGroups = [ "video" "render" ];
 
   environment.systemPackages = with pkgs; [
